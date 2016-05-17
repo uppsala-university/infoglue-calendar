@@ -1,0 +1,23 @@
+/AccessRight.java/1.3/Thu Jun  7 12:26:52 2007//
+/AccessRightGroup.java/1.3/Thu Jun  7 12:26:52 2007//
+/AccessRightRole.java/1.3/Thu Jun  7 12:26:52 2007//
+/AccessRightUser.java/1.3/Thu Jun  7 12:26:52 2007//
+/BaseEntity.java/1.2/Fri Dec  8 16:16:53 2006//
+/Calendar.java/1.13/Fri Dec  8 16:16:53 2006//
+/CalendarProperty.java/1.2/Fri Jul  7 12:55:24 2006//
+/Category.java/1.9/Fri Dec  8 13:19:54 2006//
+/Entry.java/1.8/Fri Dec  8 16:16:53 2006//
+/Event.java/1.30/Fri Dec  8 16:16:53 2006//
+/EventCategory.java/1.2/Fri Dec  8 16:16:53 2006//
+/EventType.java/1.4/Fri Dec  8 16:16:53 2006//
+/EventTypeCategoryAttribute.java/1.3/Fri Dec  8 16:16:53 2006//
+/EventVersion.java/1.7/Tue Oct  9 17:21:42 2007//
+/Group.java/1.2/Fri Dec  8 16:16:53 2006//
+/InterceptionPoint.java/1.3/Thu Jun  7 12:26:52 2007//
+/Language.java/1.3/Fri Dec  8 16:16:53 2006//
+/Location.java/1.8/Tue Sep 25 18:11:30 2007//
+/Participant.java/1.5/Fri Dec  8 16:16:53 2006//
+/Resource.java/1.7/Fri Dec  8 16:16:53 2006//
+/Role.java/1.2/Fri Dec  8 16:16:53 2006//
+/Subscriber.java/1.2/Fri Dec  8 16:16:53 2006//
+D
