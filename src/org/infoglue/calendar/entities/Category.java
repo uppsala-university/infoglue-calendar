@@ -179,7 +179,7 @@ public class Category implements BaseEntity
     {
     	List sortedList = new ArrayList();
     	sortedList.addAll(children);
-    	System.out.println("sortedList:" + sortedList + ":" + isoCode);
+
         Collections.sort(sortedList, new CategoryComparator(isoCode));
         
         return sortedList;
