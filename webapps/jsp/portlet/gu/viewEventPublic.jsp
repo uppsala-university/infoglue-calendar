@@ -362,15 +362,15 @@
 <ww:else>
 	<xml>
 		<event>
-			<title><ww:property value="#eventVersion.name"/></title>
-			<date><ww:property value="#startDate"/></date>
+			<title><ww:property value="#eventVersion.name" escape="true"/></title>
+			<date><ww:property value="#startDate" escape="true"/></date>
 			<subjects>
 				<ww:iterator value="event.owningCalendar.eventType.categoryAttributes">
 					<ww:if test="top.name == 'Ämnesområde' || top.name == 'Ämnesområden'">
 						<ww:set name="categoryName" value="top.name"/>
 						<ww:set name="selectedCategories" value="this.getEventCategories(top)"/>
 						<ww:iterator value="#selectedCategories" status="rowstatus">
-							<subject><ww:property value="top.getLocalizedName(#languageCode, 'sv')"/></subject>
+							<subject><ww:property value="top.getLocalizedName(#languageCode, 'sv')" escape="true"/></subject>
 						</ww:iterator>
 					</ww:if>
 		   		</ww:iterator>
@@ -392,17 +392,17 @@
 					<ww:set name="selectedCategories" value="this.getEventCategories(top)"/>
 					<ww:set name="categoryAttribute" value="top.getInternalName()"/>
 					<ww:iterator value="#selectedCategories" status="rowstatus">
-						<keyword><ww:property value="top.getLocalizedName(#languageCode, 'sv')"/></keyword>
+						<keyword><ww:property value="top.getLocalizedName(#languageCode, 'sv')" escape="true"/></keyword>
 					</ww:iterator>
 					</ww:if>
 	   			</ww:iterator>
 		   	</keywords>
 			<short-description>				<![CDATA[
 				<ww:if test="#eventVersion.shortDescription != null && #eventVersion.shortDescription != ''">
-					<ww:property value="#eventVersion.shortDescription"/>
+					<ww:property value="#eventVersion.shortDescription" escape="true"/>
 				</ww:if>
 				<ww:else>
-					<c:set var="longDescription"><ww:property value="#eventVersion.longDescription"/></c:set>
+					<c:set var="longDescription"><ww:property value="#eventVersion.longDescription" escape="true"/></c:set>
 					<%
 						String decoratedLongDescription = (String)pageContext.getAttribute("longDescription");
 						decoratedLongDescription = decoratedLongDescription.substring(0, 250);
@@ -411,14 +411,14 @@
 					<c:out value="${longDescription}"></c:out>
 				</ww:else>								]]>
 			</short-description>
-			<name><ww:if test="event.contactName != null && event.contactName != ''"><ww:property value="event.contactName"/></ww:if></name>
-			<email><ww:if test="event.contactEmail != null && event.contactEmail != ''"><ww:property value="event.contactEmail"/></ww:if></email>
+			<name><ww:if test="event.contactName != null && event.contactName != ''"><ww:property value="event.contactName" escape="true"/></ww:if></name>
+			<email><ww:if test="event.contactEmail != null && event.contactEmail != ''"><ww:property value="event.contactEmail" escape="true"/></ww:if></email>
 			<organiser>
-				<ww:if test="#eventVersion.organizerName != null && #eventVersion.organizerName != ''"><ww:property value="#eventVersion.organizerName"/></ww:if>
+				<ww:if test="#eventVersion.organizerName != null && #eventVersion.organizerName != ''"><ww:property value="#eventVersion.organizerName" escape="true"/></ww:if>
 			</organiser>
 			<versions>
 				<ww:iterator value="event.entries">
-					<version><ww:property value="top.class"/></version>
+					<version><ww:property value="top.class" escape="true"/></version>
 				</ww:iterator>
 			</versions>
 		</event>
