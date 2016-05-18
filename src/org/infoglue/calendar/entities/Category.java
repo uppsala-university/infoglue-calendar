@@ -22,11 +22,16 @@
 */
 package org.infoglue.calendar.entities;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
+import org.infoglue.calendar.util.CategoryComparator;
 
 import com.opensymphony.xwork.ActionContext;
 
@@ -169,6 +174,17 @@ public class Category implements BaseEntity
     {
         return children;
     }
+
+    public List getSortedChildren(String isoCode)
+    {
+    	List sortedList = new ArrayList();
+    	sortedList.addAll(children);
+    	System.out.println("sortedList:" + sortedList + ":" + isoCode);
+        Collections.sort(sortedList, new CategoryComparator(isoCode));
+        
+        return sortedList;
+    }
+
     
     public void setChildren(Set children)
     {

@@ -69,7 +69,7 @@
             <ww:set name="categoryAttributeIndex" value="#rowstatus.index" scope="page"/>
             <input type="hidden" name="categoryAttributeId_<ww:property value="#rowstatus.index"/>" value="<ww:property value="top.id"/>"/>
             <c:set var="categoryAttributeName" value="categoryAttribute_${categoryAttribute.id}_categoryId"/>
-            <calendar:selectField label="top.name" name="${categoryAttributeName}" multiple="true" value="top.category.children" selectedValues="getCategoryAttributeValues(top.id)" cssClass="listBox" required="false"/>
+            <calendar:selectField label="top.name" name="${categoryAttributeName}" multiple="true" value="top.category.getSortedChildren(currentContentTypeEditorViewLanguageCode)" selectedValues="getCategoryAttributeValues(top.id)" cssClass="listBox" required="false"/>
         </ww:iterator>
     
         <calendar:checkboxField label="labels.internal.soba.searchANDOR" name="'andSearch'" valueMap="this.getAndSearch()" selectedValues="false"/>
