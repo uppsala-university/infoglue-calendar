@@ -333,7 +333,6 @@ public class ViewEventListAction extends CalendarAbstractAction
 
     public String listFilteredGU() throws Exception
     {
-    	System.out.println("AAAAAAAAAAAAAAAAAAA:" + getStartDateTime());
     	if(startDateTime == null)
     		startDateTime = getStartDateTime();
     	
