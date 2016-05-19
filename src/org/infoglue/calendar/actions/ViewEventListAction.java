@@ -99,6 +99,7 @@ public class ViewEventListAction extends CalendarAbstractAction
     private String forwardMonthUrl		= null;
     private String backwardMonthUrl		= null;
     private String filterDescription	= null;
+    private Integer numberOfItems 		= null;
     
     VisualFormatter vf = new VisualFormatter();
     
@@ -332,7 +333,7 @@ public class ViewEventListAction extends CalendarAbstractAction
 
     public String listFilteredGU() throws Exception
     {
-
+    	System.out.println("AAAAAAAAAAAAAAAAAAA:" + getStartDateTime());
     	if(startDateTime == null)
     		startDateTime = getStartDateTime();
     	
@@ -351,12 +352,16 @@ public class ViewEventListAction extends CalendarAbstractAction
     	if(calendarMonth == null)
     		calendarMonth = getCalendarMonth();
 
+    	if(numberOfItems == null)
+    		numberOfItems = getNumberOfItems();
+    	
     	log.info("freeText:" + freeText);
     	log.info("startDateTime:" + startDateTime);
     	log.info("endDateTime:" + endDateTime);
     	log.info("categoryAttribute:" + categoryAttribute);
     	log.info("categoryNames:" + categoryNames);
     	log.info("calendarMonth:" + calendarMonth);
+    	log.info("numberOfItems:" + numberOfItems);
     	
     	if(startDateTime != null && startDateTime.length() > 0)
             startCalendar = getCalendar(startDateTime, "yyyy-MM-dd", true); 
@@ -433,7 +438,7 @@ public class ViewEventListAction extends CalendarAbstractAction
         Session session = getSession(true);
 
         //this.events = EventController.getController().getEventList(calendarIds, categoryAttribute, categoryNamesArray, includedLanguages, startCalendar, endCalendar, freeText, session);
-        this.events = EventController.getController().getEventList(calendarIds, categories, includedLanguages, startCalendar, endCalendar, freeText, session);
+        this.events = EventController.getController().getEventList(calendarIds, categories, includedLanguages, startCalendar, endCalendar, freeText, numberOfItems, session);
 
         log.info("Registering usage at least:" + calendarId + " for siteNodeId:" + this.getSiteNodeId());
 
@@ -900,7 +905,8 @@ public class ViewEventListAction extends CalendarAbstractAction
     {
     	return this.filterDescription;
     }
-    
+
+
     /*
     public List getCategoriesList()
     {
