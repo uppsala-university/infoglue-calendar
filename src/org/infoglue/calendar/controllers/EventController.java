@@ -1472,7 +1472,7 @@ public class EventController extends BasicController
     {
     	return getEventList(calendarIds, categories, includedLanguages, startCalendar, endCalendar, freeText, null, session);
     }
-    
+
     /**
      * Gets a list of all events available for a particular calendar with the optional categories.
      * @param categories The Map should have the form: key = EventType's categoryattribute name, value = list of Category.internalNames to match against
@@ -1525,7 +1525,7 @@ public class EventController extends BasicController
 	        criteria.add(Expression.eq("stateId", Event.STATE_PUBLISHED));
 
 	        Criteria versionsCriteria = criteria.createAlias("versions", "v");
-
+	        
 	        if(startCalendar != null && endCalendar != null)
 	        {
 		        if(startCalendar.get(java.util.Calendar.YEAR) == endCalendar.get(java.util.Calendar.YEAR) && startCalendar.get(java.util.Calendar.DAY_OF_YEAR) == endCalendar.get(java.util.Calendar.DAY_OF_YEAR))
@@ -1535,13 +1535,16 @@ public class EventController extends BasicController
 		        	criteria.add(Expression.and(Expression.le("startDateTime", startCalendar), Expression.ge("endDateTime", endCalendar)));
 		        }
 		        else
+		        {
 		        	criteria.add(Expression.or(Expression.and(Expression.ge("startDateTime", startCalendar), Expression.le("startDateTime", endCalendar)), Expression.and(Expression.ge("endDateTime", endCalendar),Expression.le("endDateTime", endCalendar))));
+		        }
 	        }
 	        else
 	        {
 	        	criteria.add(Expression.gt("endDateTime", java.util.Calendar.getInstance()));
-	        }
-
+		    }
+	        
+	        
 	        criteria.add(Expression.eq("stateId", Event.STATE_PUBLISHED));
 	        criteria.addOrder(Order.asc("startDateTime"));
 	        criteria.createCriteria("calendars")
