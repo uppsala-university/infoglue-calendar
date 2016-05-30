@@ -24,9 +24,11 @@
 package org.infoglue.common.util.mail;
 
 import java.util.Properties;
+
 import javax.mail.Session;
 
 import org.infoglue.common.util.PropertyHelper;
+import org.jfree.util.Log;
 
 
 /**
@@ -53,6 +55,7 @@ public class MailServiceFactory
     		session = initializeSession();
 			//session.setDebug(true);
     	}
+	    Log.info("Session:" + session.getProperties());
     
     	return new MailService(session);
   	}
