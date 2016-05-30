@@ -222,7 +222,7 @@ public class MailService
 		        } 
 			    catch(AddressException e) 
 			    {
-			    	Log.warn("Badly formatted email address [" + email + "].");
+			    	log.warn("Badly formatted email address [" + email + "].");
 			    	throw new SystemException("Badly formatted email address [" + email + "].", e);
 			    }
 	        }
