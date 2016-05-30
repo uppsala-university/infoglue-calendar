@@ -27,8 +27,10 @@ import java.util.Properties;
 
 import javax.mail.Session;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.infoglue.calendar.controllers.EntryController;
 import org.infoglue.common.util.PropertyHelper;
-import org.jfree.util.Log;
 
 
 /**
@@ -39,6 +41,7 @@ import org.jfree.util.Log;
 
 public class MailServiceFactory 
 {
+    private static Log log = LogFactory.getLog(MailServiceFactory.class);
 
 	// The singleton mail session; shared by all MailService objects.
   	private static Session session;
@@ -55,7 +58,7 @@ public class MailServiceFactory
     		session = initializeSession();
 			//session.setDebug(true);
     	}
-	    Log.info("Session:" + session.getProperties());
+	    log.info("Session:" + session.getProperties());
     
     	return new MailService(session);
   	}
