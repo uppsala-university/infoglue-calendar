@@ -32,11 +32,16 @@ import javax.mail.*;
 import javax.activation.*;
 import javax.mail.internet.*;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.infoglue.calendar.actions.UpdateEventAction;
 import org.infoglue.common.exceptions.Bug;
 import org.infoglue.common.exceptions.SystemException;
 
 public class MailService 
 {
+
+	private static Log log = LogFactory.getLog(MailService.class);
 
     // The mail session.
     private Session session;
@@ -89,9 +94,11 @@ public class MailService
 		try 
 		{
 			Transport.send(message);
+			log.info("Mail sent...");
 		} 
 		catch(MessagingException e) 
 		{
+			log.error("Unable to send message: " + e.getMessage(), e);
 		    //e.printStackTrace();
 			throw new SystemException("Unable to send message.", e);
 		}
@@ -207,14 +214,16 @@ public class MailService
 	    for(int i=0; i<emailAddresses.length; i++)
 	    {
 	        String email = emailAddresses[i];
-	        if (email != null && !email.isEmpty()) {
+	        if (email != null && !email.isEmpty()) 
+	        {
 		        try 
 				{
-		            addresses[i] = new InternetAddress(email);
+		            addresses[i] = new InternetAddress(email.trim());
 		        } 
 			    catch(AddressException e) 
 			    {
-			        throw new SystemException("Badly formatted email address [" + email + "].", e);
+			    	Log.warn("Badly formatted email address [" + email + "].");
+			    	throw new SystemException("Badly formatted email address [" + email + "].", e);
 			    }
 	        }
 	    }
