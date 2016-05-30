@@ -382,7 +382,7 @@ public class AccessRightController extends BasicController
 		InfoGluePrincipalBean infoGluePrincipalBean = (InfoGluePrincipalBean)CacheController.getCachedObject("principalsCache", "principal_" + userName, timeoutLength);
 		if(infoGluePrincipalBean != null)
 		{
-			log.info("cached principal...");
+			log.info("cached principal:" + infoGluePrincipalBean);
 			return infoGluePrincipalBean;			
 		}
 			
@@ -391,7 +391,11 @@ public class AccessRightController extends BasicController
 		    WebServiceHelper wsh = new WebServiceHelper();
 	        wsh.setServiceUrl(getServiceURL());
 	        
+	        log.info("Getting principal on:" + getServiceURL() + ":" + userName);
+	        
 	        infoGluePrincipalBean = (InfoGluePrincipalBean)wsh.getObject("getPrincipal", userName);
+	        log.info("Got principal:" + infoGluePrincipalBean);
+			
 	        if(infoGluePrincipalBean != null)
 	        	CacheController.cacheObject("principalsCache", "principal_" + userName, infoGluePrincipalBean);	        	
 		}

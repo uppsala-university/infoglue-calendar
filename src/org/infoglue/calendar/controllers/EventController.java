@@ -1811,14 +1811,17 @@ public class EventController extends BasicController
 	    {
 	        List allPrincipals = new ArrayList();
 	        Collection owningRoles = event.getOwningCalendar().getOwningRoles();
+	        log.info("owningRoles:" + owningRoles.size());
 	        Iterator owningRolesIterator = owningRoles.iterator();
 	        while(owningRolesIterator.hasNext())
 	        {
 	            Role role = (Role)owningRolesIterator.next();
+	            log.info("Owning role:" + role.getName());
 	            
 	            List principals = new ArrayList();
 	            principals.addAll(AccessRightController.getController().getPrincipalsWithRole(role.getName()));
 	            //List principals = RoleControllerProxy.getController().getInfoGluePrincipals(role.getName());
+	            log.info("principals:" + principals.size());
 	            
 	            Iterator userIterator = principals.iterator();
 	            while(userIterator.hasNext())
@@ -1826,6 +1829,7 @@ public class EventController extends BasicController
 	            	
 	                InfoGluePrincipalBean principal = (InfoGluePrincipalBean)userIterator.next();
 	                boolean hasGroup = hasUserGroup(principal, event);
+	                log.info("hasGroup:" + principal);
 	                if(hasGroup)
 	                    allPrincipals.add(principal);
 	            }
@@ -1837,7 +1841,7 @@ public class EventController extends BasicController
 	        {
 		        InfoGluePrincipalBean infogluePrincipal = (InfoGluePrincipalBean)allPrincipalsIterator.next();
 		        addresses += infogluePrincipal.getEmail() + ";";
-		        System.out.println("Rasmus adress:" + infogluePrincipal.getEmail() + " for user:" + infogluePrincipal.getDisplayName());
+		        log.info("Rasmus adress:" + infogluePrincipal.getEmail() + " for user:" + infogluePrincipal.getDisplayName());
 	        }
 
             String template;
@@ -1980,6 +1984,7 @@ public class EventController extends BasicController
             
             List principals = new ArrayList();
             principals.addAll(AccessRightController.getController().getPrincipalsWithGroup(group.getName()));
+            log.info("principals with group '" + group.getName() + "': " + principals.size());
             //List principals = GroupControllerProxy.getController().getInfoGluePrincipals(group.getName());
 
             if(principals.contains(principal))
