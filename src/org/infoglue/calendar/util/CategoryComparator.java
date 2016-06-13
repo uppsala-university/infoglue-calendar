@@ -3,35 +3,67 @@ package org.infoglue.calendar.util;
 import java.util.Comparator;
 
 import org.infoglue.calendar.entities.Category;
-import org.infoglue.calendar.entities.Event;
-import org.infoglue.calendar.entities.EventTypeCategoryAttribute;
-
 
 /**
  * @author Mattias Bogeblad
  *
  */
 
-public class CategoryComparator implements Comparator
+public class CategoryComparator implements Comparator<Category>
 {
 	private String isoCode;
-	
+
 	public CategoryComparator(String isoCode)
 	{
 		this.isoCode = isoCode;
 	}
 	
-	public int compare(Object o1, Object o2) 
+	private Integer handleNullCases(Object value1, Object value2)
 	{
-		int result = 0;
-		Category e2 = (Category)o2;
-		Category e1 = (Category)o1;
-		int orderColumnResult = e1.getLocalizedName(isoCode, "en").toLowerCase().compareTo(e2.getLocalizedName(isoCode, "en").toLowerCase());
+		/*
+		 * Put null values last
+		 */
+		if (value1 == null && value2 == null)
+		{
+			return 0;
+		}
+		else if (value1 == null && value2 != null)
+		{
+			return 1;
+		}
+		else if (value1 != null && value2 == null)
+		{
+			return -1;
+		}
+		else
+		{
+			return null;
+		}
+	}
+
+	public int compare(Category c1, Category c2)
+	{
+		Integer result = handleNullCases(c1, c2);
 		
-		if(orderColumnResult != 0)
-			result = orderColumnResult;
-		
-		return result;
+		if (result != null)
+		{
+			return result;
+		}
+		else
+		{
+			String category1Name = c1.getLocalizedName(isoCode, "en");
+			String category2Name = c2.getLocalizedName(isoCode, "en");
+
+			result = handleNullCases(category1Name, category2Name);
+			if (result != null)
+			{
+				return result;
+			}
+			else
+			{
+				return category1Name.toLowerCase().compareTo(category2Name.toLowerCase());
+			}
+		}
 	}
 
 }
