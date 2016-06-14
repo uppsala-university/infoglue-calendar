@@ -40,7 +40,7 @@
         
     	if (!document.inputForm.agree.checked) {
               document.inputForm.agree.focus();
-               alert("Du måste fylla i kryssrutan för att gå vidare");
+               alert("Du m\u00E5ste fylla i kryssrutan f\u00F6r att g\u00E5 vidare");
 
             return false;
 		}
@@ -361,7 +361,7 @@
 			<ww:set name="categoryAttributeIndex" value="#rowstatus.index" scope="page"/>
 			<input type="hidden" name="categoryAttributeId_<ww:property value="#rowstatus.index"/>" value="<ww:property value="top.id"/>"/>
 			<c:set var="categoryAttributeName" value="categoryAttribute_${categoryAttribute.id}_categoryId"/>
-			<calendar:selectField label="top.name" name="${categoryAttributeName}" multiple="true" value="top.category.getSortedChildren(currentContentTypeEditorViewLanguageCode)" selectedValues="getCategoryAttributeValues(top.id)" tabIndex="${tabCounter}" cssClass="listBox" required="true"/>
+			<calendar:selectField label="top.name" name="${categoryAttributeName}" multiple="true" value="top.category.getSortedChildren(languageCode)" selectedValues="getCategoryAttributeValues(top.id)" tabIndex="${tabCounter}" cssClass="listBox" required="true"/>
 			<c:set var="tabCounter" value="${tabCounter +1}"/>
 		</ww:iterator>
         
