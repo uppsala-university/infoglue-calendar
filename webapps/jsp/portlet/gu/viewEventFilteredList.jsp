@@ -69,30 +69,23 @@
 	--%>
 
 	<%
-		int currentYear = -1;
 		int currentMonth = -1;
 		String month, firstLetterMonth, monthRemaining;
 	%>
 	<ww:iterator value="events" status="rowstatus">
 		<%
 		GregorianCalendar cal = (GregorianCalendar)stack.findValue("top.startDateTime");
-		
-		if( cal.get(Calendar.YEAR) != currentYear ) {
-			out.write("<p class=\"year\">"+cal.get(Calendar.YEAR)+"</p>");
-			currentMonth = -1;
-		}
-		
+
 		if( cal.get(Calendar.MONTH)+1 != currentMonth ) {
 			month = vf.formatDate(cal.getTime(), locale, "MMMM");
 			firstLetterMonth = month.substring(0,1);
 			monthRemaining = month.substring(1);
 			month = firstLetterMonth.toUpperCase()+monthRemaining;
 			
-			out.write("<p class=\"month\">"+month+"</p>");
+			out.write("<p class=\"month\">" + month + " " + cal.get(Calendar.YEAR) + "</p>");
 			currentMonth = (cal.get(Calendar.MONTH)+1);
 		}
-		
-		currentYear = cal.get(Calendar.YEAR);
+
 		%>
 		<ww:set name="event" value="top"/>
 		<ww:set name="eventVersion" value="this.getEventVersion('#event')"/>
@@ -141,42 +134,40 @@
 				pageContext.setAttribute("isoStartDate", startDateString);
 			%>
 			<p class="date_time">
-				<span class="dtstart">
-					<!-- tid -->
-					<abbr class="value" title="<c:out value="${isoStartDate}"/>"><ww:property value="this.formatDate(top.startDateTime.getTime(), #shortDateFormat)"/></abbr>
-					<ww:set name="startDay" value="this.formatDate(top.startDateTime.getTime(), 'yyyy-MM-dd')"/>
-					<ww:set name="endDay" value="this.formatDate(top.endDateTime.getTime(), 'yyyy-MM-dd')"/>
-					<ww:if test="this.formatDate(top.startDateTime.time, 'HH:mm') != '12:34'">
-						<ww:property value="this.getLabel('labels.public.event.klockLabel')"/>
-						<span class="value"><ww:property value="this.formatDate(top.startDateTime.getTime(), #timeFormat)"/></span>
-					</ww:if>
-				</span>
-				<ww:if test="#startDay != #endDay">
-					&ndash;
-					<span class="dtend">
-						<abbr class="value" title="<ww:property value='this.formatDate(top.endDateTime.getTime(), "yyyy-MM-dd HH:mm")' />"> <ww:property value="this.formatDate(top.endDateTime.getTime(), #shortDateFormat)"/></abbr>
+			<span class="dtstart">
+			 	<!-- tid -->
+			 	<abbr class="value" title="<c:out value="${isoStartDate}"/>"><ww:property value="this.formatDate(top.startDateTime.getTime(), #shortDateFormat)"/></abbr>
+                                <ww:set name="startDay" value="this.formatDate(top.startDateTime.getTime(), 'yyyy-MM-dd')"/>
+                                <ww:set name="endDay" value="this.formatDate(top.endDateTime.getTime(), 'yyyy-MM-dd')"/>
+
+                                
+                                <ww:if test="this.formatDate(top.startDateTime.time, 'HH:mm') != '12:34'">
+					<ww:property value="this.getLabel('labels.public.event.klockLabel')"/>
+					<span class="value"><ww:property value="this.formatDate(top.startDateTime.getTime(), #timeFormat)"/></span>
+					
+                                        </ww:if>
+
+                                        </span>
+
+				 	<ww:if test="#startDay != #endDay">
+
+
+                                            - <span class="dtend">
+
+                                                <abbr class="value" title="<ww:property value='this.formatDate(top.endDateTime.getTime(), "yyyy-MM-dd HH:mm")' />"> <ww:property value="this.formatDate(top.endDateTime.getTime(), #shortDateFormat)"/></abbr>
+
+
 						<ww:if test="this.formatDate(top.endDateTime.time, 'HH:mm') != '23:59'">
-							<ww:property value="this.getLabel('labels.public.event.klockLabel')"/>
-							<span class="value"><ww:property value="this.formatDate(top.endDateTime.getTime(), #timeFormat)"/></span>
-						</ww:if>
-					</span>
-				</ww:if>
-				<ww:elseif test="this.formatDate(top.endDateTime.time, 'HH:mm') != '23:59'">
-					&ndash;
-					<span class ="dtend">
-						<ww:property value="this.getLabel('labels.public.event.klockLabel')"/>
-						<span class="value">
-							<ww:property value="this.formatDate(top.endDateTime.getTime(), #timeFormat)"/>
-						</span>
-					</span>
-				</ww:elseif>
+                                                                <ww:property value="this.getLabel('labels.public.event.klockLabel')"/>
+                                                                <span class="value"><ww:property value="this.formatDate(top.endDateTime.getTime(), #timeFormat)"/></span>
+
+                                                </ww:if>
+                                        </span>
+                                      </ww:if>
+					
+			 	
+			
 			</p>
-
-			<ww:set name="puffImage" value="this.getResourceUrl(top, 'PuffBild')"/>
-			<ww:if test="#puffImage != null">
-				<img src="<ww:property value="#puffImage"/>" class="img_calendar_event"/>
-			</ww:if>
-
 			<h3 class="summary">
 				<a class="url uid summary" href="<ww:property value="#attr.detailUrl"/><c:out value="${delim}"/>eventId=<ww:property value="top.id"/>"><ww:property value="#eventVersion.name"/></a>
 			</h3>
@@ -216,7 +207,7 @@
 							<c:out value="${location}" escapeXml="false"/> 
 						</c:if>
 						
-						<!-- Föreläsare -->
+						<!-- F�rel�sare -->
 						<ww:if test="#eventVersion.lecturer != null && #eventVersion.lecturer != ''">
 							<li>
 								<ww:property value="this.getLabel('labels.public.event.lecturerLabel')"/>: <ww:property value="#eventVersion.lecturer"/>
@@ -228,7 +219,7 @@
 							<li><a class="url uid webpage" href="<ww:property value="#eventVersion.eventUrl"/>"><ww:property value="this.getLabel('labels.public.event.eventUrl')"/></a></li>
 						</ww:if>
 						
-						<!--  Arrangör -->
+						<!--  Arrang�r -->
 						<ww:if test="#eventVersion.organizerName != null && #eventVersion.organizerName != ''">
 				   			<li><!-- organizer name -->
 				   				<ww:property value="this.getLabel('labels.public.event.organizerLabel')"/>: <ww:property value="#eventVersion.organizerName"/>

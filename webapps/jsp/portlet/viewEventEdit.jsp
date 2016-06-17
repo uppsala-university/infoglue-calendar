@@ -297,7 +297,7 @@
                 <ww:set name="selectedCategories" value="this.getEventCategories(top)"/>
                 <c:set var="categoryAttributeName" value="categoryAttribute_${categoryAttribute.id}_categoryId"/>
                 <input type="hidden" name="categoryAttributeId_<ww:property value="#rowstatus.index"/>" value="<ww:property value="top.id"/>"/>
-                <calendar:selectField label="top.name" name="${categoryAttributeName}" multiple="true" value="top.category.getSortedChildren(currentContentTypeEditorViewLanguageCode)" selectedValues="getCategoryAttributeValues(top.id)" selectedValueList="#selectedCategories" cssClass="listBox" required="true"/>
+                <calendar:selectField label="top.name" name="${categoryAttributeName}" multiple="true" value="top.category.getSortedChildren(languageCode)" selectedValues="getCategoryAttributeValues(top.id)" selectedValueList="#selectedCategories" cssClass="listBox" required="true"/>
             </ww:iterator>
     
             <%--

@@ -301,44 +301,19 @@
 		
 		<ww:if test="#eventVersion.decoratedLongDescription != null && #eventVersion.decoratedLongDescription != ''">
 			<div class="longer_description">
-			<%--
 			<ww:set name="puffImage" value="this.getResourceUrl(event, 'DetaljBild')"/>
 			<ww:if test="#puffImage != null">
 			<img src="<ww:property value="#puffImage"/>" class="img_left_letter"/>
 			</ww:if>
-			--%>
 			<ww:property value="#eventVersion.decoratedLongDescription"/>
 			</div>
-		</ww:if>
-		<%--
-
-		<ww:if test="event.resources.size() > 0">
-			<ww:iterator value="event.resources">
-				<ww:if test="top.assetKey == 'BifogadFil'">
-  				<ww:property value="this.getLabel('labels.public.event.additionalInfoLabel')"/>:
-		  			<p>
-
-						<ww:set name="resourceId" value="top.id" scope="page"/>
-						<calendar:resourceUrl id="url" resourceId="${resourceId}"/>
-						<ww:if test="fileName.indexOf('.pdf') > -1">
-							<ww:set name="resourceClass" value="'pdficon'"/>
+		</ww:if>		<ww:set name="attachedFiles" value="this.getResourcesWithAssetKey('BifogadFil')"/>
+		<ww:if test="#attachedFiles.size() > 0">			<span class="additionInfoHeader"><ww:property value="this.getLabel('labels.public.event.additionalInfoLabel')"/>:</span>			<ul class="calendarAttachedFiles">				<ww:iterator value="#attachedFiles">					<li>						<ww:set name="resourceId" value="top.id" scope="page"/>						<calendar:resourceUrl id="url" resourceId="${resourceId}"/>						<ww:if test="fileName.indexOf('.pdf') > -1">
+							<ww:set name="resourceClass" value="'pdficon'"/>
 						</ww:if>
-						<ww:if test="fileName.indexOf('.doc') > -1">
-							<ww:set name="resourceClass" value="'wordicon'"/>
-						</ww:if>
-						<ww:if test="fileName.indexOf('.xls') > -1">
-							<ww:set name="resourceClass" value="'excelicon'"/>
-						</ww:if>
-						<ww:if test="fileName.indexOf('.ppt') > -1">
-							<ww:set name="resourceClass" value="'powerpointicon'"/>
-						</ww:if>
-						<a class="url uid" href="<c:out value="${url}"/>" target="_blank" class="<ww:property value="#resourceClass"/>"><ww:property value="shortendFileName"/></a><br/>
-		  			</p>
-				</ww:if>
-
-	  		</ww:iterator>
-		</ww:if>
-		--%>
+						<ww:if test="fileName.indexOf('.doc') > -1">							<ww:set name="resourceClass" value="'wordicon'"/>						</ww:if>						<ww:if test="fileName.indexOf('.xls') > -1">							<ww:set name="resourceClass" value="'excelicon'"/>						</ww:if>						<ww:if test="fileName.indexOf('.ppt') > -1">							<ww:set name="resourceClass" value="'powerpointicon'"/>						</ww:if>						<a class="url uid <ww:property value="#resourceClass"/>" href="<c:out value="${url}"/>" target="_blank"><ww:property value="shortendFileName"/></a>					</li>
+				</ww:iterator>			</ul>
+		</ww:if>
 	</div>
 </ww:if>
 <ww:else>

@@ -28,6 +28,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,6 +49,7 @@ import org.infoglue.calendar.entities.EventType;
 import org.infoglue.calendar.entities.EventTypeCategoryAttribute;
 import org.infoglue.calendar.entities.EventVersion;
 import org.infoglue.calendar.entities.Language;
+import org.infoglue.calendar.entities.Resource;
 import org.infoglue.common.util.VelocityTemplateProcessor;
 
 import com.opensymphony.webwork.ServletActionContext;
@@ -176,8 +178,8 @@ public class ViewEventAction extends CalendarAbstractAction
         }
         catch(Exception e)
         {
-            log.error("Ett fel uppstod n‰r evenemang med id " + this.eventId + " skulle visas:" + e.getMessage(), e);
-            setError("Ett fel uppstod n‰r evenemang med id " + this.eventId + " skulle visas.", e);
+            log.error("Ett fel uppstod n√§r evenemang med id " + this.eventId + " skulle visas:" + e.getMessage(), e);
+            setError("Ett fel uppstod n√§r evenemang med id " + this.eventId + " skulle visas.", e);
         }
         
         return Action.ERROR;
@@ -256,8 +258,8 @@ public class ViewEventAction extends CalendarAbstractAction
         }
         catch(Exception e)
         {
-            log.error("Ett fel uppstod n‰r evenemang med id " + this.eventId + " skulle visas:" + e.getMessage(), e);
-            setError("Ett fel uppstod n‰r evenemang med id " + this.eventId + " skulle visas.", e);
+            log.error("Ett fel uppstod n√§r evenemang med id " + this.eventId + " skulle visas:" + e.getMessage(), e);
+            setError("Ett fel uppstod n√§r evenemang med id " + this.eventId + " skulle visas.", e);
         }
 
         return Action.ERROR;
@@ -308,8 +310,8 @@ public class ViewEventAction extends CalendarAbstractAction
         }
         catch(Exception e)
         {
-            log.error("Ett fel uppstod n‰r evenemang med id " + this.eventId + " skulle visas:" + e.getMessage(), e);
-            setError("Ett fel uppstod n‰r evenemang med id " + this.eventId + " skulle visas.", e);
+            log.error("Ett fel uppstod n√§r evenemang med id " + this.eventId + " skulle visas:" + e.getMessage(), e);
+            setError("Ett fel uppstod n√§r evenemang med id " + this.eventId + " skulle visas.", e);
         }
         
         return Action.ERROR;
@@ -360,8 +362,8 @@ public class ViewEventAction extends CalendarAbstractAction
         }
         catch(Exception e)
         {
-            log.error("Ett fel uppstod n‰r evenemang med id " + this.eventId + " skulle visas:" + e.getMessage(), e);
-            setError("Ett fel uppstod n‰r evenemang med id " + this.eventId + " skulle visas.", e);
+            log.error("Ett fel uppstod n√§r evenemang med id " + this.eventId + " skulle visas:" + e.getMessage(), e);
+            setError("Ett fel uppstod n√§r evenemang med id " + this.eventId + " skulle visas.", e);
         }
         
         return Action.ERROR;
@@ -386,7 +388,28 @@ public class ViewEventAction extends CalendarAbstractAction
 
         return categories;
     }
-    
+
+	public List<Resource> getResourcesWithAssetKey(String assetKey)
+	{
+		List<Resource> results = new LinkedList<Resource>();
+
+		if (getEvent().getResources() != null)
+		{
+			@SuppressWarnings("unchecked")
+			Iterator<Resource> it = (Iterator<Resource>)getEvent().getResources().iterator();
+			while (it.hasNext())
+			{
+				Resource resource = it.next();
+				if (resource.getAssetKey().equals(assetKey))
+				{
+					results.add(resource);
+				}
+			}
+		}
+
+		return results;
+	}
+
     public Event getEvent()
     {
         return event;
