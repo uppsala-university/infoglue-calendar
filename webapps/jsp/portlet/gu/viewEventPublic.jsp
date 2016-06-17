@@ -88,29 +88,11 @@
 				
 
                   </ww:if>
-
-			   <ww:if test="#startDay !=  #endDay">
-                                &mdash;
-                                       
-                                <span class ="dtend">
-                                <abbr class="value" title="<ww:property value='this.formatDate(event.endDateTime.getTime(), #dateFormat)' />"> <ww:property value="this.formatDate(event.endDateTime.getTime(), #dateFormat)"/></abbr>
-
-                                           
-                                                 <ww:if test="this.formatDate(event.endDateTime.time, 'HH:mm') != '23:59'">
-                                                    
-<ww:property value="this.getLabel('labels.public.event.klockLabel')"/>
-                                                       
-                                                                    <span class="value">
-                                                                        <ww:property value="this.formatDate(event.endDateTime.getTime(), #timeFormat)"/></span>
-                                                     
-                                                   </ww:if>
-                                </span>
-                                        
-                             </ww:if>
-				
-			                                 </li>
-
-		 	
+				<ww:if test="#startDay !=  #endDay">
+					&mdash;					<span class ="dtend">						<abbr class="value" title="<ww:property value='this.formatDate(event.endDateTime.getTime(), #dateFormat)' />"> <ww:property value="this.formatDate(event.endDateTime.getTime(), #dateFormat)"/></abbr>						<ww:if test="this.formatDate(event.endDateTime.time, 'HH:mm') != '23:59'">
+							<ww:property value="this.getLabel('labels.public.event.klockLabel')"/>
+							<span class="value">								<ww:property value="this.formatDate(event.endDateTime.getTime(), #timeFormat)"/>							</span>						</ww:if>
+					</span>				</ww:if>				<ww:elseif test="this.formatDate(event.endDateTime.time, 'HH:mm') != '23:59'">					&ndash;					<span class ="dtend">						<ww:property value="this.getLabel('labels.public.event.klockLabel')"/>						<span class="value">							<ww:property value="this.formatDate(event.endDateTime.getTime(), #timeFormat)"/>						</span>					</span>				</ww:elseif>			</li>
 			<c:set var="location">
 			<li><!-- location -->
 				<ww:property value="this.getLabel('labels.public.event.locationLabel')"/>:
@@ -261,7 +243,7 @@
 			</ww:if>
 					
 			<%--		
-			<p><span class="calFactLabel">Anmälan:</span>
+			<p><span class="calFactLabel">AnmÃ¤lan:</span>
 			<ww:if test="event.lastRegistrationDateTime.time.time > now.time.time">
 				<ww:if test="event.maximumParticipants > event.entries.size()">
 					<ww:set name="eventId" value="eventId" scope="page"/>
@@ -366,7 +348,7 @@
 			<date><ww:property value="#startDate" escape="true"/></date>
 			<subjects>
 				<ww:iterator value="event.owningCalendar.eventType.categoryAttributes">
-					<ww:if test="top.name == 'Ämnesområde' || top.name == 'Ämnesområden'">
+					<ww:if test="top.name == 'Ã„mnesomrÃ¥de' || top.name == 'Ã„mnesomrÃ¥den'">
 						<ww:set name="categoryName" value="top.name"/>
 						<ww:set name="selectedCategories" value="this.getEventCategories(top)"/>
 						<ww:iterator value="#selectedCategories" status="rowstatus">
@@ -378,7 +360,7 @@
 			<keywords>
 			<%-- 
 				<ww:iterator value="event.owningCalendar.eventType.categoryAttributes">
-					<ww:if test="top.name == 'Ämnesområde' || top.name == 'Ämnesområden'">
+					<ww:if test="top.name == 'Ã„mnesomrÃ¥de' || top.name == 'Ã„mnesomrÃ¥den'">
 						<ww:set name="categoryName" value="top.name"/>
 						<ww:set name="selectedCategories" value="this.getEventCategories(top)"/>
 						<ww:iterator value="#selectedCategories" status="rowstatus">

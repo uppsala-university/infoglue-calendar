@@ -23,13 +23,9 @@
 package org.infoglue.calendar.entities;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.infoglue.calendar.util.CategoryComparator;
 
@@ -52,8 +48,8 @@ public class Category implements BaseEntity
     private Boolean active = new Boolean(true); //Default if not otherwise set
     
     private Category parent;
-    private Set children;
-    private Set activeChildren;
+    private Set<Category> children;
+    private Set<Category> activeChildren;
 
     /**
      * @hibernate.id generator-class="native" type="long" column="id" unsaved-value="null"
@@ -169,34 +165,33 @@ public class Category implements BaseEntity
     {
         this.active = active;
     }
-    
-    public Set getChildren()
+
+    public Set<Category> getChildren()
     {
         return children;
     }
 
-    public List getSortedChildren(String isoCode)
-    {
-    	List sortedList = new ArrayList();
-    	sortedList.addAll(children);
+	public List<Category> getSortedChildren(String isoCode)
+	{
+		List<Category> sortedList = new ArrayList<Category>();
+		sortedList.addAll(children);
 
-        Collections.sort(sortedList, new CategoryComparator(isoCode));
-        
-        return sortedList;
-    }
+		Collections.sort(sortedList, new CategoryComparator(isoCode));
 
-    
-    public void setChildren(Set children)
+		return sortedList;
+	}
+
+    public void setChildren(Set<Category> children)
     {
         this.children = children;
     }
-    
-    public Set getActiveChildren()
+
+    public Set<Category> getActiveChildren()
     {
         return activeChildren;
     }
 
-    public void setActiveChildren(Set activeChildren)
+    public void setActiveChildren(Set<Category> activeChildren)
     {
         this.activeChildren = activeChildren;
     }

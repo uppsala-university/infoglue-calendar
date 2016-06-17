@@ -24,8 +24,12 @@
 package org.infoglue.common.util.mail;
 
 import java.util.Properties;
+
 import javax.mail.Session;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.infoglue.calendar.controllers.EntryController;
 import org.infoglue.common.util.PropertyHelper;
 
 
@@ -37,6 +41,7 @@ import org.infoglue.common.util.PropertyHelper;
 
 public class MailServiceFactory 
 {
+    private static Log log = LogFactory.getLog(MailServiceFactory.class);
 
 	// The singleton mail session; shared by all MailService objects.
   	private static Session session;
@@ -53,6 +58,7 @@ public class MailServiceFactory
     		session = initializeSession();
 			//session.setDebug(true);
     	}
+	    log.info("Session:" + session.getProperties());
     
     	return new MailService(session);
   	}

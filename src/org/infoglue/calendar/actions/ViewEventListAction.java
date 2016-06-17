@@ -352,7 +352,8 @@ public class ViewEventListAction extends CalendarAbstractAction
     		calendarMonth = getCalendarMonth();
 
     	if(numberOfItems == null)
-    		numberOfItems = getNumberOfItems();
+    		numberOfItems = getNumberOfItemsNoFallback();
+    	System.out.println("numberOfItems:" + numberOfItems);
     	
     	log.info("freeText:" + freeText);
     	log.info("startDateTime:" + startDateTime);
@@ -596,7 +597,16 @@ public class ViewEventListAction extends CalendarAbstractAction
         else
             return new Integer(10);
     }
-    
+
+    public Integer getNumberOfItemsNoFallback()
+    {
+        Object o = ServletActionContext.getRequest().getAttribute("numberOfItems");
+        if(o != null && o.toString().length() > 0 && !o.toString().equalsIgnoreCase("undefined"))
+            return new Integer((String)o);
+        else
+            return null;
+    }
+
     public List getEventCategories(String eventString, EventTypeCategoryAttribute categoryAttribute)
     {
         Object object = findOnValueStack(eventString);
