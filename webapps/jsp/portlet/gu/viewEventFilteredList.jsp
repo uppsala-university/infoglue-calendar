@@ -69,30 +69,23 @@
 	--%>
 
 	<%
-		int currentYear = -1;
 		int currentMonth = -1;
 		String month, firstLetterMonth, monthRemaining;
 	%>
 	<ww:iterator value="events" status="rowstatus">
 		<%
 		GregorianCalendar cal = (GregorianCalendar)stack.findValue("top.startDateTime");
-		
-		if( cal.get(Calendar.YEAR) != currentYear ) {
-			out.write("<p class=\"year\">"+cal.get(Calendar.YEAR)+"</p>");
-			currentMonth = -1;
-		}
-		
+
 		if( cal.get(Calendar.MONTH)+1 != currentMonth ) {
 			month = vf.formatDate(cal.getTime(), locale, "MMMM");
 			firstLetterMonth = month.substring(0,1);
 			monthRemaining = month.substring(1);
 			month = firstLetterMonth.toUpperCase()+monthRemaining;
 			
-			out.write("<p class=\"month\">"+month+"</p>");
+			out.write("<p class=\"month\">" + month + " " + cal.get(Calendar.YEAR) + "</p>");
 			currentMonth = (cal.get(Calendar.MONTH)+1);
 		}
-		
-		currentYear = cal.get(Calendar.YEAR);
+
 		%>
 		<ww:set name="event" value="top"/>
 		<ww:set name="eventVersion" value="this.getEventVersion('#event')"/>
@@ -214,7 +207,7 @@
 							<c:out value="${location}" escapeXml="false"/> 
 						</c:if>
 						
-						<!-- Föreläsare -->
+						<!-- Fï¿½relï¿½sare -->
 						<ww:if test="#eventVersion.lecturer != null && #eventVersion.lecturer != ''">
 							<li>
 								<ww:property value="this.getLabel('labels.public.event.lecturerLabel')"/>: <ww:property value="#eventVersion.lecturer"/>
@@ -226,7 +219,7 @@
 							<li><a class="url uid webpage" href="<ww:property value="#eventVersion.eventUrl"/>"><ww:property value="this.getLabel('labels.public.event.eventUrl')"/></a></li>
 						</ww:if>
 						
-						<!--  Arrangör -->
+						<!--  Arrangï¿½r -->
 						<ww:if test="#eventVersion.organizerName != null && #eventVersion.organizerName != ''">
 				   			<li><!-- organizer name -->
 				   				<ww:property value="this.getLabel('labels.public.event.organizerLabel')"/>: <ww:property value="#eventVersion.organizerName"/>
