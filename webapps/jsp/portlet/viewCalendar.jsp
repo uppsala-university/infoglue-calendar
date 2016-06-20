@@ -49,9 +49,7 @@
             <calendar:selectField label="labels.internal.calendar.groups" name="groups" multiple="true" value="infoglueGroups" selectedValueSet="#owningGroups" cssClass="listBox"/>
            
             <calendar:selectField label="labels.internal.calendar.eventType" name="'eventTypeId'" multiple="false" value="eventTypes" selectedValue="calendar.eventType.id" cssClass="listBox"/>
-    
-            <calendar:selectField label="labels.internal.calendar.eventType" name="'systemLanguageId'" multiple="false" value="languages" selectedValue="calendar.languages.id" cssClass="listBox"/>
-    
+
             <div style="height:10px"></div>
             <input type="submit" value="<ww:property value="this.getLabel('labels.internal.calendar.updateButton')"/>" class="button">
             <input type="button" onclick="history.back();" value="<ww:property value="this.getLabel('labels.internal.applicationCancel')"/>" class="button">
