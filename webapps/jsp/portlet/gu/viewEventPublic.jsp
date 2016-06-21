@@ -92,7 +92,7 @@
 					&mdash;					<span class ="dtend">						<abbr class="value" title="<ww:property value='this.formatDate(event.endDateTime.getTime(), #dateFormat)' />"> <ww:property value="this.formatDate(event.endDateTime.getTime(), #dateFormat)"/></abbr>						<ww:if test="this.formatDate(event.endDateTime.time, 'HH:mm') != '23:59'">
 							<ww:property value="this.getLabel('labels.public.event.klockLabel')"/>
 							<span class="value">								<ww:property value="this.formatDate(event.endDateTime.getTime(), #timeFormat)"/>							</span>						</ww:if>
-					</span>				</ww:if>				<ww:elseif test="this.formatDate(event.endDateTime.time, 'HH:mm') != '23:59'">					&ndash;					<span class ="dtend">						<ww:property value="this.getLabel('labels.public.event.klockLabel')"/>						<span class="value">							<ww:property value="this.formatDate(event.endDateTime.getTime(), #timeFormat)"/>						</span>					</span>				</ww:elseif>			</li>
+					</span>				</ww:if>				<ww:elseif test="this.formatDate(event.endDateTime.time, 'HH:mm') != '23:59'">					&ndash;					<span class ="dtend">						<span class="value">							<ww:property value="this.formatDate(event.endDateTime.getTime(), #timeFormat)"/>						</span>					</span>				</ww:elseif>			</li>
 			<c:set var="location">
 			<li><!-- location -->
 				<ww:property value="this.getLabel('labels.public.event.locationLabel')"/>:
