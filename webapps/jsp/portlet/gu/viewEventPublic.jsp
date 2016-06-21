@@ -361,8 +361,8 @@
 				<ww:else>
 					<c:set var="longDescription"><ww:property value="#eventVersion.longDescription" escape="true"/></c:set>
 					<%
-						String decoratedLongDescription = (String)pageContext.getAttribute("longDescription");
-						decoratedLongDescription = decoratedLongDescription.substring(0, 250);
+						String decoratedLongDescription = (String)pageContext.getAttribute("longDescription");						int descriptionLength = Math.min(250, decoratedLongDescription.length());
+						decoratedLongDescription = decoratedLongDescription.substring(0, descriptionLength);
 						pageContext.setAttribute("longDescription", decoratedLongDescription);
 					%>
 					<c:out value="${longDescription}"></c:out>
