@@ -49,12 +49,7 @@
 			<calendar:evalParam name="calendarId" value="${calendarId}"/>
 			<calendar:evalParam name="versionLanguageId" value="${versionLanguageId}"/>
 		</portlet:renderURL>
-
-		<portlet:renderURL var="uploadFormURL">
-			<calendar:evalParam name="action" value="UpdateEvent!uploadForm"/>
-			<calendar:evalParam name="eventId" value="${eventId}"/>
-		</portlet:renderURL>
-
+		
 		<calendar:hasRole id="calendarAdministrator" roleName="CalendarAdministrator"/>
 		
 		<%
@@ -220,7 +215,7 @@
 
 	<form name="deleteLinkForm" method="POST" action="<c:out value="${confirmUrl}"/>">
 		<input type="hidden" name="confirmTitle" value="Radera - bekr&#228;fta"/>
-		<input type="hidden" name="confirmMessage" value="&#196;r du s&#228;ker p&#229; att du vill radera &quot;<c:out value="${name}"/>&quot;"/>
+		<input type="hidden" name="confirmMessage" value="&#196;„r du s&#228;ker p&#229; att du vill radera &quot;<c:out value="${name}"/>&quot;"/>
 		<input type="hidden" name="okUrl" value="<%= java.net.URLEncoder.encode(pageContext.getAttribute("deleteUrl").toString(), "utf-8") %>"/>
 		<input type="hidden" name="cancelUrl" value="<%= java.net.URLEncoder.encode(pageContext.getAttribute("viewListUrl").toString(), "utf-8") %>"/>
 
@@ -232,7 +227,7 @@
 
 	<form name="deleteVersionLinkForm" method="POST" action="<c:out value="${confirmUrl}"/>">
 		<input type="hidden" name="confirmTitle" value="Radera - bekr&#228;fta"/>
-		<input type="hidden" name="confirmMessage" value="&#196;r du s&#228;ker p&#229; att du vill radera den <c:out value="${eventVersion.language.name}"/> versionen av &quot;<c:out value="${name}"/>&quot;"/>
+		<input type="hidden" name="confirmMessage" value="&#196;„r du s&#228;ker p&#229; att du vill radera den <c:out value="${eventVersion.language.name}"/> versionen av &quot;<c:out value="${name}"/>&quot;"/>
 		<input type="hidden" name="okUrl" value="<%= java.net.URLEncoder.encode(pageContext.getAttribute("deleteVersionUrl").toString(), "utf-8") %>"/>
 		<input type="hidden" name="cancelUrl" value="<%= java.net.URLEncoder.encode(pageContext.getAttribute("viewListUrl").toString(), "utf-8") %>"/>
 
@@ -471,12 +466,19 @@
 			<calendar:evalParam name="versionLanguageId" value="${versionLanguageId}"/>
 		</portlet:renderURL>
 
+		<%-- <portlet:renderURL var="uploadFormURL">
+			<calendar:evalParam name="action" value="UpdateEvent!uploadForm"/>
+			<calendar:evalParam name="eventId" value="${eventId}"/>
+		</portlet:renderURL> --%>
+		
 		<calendar:hasRole id="calendarAdministrator" roleName="CalendarAdministrator"/>
+		
+
 
 		<ww:if test="this.getIsEventCreator(event) || this.getIsEventOwner(event) || calendarAdministrator == true">
 
+	  		<%-- <input onclick="document.location.href='<c:out value="${uploadFormURL}"/>';" type="button" value="<ww:property value="this.getLabel('labels.internal.event.attachFile')"/>" class="button"> --%>
 			<input onclick="document.location.href='<c:out value="${editEventRenderURL}"/>';" type="button" value="<ww:property value="this.getLabel('labels.internal.event.editButton')"/>" class="button">
-			<input onclick="document.location.href='<c:out value="${uploadFormURL}"/>';" type="button" value="<ww:property value="this.getLabel('labels.internal.event.attachFile')"/>" class="button">
 			
 			<ww:if test="event.versions.size() > 1">
 				<input onclick="document.deleteVersionLinkForm.submit();" type="button" value="<ww:property value="this.getParameterizedLabel('labels.internal.event.deleteVersionButton', eventVersion.language.name)"/>" class="button"></a>

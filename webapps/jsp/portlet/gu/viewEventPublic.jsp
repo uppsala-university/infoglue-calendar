@@ -243,7 +243,7 @@
 			</ww:if>
 					
 			<%--		
-			<p><span class="calFactLabel">AnmÃ¤lan:</span>
+			<p><span class="calFactLabel">Anmälan:</span>
 			<ww:if test="event.lastRegistrationDateTime.time.time > now.time.time">
 				<ww:if test="event.maximumParticipants > event.entries.size()">
 					<ww:set name="eventId" value="eventId" scope="page"/>
@@ -301,19 +301,44 @@
 		
 		<ww:if test="#eventVersion.decoratedLongDescription != null && #eventVersion.decoratedLongDescription != ''">
 			<div class="longer_description">
+			<%--
 			<ww:set name="puffImage" value="this.getResourceUrl(event, 'DetaljBild')"/>
 			<ww:if test="#puffImage != null">
 			<img src="<ww:property value="#puffImage"/>" class="img_left_letter"/>
 			</ww:if>
+			--%>
 			<ww:property value="#eventVersion.decoratedLongDescription"/>
 			</div>
-		</ww:if>		<ww:set name="attachedFiles" value="this.getResourcesWithAssetKey('BifogadFil')"/>
-		<ww:if test="#attachedFiles.size() > 0">			<span class="additionInfoHeader"><ww:property value="this.getLabel('labels.public.event.additionalInfoLabel')"/>:</span>			<ul class="calendarAttachedFiles">				<ww:iterator value="#attachedFiles">					<li>						<ww:set name="resourceId" value="top.id" scope="page"/>						<calendar:resourceUrl id="url" resourceId="${resourceId}"/>						<ww:if test="fileName.indexOf('.pdf') > -1">
-							<ww:set name="resourceClass" value="'pdficon'"/>
+		</ww:if>
+		<%--
+
+		<ww:if test="event.resources.size() > 0">
+			<ww:iterator value="event.resources">
+				<ww:if test="top.assetKey == 'BifogadFil'">
+  				<ww:property value="this.getLabel('labels.public.event.additionalInfoLabel')"/>:
+		  			<p>
+
+						<ww:set name="resourceId" value="top.id" scope="page"/>
+						<calendar:resourceUrl id="url" resourceId="${resourceId}"/>
+						<ww:if test="fileName.indexOf('.pdf') > -1">
+							<ww:set name="resourceClass" value="'pdficon'"/>
 						</ww:if>
-						<ww:if test="fileName.indexOf('.doc') > -1">							<ww:set name="resourceClass" value="'wordicon'"/>						</ww:if>						<ww:if test="fileName.indexOf('.xls') > -1">							<ww:set name="resourceClass" value="'excelicon'"/>						</ww:if>						<ww:if test="fileName.indexOf('.ppt') > -1">							<ww:set name="resourceClass" value="'powerpointicon'"/>						</ww:if>						<a class="url uid <ww:property value="#resourceClass"/>" href="<c:out value="${url}"/>" target="_blank"><ww:property value="shortendFileName"/></a>					</li>
-				</ww:iterator>			</ul>
-		</ww:if>
+						<ww:if test="fileName.indexOf('.doc') > -1">
+							<ww:set name="resourceClass" value="'wordicon'"/>
+						</ww:if>
+						<ww:if test="fileName.indexOf('.xls') > -1">
+							<ww:set name="resourceClass" value="'excelicon'"/>
+						</ww:if>
+						<ww:if test="fileName.indexOf('.ppt') > -1">
+							<ww:set name="resourceClass" value="'powerpointicon'"/>
+						</ww:if>
+						<a class="url uid" href="<c:out value="${url}"/>" target="_blank" class="<ww:property value="#resourceClass"/>"><ww:property value="shortendFileName"/></a><br/>
+		  			</p>
+				</ww:if>
+
+	  		</ww:iterator>
+		</ww:if>
+		--%>
 	</div>
 </ww:if>
 <ww:else>
@@ -323,7 +348,7 @@
 			<date><ww:property value="#startDate" escape="true"/></date>
 			<subjects>
 				<ww:iterator value="event.owningCalendar.eventType.categoryAttributes">
-					<ww:if test="top.name == 'Ã„mnesomrÃ¥de' || top.name == 'Ã„mnesomrÃ¥den'">
+					<ww:if test="top.name == 'Ämnesområde' || top.name == 'Ämnesområden'">
 						<ww:set name="categoryName" value="top.name"/>
 						<ww:set name="selectedCategories" value="this.getEventCategories(top)"/>
 						<ww:iterator value="#selectedCategories" status="rowstatus">
@@ -335,7 +360,7 @@
 			<keywords>
 			<%-- 
 				<ww:iterator value="event.owningCalendar.eventType.categoryAttributes">
-					<ww:if test="top.name == 'Ã„mnesomrÃ¥de' || top.name == 'Ã„mnesomrÃ¥den'">
+					<ww:if test="top.name == 'Ämnesområde' || top.name == 'Ämnesområden'">
 						<ww:set name="categoryName" value="top.name"/>
 						<ww:set name="selectedCategories" value="this.getEventCategories(top)"/>
 						<ww:iterator value="#selectedCategories" status="rowstatus">
