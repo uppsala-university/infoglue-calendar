@@ -135,38 +135,38 @@
 			%>
 			<p class="date_time">
 			<span class="dtstart">
-			 	<!-- tid -->
-			 	<abbr class="value" title="<c:out value="${isoStartDate}"/>"><ww:property value="this.formatDate(top.startDateTime.getTime(), #shortDateFormat)"/></abbr>
-                                <ww:set name="startDay" value="this.formatDate(top.startDateTime.getTime(), 'yyyy-MM-dd')"/>
-                                <ww:set name="endDay" value="this.formatDate(top.endDateTime.getTime(), 'yyyy-MM-dd')"/>
+				<!-- tid -->
+				<abbr class="value" title="<c:out value="${isoStartDate}"/>"><ww:property value="this.formatDate(top.startDateTime.getTime(), #shortDateFormat)"/></abbr>
+				<ww:set name="startDay" value="this.formatDate(top.startDateTime.getTime(), 'yyyy-MM-dd')"/>
+				<ww:set name="endDay" value="this.formatDate(top.endDateTime.getTime(), 'yyyy-MM-dd')"/>
 
-                                
-                                <ww:if test="this.formatDate(top.startDateTime.time, 'HH:mm') != '12:34'">
+				<ww:if test="this.formatDate(top.startDateTime.time, 'HH:mm') != '12:34'">
 					<ww:property value="this.getLabel('labels.public.event.klockLabel')"/>
 					<span class="value"><ww:property value="this.formatDate(top.startDateTime.getTime(), #timeFormat)"/></span>
-					
-                                        </ww:if>
+				</ww:if>
 
-                                        </span>
-
-				 	<ww:if test="#startDay != #endDay">
-
-
-                                            - <span class="dtend">
-
-                                                <abbr class="value" title="<ww:property value='this.formatDate(top.endDateTime.getTime(), "yyyy-MM-dd HH:mm")' />"> <ww:property value="this.formatDate(top.endDateTime.getTime(), #shortDateFormat)"/></abbr>
-
-
-						<ww:if test="this.formatDate(top.endDateTime.time, 'HH:mm') != '23:59'">
-                                                                <ww:property value="this.getLabel('labels.public.event.klockLabel')"/>
-                                                                <span class="value"><ww:property value="this.formatDate(top.endDateTime.getTime(), #timeFormat)"/></span>
-
-                                                </ww:if>
-                                        </span>
-                                      </ww:if>
-					
-			 	
+			</span>
 			
+			<ww:if test="#startDay != #endDay">
+				&ndash;
+				<span class="dtend">
+					<abbr class="value" title="<ww:property value='this.formatDate(top.endDateTime.getTime(), "yyyy-MM-dd HH:mm")' />"> <ww:property value="this.formatDate(top.endDateTime.getTime(), #shortDateFormat)"/></abbr>
+					<ww:if test="this.formatDate(top.endDateTime.time, 'HH:mm') != '23:59'">
+						<ww:property value="this.getLabel('labels.public.event.klockLabel')"/>
+						<span class="value"><ww:property value="this.formatDate(top.endDateTime.getTime(), #timeFormat)"/></span>
+	
+					</ww:if>
+				</span>
+			</ww:if>
+			<ww:elseif test="this.formatDate(top.endDateTime.time, 'HH:mm') != '23:59'">
+				&ndash;
+				<span class ="dtend">
+					<span class="value">
+						<ww:property value="this.formatDate(top.endDateTime.getTime(), #timeFormat)"/>
+					</span>
+				</span>
+			</ww:elseif>
+
 			</p>
 			<h3 class="summary">
 				<a class="url uid summary" href="<ww:property value="#attr.detailUrl"/><c:out value="${delim}"/>eventId=<ww:property value="top.id"/>"><ww:property value="#eventVersion.name"/></a>
