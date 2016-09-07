@@ -41,6 +41,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.infoglue.calendar.controllers.EventController;
+import org.infoglue.calendar.controllers.ResourceController;
 import org.infoglue.calendar.entities.Calendar;
 import org.infoglue.calendar.entities.Event;
 import org.infoglue.calendar.entities.EventCategory;
@@ -889,6 +890,16 @@ public class ViewEventListAction extends CalendarAbstractAction
         }	        
         return dates;
     }
+
+    @Override
+	public String getResourceUrl(Event event, String assetKey) throws Exception
+	{
+		if (event == null)
+		{
+			return "";
+		}
+		return ResourceController.getController().getResourceUrl(event.getId(), assetKey, getSession());
+	}
 
     public void setCategoryAttribute(String categoryAttribute)
     {
