@@ -25,8 +25,11 @@ package org.infoglue.calendar.controllers;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import org.apache.commons.logging.Log;
@@ -224,7 +227,85 @@ public class ResourceController extends BasicController
         }
         return null;
     }
-    
+
+	private String constructResourceUrl(Resource resource)
+	{
+		String digitalAssetPath = PropertyHelper.getProperty("digitalAssetPath");
+		String fileName = resource.getId() + "_" + resource.getAssetKey() + "_" + resource.getFileName();
+
+		File file = new File(fileName);
+		if (!file.exists())
+		{
+			log.debug("Resource does not exist on disc. Lets create it. Resouce.id <" + resource.getId() + ">");
+			writeResourceToDisc(resource, digitalAssetPath, file);
+		}
+
+		String urlBase = PropertyHelper.getProperty("urlBase");
+		return urlBase + "digitalAssets/" + fileName;
+	}
+
+
+	private void writeResourceToDisc(Resource resource, String digitalAssetPath, File file) {
+		String filePath = digitalAssetPath + file.getName();
+		try
+		{
+			FileOutputStream fos = new FileOutputStream(filePath);
+			Blob blob = resource.getResource();
+			byte[] bytes = blob.getBytes(1, (int) blob.length());
+			fos.write(bytes);
+			fos.flush();
+			fos.close();
+		}
+		catch (FileNotFoundException ex)
+		{
+			log.warn("File exists or could not be created. File path <" + filePath + "> Resource.id: <" + resource.getId() +  "> Message: " + ex.getMessage());
+		}
+		catch (IOException ex)
+		{
+			log.warn("IO exception when writing resource to disc. Resource.id: <" + resource.getId() +  "> Message: " + ex.getMessage());
+		}
+		catch (SQLException ex)
+		{
+			log.warn("Database error when writing resource to disc. Resource.id: <" + resource.getId() +  "> Message: " + ex.getMessage());
+		}
+	}
+	
+	private Resource getResource(Long eventId, String assetKey, Session session) {
+		try
+		{
+			Query query = session.createQuery("FROM Resource resource WHERE assetKey = :asset_key AND resource.event.id = :event_id");
+			query.setParameter("asset_key", assetKey);
+			query.setParameter("event_id", eventId);
+			return (Resource)query.uniqueResult();
+		}
+		catch (HibernateException hex)
+		{
+			log.error("Error when fetching Resource from the database. Message: " + hex.getMessage());
+			return null;
+		}
+	}
+
+	/**
+	 * Fetches the URL for the given asset on the given event. If the asset is not found or if an error occurs an
+	 * empty string is returned.
+	 * 
+	 * @param eventId The event which resource to get.
+	 * @param assetKey The asset key of the resource to get.
+	 * @param session A hibernate session that will be used to fetch the resource.
+	 * @return A URL to the resource or an empty string if no asset URL could be fetched.
+	 */
+	public String getResourceUrl(Long eventId, String assetKey, Session session) {
+		Resource result = getResource(eventId, assetKey, session);
+		if (result == null)
+		{
+			return "";
+		}
+		else
+		{
+			return constructResourceUrl(result);
+		}
+	}
+
     /**
      * This method returns a Resource based on it's primary key
      * @return Resource
