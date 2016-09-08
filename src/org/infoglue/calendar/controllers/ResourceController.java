@@ -199,12 +199,17 @@ public class ResourceController extends BasicController
     
     public String getResourceUrl(Event event, String assetKey, Session session) throws Exception
     {
+    	log.debug("Getting resource URL from event. <" + event.getId() + "> + <" + assetKey + ">");
         String url = "";
         
         Iterator resourceIterator = event.getResources().iterator();
         while(resourceIterator.hasNext())
         {
             Resource resource = (Resource)resourceIterator.next();
+            if (log.isDebugEnabled())
+            {
+            	log.debug("Looking for asset with key <" + assetKey + ">. Current asset: <" + resource.getAssetKey() + ">");
+            }
 
             if(resource.getAssetKey().equalsIgnoreCase(assetKey))
             {
@@ -221,6 +226,7 @@ public class ResourceController extends BasicController
 				String urlBase = PropertyHelper.getProperty("urlBase");
 				
 				url = urlBase + "digitalAssets/" + fileName;
+				log.debug("Generated resource URL <" + url + ">");
 				
 				return url;
             }
@@ -232,12 +238,17 @@ public class ResourceController extends BasicController
 	{
 		String digitalAssetPath = PropertyHelper.getProperty("digitalAssetPath");
 		String fileName = resource.getId() + "_" + resource.getAssetKey() + "_" + resource.getFileName();
+		String filePath = digitalAssetPath + fileName;
 
-		File file = new File(fileName);
+		File file = new File(filePath);
 		if (!file.exists())
 		{
 			log.debug("Resource does not exist on disc. Lets create it. Resouce.id <" + resource.getId() + ">");
 			writeResourceToDisc(resource, digitalAssetPath, file);
+		}
+		else
+		{
+			log.debug("Resource file already exists in disc. <" + file.getAbsolutePath() + ">");
 		}
 
 		String urlBase = PropertyHelper.getProperty("urlBase");
@@ -255,6 +266,7 @@ public class ResourceController extends BasicController
 			fos.write(bytes);
 			fos.flush();
 			fos.close();
+			log.debug("Created file on disc <" + file.getAbsolutePath() + ">");
 		}
 		catch (FileNotFoundException ex)
 		{
@@ -291,17 +303,19 @@ public class ResourceController extends BasicController
 	 * 
 	 * @param eventId The event which resource to get.
 	 * @param assetKey The asset key of the resource to get.
-	 * @param session A hibernate session that will be used to fetch the resource.
+	 * @param session A Hibernate session that will be used to fetch the resource.
 	 * @return A URL to the resource or an empty string if no asset URL could be fetched.
 	 */
 	public String getResourceUrl(Long eventId, String assetKey, Session session) {
 		Resource result = getResource(eventId, assetKey, session);
 		if (result == null)
 		{
+			log.debug("Found no resource for <" + eventId + "> <" + assetKey + ">");
 			return "";
 		}
 		else
 		{
+			log.debug("Found resource for <" + eventId + "> <" + assetKey + ">. Resource.id: <" + result.getId() + ">");
 			return constructResourceUrl(result);
 		}
 	}
