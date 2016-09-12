@@ -896,6 +896,7 @@ public class ViewEventListAction extends CalendarAbstractAction
 	{
 		if (event == null)
 		{
+			log.debug("Event was null. Cannot return resource url.");
 			return "";
 		}
 		return ResourceController.getController().getResourceUrl(event.getId(), assetKey, getSession());
