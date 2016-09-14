@@ -155,27 +155,27 @@
 						</ww:elseif>
 
 					</p>
+					
 					<h3 class="summary">
 						<ww:property value="#eventVersion.name"/>
 					</h3>
-				</a>
 	  
-				<div class="description clearfix">
-					<ww:set name="detailImage" value="this.getResourceUrl(event, 'DetaljBild')"/>
-					<!-- start div if image exists -->
-					<ww:if test="#detailImage != null">
-						<div class="size3of4 unit">
-					</ww:if>
-
-					<ww:property value="#eventVersion.shortDescription"/>
-
-					<ww:if test="#detailImage != null">
-						</div><!-- end div size3of4 -->
-						<div class="size1of4 unit last">			
-							<img src="<ww:property value='#detailImage'/>" alt="<ww:property value='#eventVersion.name'/>">
-						</div>
-					</ww:if>
-				</div>
+					<div class="description clearfix">
+						<ww:set name="detailImage" value="this.getResourceUrl(#event, 'DetaljBild')"/>
+						<!-- start div if image exists -->
+						<ww:if test="#detailImage != null && #detailImage != ''">
+							<div class="size3of4 unit">
+						</ww:if>
+						<!-- Description -->
+						<ww:property value="#eventVersion.shortDescription"/>
+						<ww:if test="#detailImage != null && #detailImage != ''">
+							</div><!-- end div size3of4 -->
+							<div class="size1of4 unit last">			
+								<img src="<ww:property value='#detailImage'/>" alt="<ww:property value='#eventVersion.name'/>">
+							</div>
+						</ww:if>
+					</div>
+				</a>
 			</li>
 			<%-- 
 			</ww:if>
