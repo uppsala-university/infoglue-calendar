@@ -145,7 +145,7 @@
         
     	<%-- kort beskrivning --%>            
             <a class="inputLink" href="#" onclick="return false;"><img class="infocon" src="<%=request.getContextPath()%>/images/infotecken.gif" /><p class="labelInfo"><ww:property value="this.getLabel('labels.internal.event.shortDescriptionInfo')"/></p></a>
-                <calendar:textAreaField label="labels.internal.event.shortDescription" name="'shortDescription'" value="event.shortDescription" cssClass="smalltextarea" wysiwygToolbar="shortDescription" required="false" tabIndex="5"/>
+              		<calendar:textAreaField label="labels.internal.event.shortDescription" name="'shortDescription'" maxLength="400" value="event.shortDescription" cssClass="smalltextarea" required="false" tabIndex="5"/>
         
         
         <%-- beskrivning --%>            
