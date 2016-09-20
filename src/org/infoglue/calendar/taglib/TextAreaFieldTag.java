@@ -68,7 +68,8 @@ public class TextAreaFieldTag extends AbstractCalendarTag
 	private String requiredLabelClass = "redstar";
 	private String requiredText = "*";
 	private String tabIndex ="";
-
+	private String maxLength = "";
+	
 	public void setRequiredText(String requiredText)
 	{
 		this.requiredText = requiredText;
@@ -148,12 +149,12 @@ public class TextAreaFieldTag extends AbstractCalendarTag
 	    if(this.label != null)
 	    {
 		    sb.append("<label for=\"" + name + "\">" + this.label + "</label>" + (getMandatory() ? "<span class=\"" + requiredLabelClass + "\">" + requiredText + "</span>" : "") + " " + errorMessage + "<br/>");
-	    	sb.append("	<textarea id=\"" + name + "\" name=\"" + name + "\"" + "tabindex=\"" + tabIndex +"\"" +" class=\"" + cssClass + "\">" + ((value == null) ? "" : value) + "</textarea><br/>");
+	    	sb.append("	<textarea id=\"" + name + "\" name=\"" + name + "\"" + "maxlength=\"" + maxLength + "\"" + "tabindex=\"" + tabIndex +"\"" +" class=\"" + cssClass + "\">" + ((value == null) ? "" : value) + "</textarea><br/>");
 	    }
 	    else
 	    {
 	    	sb.append("<label for=\"" + name + "\">" + this.name + "</label>" + (getMandatory() ? "<span class=\"" + requiredLabelClass + "\">" + requiredText + "</span>" : "") + " " + errorMessage + "<br/>");
-	    	sb.append("	<textarea id=\"" + name + "\" name=\"" + name + "\"" + "tabindex=\"" + tabIndex +"\"" +" class=\"" + cssClass + "\">" + ((value == null) ? "" : value) + "</textarea><br/>");
+	    	sb.append("	<textarea id=\"" + name + "\" name=\"" + name + "\"" + "maxlength=\"" + maxLength + "\"" + "tabindex=\"" + tabIndex +"\"" +" class=\"" + cssClass + "\">" + ((value == null) ? "" : value) + "</textarea><br/>");
 
 
 	    }
@@ -248,7 +249,15 @@ public class TextAreaFieldTag extends AbstractCalendarTag
         else
             this.mandatory = false;   
     }
+    public void setMaxLength(String maxLength)
+    {
+    	this.maxLength = maxLength;
+    }
 
+    public String getMaxLength()
+    {
+    	return this.maxLength;
+    }
     
     public void setMandatory(String mandatory)
     {
