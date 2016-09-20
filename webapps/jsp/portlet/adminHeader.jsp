@@ -5,12 +5,12 @@
 
 <portlet:defineObjects/>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html lang="sv">
+<!DOCTYPE html>
+	<html lang="sv">
 
 	<head>
 		<title><ww:property value="this.getLabel('labels.internal.applicationTitle')"/></title>
-		<meta http-equiv="content-type" content="text/html;charset=utf-8">
+		<meta charset="utf-8">
 		<ww:if test="CSSUrl != null">
 			<style type="text/css" media="screen">@import url(<ww:property value="CSSUrl"/>);</style>
 		</ww:if>
