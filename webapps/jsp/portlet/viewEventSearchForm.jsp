@@ -52,14 +52,14 @@
                 <img src="<%=request.getContextPath()%>/images/calendar.gif" id="trigger_endDateTime" style="border: 0px solid black; cursor: pointer;" title="Date selector">
                 <input name="endTime" value="<ww:property value="endTime"/>" class="hourfield" type="textfield">					
             </div>
+
+            <calendar:selectField label="labels.internal.calendar.eventType" name="'categoryId'" headerItem="labels.internal.search.input.eventTypeDefault" multiple="false" value="categoriesList" selectedValue="categoryId" cssClass="listBox"/>
     
-            <calendar:selectField label="labels.internal.calendar.eventType" name="'categoryId'" headerItem="Filtrera p&#229; evenemangstyp" multiple="false" value="categoriesList" selectedValue="categoryId" cssClass="listBox"/>
+            <calendar:selectField label="labels.internal.event.owningCalendar" name="'calendarId'" headerItem="labels.internal.search.input.mainCalendarDefault" multiple="false" value="calendarList" selectedValue="calendarId" cssClass="listBox"/>
     
-            <calendar:selectField label="labels.internal.event.owningCalendar" name="'calendarId'" headerItem="Filtrera p&#229; huvudkalender" multiple="false" value="calendarList" selectedValue="calendarId" cssClass="listBox"/>
+            <calendar:selectField label="labels.internal.event.location" name="'locationId'" headerItem="labels.internal.search.input.locationDefault" multiple="false" value="locationList" selectedValue="locationId" cssClass="listBox"/>
     
-            <calendar:selectField label="labels.internal.event.location" name="'locationId'" headerItem="Filtrera p&#229; plats" multiple="false" value="locationList" selectedValue="locationId" cssClass="listBox"/>
-    
-            <calendar:selectField label="labels.internal.event.searchItemsPerPage" name="'itemsPerPage'" headerItem="Antal poster per sida" multiple="false" value="itemsPerPageMap" selectedValue="itemsPerPage" cssClass="listBox"/>
+            <calendar:selectField label="labels.internal.event.searchItemsPerPage" name="'itemsPerPage'" headerItem="labels.internal.search.input.numberOfPostsDefault" multiple="false" value="itemsPerPageMap" selectedValue="itemsPerPage" cssClass="listBox"/>
     
             <calendar:checkboxField label="Export to Excel" name="'exportResult'" valueMap="yesNoMap" selectedValues="false"/>
     

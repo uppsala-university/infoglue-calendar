@@ -1,3 +1,5 @@
+<%@page import="java.text.MessageFormat"%>
+<%@page import="org.infoglue.calendar.actions.CalendarAbstractAction"%>
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
 
 <c:set var="activeNavItem" value="Events" scope="page"/>
@@ -111,7 +113,7 @@
         </c:if>
         <c:choose>
             <c:when test="${numberOfItems != -1}">
-                <calendar:slots visibleElementsId="eventsItems" visibleSlotsId="indices" lastSlotId="lastSlot" elements="${eventList}" currentSlot="${currentSlot}" slotSize="${numberOfItems}" slotCount="10"/>
+                <calendar:slots visibleElementsId="eventsItems" visibleSlotsId="indices" lastSlotId="lastSlot" elements="${eventList}" currentSlot="${currentSlot}" slotSize="2" slotCount="10"/> <%-- ${numberOfItems} --%>
             </c:when>
             <c:otherwise>
                 <c:set var="eventsItems" value="${eventList}"/>
@@ -171,29 +173,42 @@
     
     <ww:if test="events != null && events.size() > 0">
         <br/>
-        <div class="prev_next">
-            <p><strong>Sida <c:out value="${currentSlot}"/> av <c:out value="${lastSlot}"/></strong>&nbsp;</p>
-        </div>
-        
+
+		<ww:set name="thisObject" value="this" scope="page"/>
+		<%
+			String currentSlot = (String)pageContext.getAttribute("currentSlot");
+			Integer lastSlot = (Integer)pageContext.getAttribute("lastSlot");
+			CalendarAbstractAction caa = (CalendarAbstractAction)pageContext.getAttribute("thisObject");
+			
+			String paginationLabel = caa.getLabel("labels.internal.event.pagination");
+			Object[] arguments = {currentSlot, lastSlot};
+		
+			pageContext.setAttribute("paginationLabelFormatted", MessageFormat.format(paginationLabel, arguments));
+		%>
+
+		<div class="prev_next">
+			<p><strong><c:out value="${paginationLabelFormatted}"/></strong>&nbsp;</p>
+		</div>
+
         <c:if test="${lastSlot != 1}">
             <div class="prev_next">
                 <p>
                 <c:if test="${currentSlot gt 1}">
                     <c:set var="previousSlotId" value="${currentSlot - 1}"/>
-                    <a href="javascript:changeSlot(1);" class="number" title="F&ouml;rsta sidan">F&Ouml;RSTA</a>
-                    <a href="javascript:changeSlot(<c:out value='${previousSlotId}'/>);" title="F&ouml;reg&aring;ende sida" class="number">&laquo;</a>
+                    <a href="javascript:changeSlot(1);" class="number" title="<ww:property value="this.getLabel('labels.internal.event.pagination.firstTitle')"/>"><ww:property value="this.getLabel('labels.internal.event.pagination.first')"/></a>
+                    <a href="javascript:changeSlot(<c:out value='${previousSlotId}'/>);" title="<ww:property value="this.getLabel('labels.internal.event.pagination.previousTitle')"/>" class="number">&laquo;</a>
                 </c:if>
                 <c:forEach var="slot" items="${indices}" varStatus="count">
                     <c:if test="${slot == currentSlot}">
                         <span class="number"><c:out value="${slot}"/></span>
                     </c:if>
                     <c:if test="${slot != currentSlot}">
-                        <a href="javascript:changeSlot(<c:out value="${slot}"/>);" title="Sida <c:out value='${slot}'/>" class="number"><c:out value="${slot}"/></a>
+                        <a href="javascript:changeSlot(<c:out value="${slot}"/>);" title="<ww:property value="this.getParameterizedLabel('labels.internal.event.pagination.pageTitle', #attr.slot)"/>" class="number"><c:out value="${slot}"/></a>
                     </c:if>
                 </c:forEach>
                 <c:if test="${currentSlot lt lastSlot}">
                     <c:set var="nextSlotId" value="${currentSlot + 1}"/>
-                    <a href="javascript:changeSlot(<c:out value="${nextSlotId}"/>);" title="N&auml;sta sida" class="number">&raquo;</a>
+                    <a href="javascript:changeSlot(<c:out value="${nextSlotId}"/>);" title="<ww:property value="this.getLabel('labels.internal.event.pagination.nextTitle')"/>" class="number">&raquo;</a>
                 </c:if>
                 </p>
             </div>

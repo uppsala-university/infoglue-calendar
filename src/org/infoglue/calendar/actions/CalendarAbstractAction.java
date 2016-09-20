@@ -78,7 +78,6 @@ import org.infoglue.common.util.ActionValidatorManager;
 import org.infoglue.common.util.ConstraintExceptionBuffer;
 import org.infoglue.common.util.PropertyHelper;
 import org.infoglue.common.util.ResourceBundleHelper;
-import org.infoglue.common.util.WebServiceHelper;
 
 import com.opensymphony.webwork.ServletActionContext;
 import com.opensymphony.xwork.ActionContext;
@@ -158,7 +157,7 @@ public class CalendarAbstractAction extends ActionSupport
         items.add(new String[]{"100", "100"});
         items.add(new String[]{"200", "200"});
         items.add(new String[]{"500", "500"});
-        items.add(new String[]{"-1", "Alla"});
+        items.add(new String[]{"-1", getLabel("labels.internal.all")});
         
         return items;
     }
@@ -912,7 +911,6 @@ public class CalendarAbstractAction extends ActionSupport
       
         return label;
     }
-
     
     public String getLabel(String key)
     {
@@ -1344,6 +1342,26 @@ public class CalendarAbstractAction extends ActionSupport
 		ActionContext a = ActionContext.getContext();
 		Object value = a.getValueStack().findValue(expr);
 		return value;
+	}
+
+	public String getPrincipalDisplayName()
+	{
+		String name = "";
+
+		try
+		{
+			InfoGluePrincipalBean principal = getInfoGluePrincipal();
+			if (principal != null)
+			{
+				name = principal.getFirstName() + " " + principal.getLastName();
+			}
+		}
+		catch (Exception ex)
+		{
+			log.warn("Failed to get principal display name. Message: " + ex.getMessage());
+		}
+
+		return name;
 	}
 
 }
