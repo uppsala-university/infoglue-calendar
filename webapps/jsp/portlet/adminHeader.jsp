@@ -1,3 +1,5 @@
+<%@page import="org.infoglue.calendar.actions.ViewCalendarAdministrationAction"%>
+<%@page import="com.opensymphony.xwork.ActionContext"%>
 <%@ taglib uri="webwork" prefix="ww" %>
 <%@ taglib uri="http://java.sun.com/portlet" prefix="portlet"%>
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
@@ -135,11 +137,13 @@
 
 <div class="head">
 	<span class="left">
-		<p class="calendarHead"><a href="<c:out value="${viewCalendarAdministrationUrl}"/>">Kalendarium</a></p>
-        <p class="uuHead">Uppsala universitet</p>
+		<p class="calendarHead"><a href="<c:out value="${viewCalendarAdministrationUrl}"/>"><ww:property value="this.getLabel('labels.internal.header.heading')"/></a></p>
+		<p class="uuHead"><ww:property value="this.getLabel('labels.internal.header.subHeading')"/></p>
 	</span>	
-	<span class="right">	
-		Inloggad som <ww:property value="this.getInfoGluePrincipal().firstName"/> <ww:property value="this.getInfoGluePrincipal().lastName"/> | <a href="<ww:property value="logoutUrl"/>">Logga ut</a>
+	<span class="right">
+		<ww:property value="this.getParameterizedLabel('labels.internal.header.loggedinUser', this.getPrincipalDisplayName())"/>
+		|
+		<a href="<ww:property value="logoutUrl"/>"><ww:property value="this.getLabel('labels.internal.header.logout')"/></a>
 		<%--
 		Request: <c:out value="${request.remoteUser}"/><br/>
 		Request: <c:out value="${request.remoteHost}"/><br/>
