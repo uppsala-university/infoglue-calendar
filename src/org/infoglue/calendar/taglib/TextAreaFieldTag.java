@@ -170,13 +170,18 @@ public class TextAreaFieldTag extends AbstractCalendarTag
 	    	sb.append(rowDivHTMLEnd);
 
         write(sb.toString());
-	    
+    	this.labelCssClass = "";
+    	this.value = "";
+    	this.label = "";
+    	this.cssClass = "";
+    	this.wysiwygToolbar ="";
         this.rowDivHTMLStart = "<div class=\"fieldrow\">";
         this.rowDivHTMLEnd = "</div>";
+    	this.errorAction = null;
         this.skipRowDiv = false;
         this.requiredLabelClass = "redstar";
         this.requiredText = "*";
-
+    	this.tabIndex ="";
         return EVAL_PAGE;
     }
 
