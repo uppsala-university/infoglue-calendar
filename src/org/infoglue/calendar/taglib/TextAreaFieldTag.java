@@ -182,6 +182,7 @@ public class TextAreaFieldTag extends AbstractCalendarTag
         this.requiredLabelClass = "redstar";
         this.requiredText = "*";
     	this.tabIndex ="";
+    	this.maxLength = "";
         return EVAL_PAGE;
     }
 
