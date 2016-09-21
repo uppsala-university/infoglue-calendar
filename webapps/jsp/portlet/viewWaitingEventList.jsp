@@ -1,3 +1,5 @@
+<%@page import="java.text.MessageFormat"%>
+<%@page import="org.infoglue.calendar.actions.CalendarAbstractAction"%>
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
 
 <c:set var="activeNavItem" value="Events" scope="page"/>
@@ -119,50 +121,14 @@
     
     <ww:if test="events != null && events.size() > 0">
         <br/>
-        <p><strong>Sida <c:out value="${currentSlot}"/> av <c:out value="${lastSlot}"/></strong>&nbsp;</p>                       
-        
-        <!-- slot navigator -->
-        <c:if test="${lastSlot != 1}">
-            <div class="prev_next">
-                <c:if test="${currentSlot gt 1}">
-                    <c:set var="previousSlotId" value="${currentSlot - 1}"/>
-                    <portlet:renderURL var="firstUrl">
-                        <portlet:param name="action" value="ViewWaitingEventList"/>
-                        <portlet:param name="currentSlot" value="1"/>
-                    </portlet:renderURL>
-                    <portlet:renderURL var="previousSlot">
-                        <portlet:param name="action" value="ViewWaitingEventList"/>
-                        <portlet:param name="currentSlot" value='<%= pageContext.getAttribute("previousSlotId").toString() %>'/>
-                    </portlet:renderURL>
-                    
-                    <a href="<c:out value='${firstUrl}'/>" class="number" title="F&ouml;rsta sidan">F&Ouml;RSTA</a>
-                    <a href="<c:out value='${previousSlot}'/>" title="F&ouml;reg&aring;ende sida" class="number">&laquo;</a>
-                </c:if>
-                <c:forEach var="slot" items="${indices}" varStatus="count">
-                    <c:if test="${slot == currentSlot}">
-                        <span class="number"><c:out value="${slot}"/></span>
-                    </c:if>
-                    <c:if test="${slot != currentSlot}">
-                        <c:set var="slotId" value="${slot}"/>
-                        <portlet:renderURL var="url">
-                            <portlet:param name="action" value="ViewWaitingEventList"/>
-                            <portlet:param name="currentSlot" value='<%= pageContext.getAttribute("slotId").toString() %>'/>
-                        </portlet:renderURL>
-        
-                        <a href="<c:out value='${url}'/>" title="Sida <c:out value='${slot}'/>" class="number"><c:out value="${slot}"/></a>
-                    </c:if>
-                </c:forEach>
-                <c:if test="${currentSlot lt lastSlot}">
-                    <c:set var="nextSlotId" value="${currentSlot + 1}"/>
-                    <portlet:renderURL var="nextSlotUrl">
-                        <portlet:param name="action" value="ViewWaitingEventList"/>
-                        <portlet:param name="currentSlot" value='<%= pageContext.getAttribute("nextSlotId").toString() %>'/>
-                    </portlet:renderURL>
-                            
-                    <a href="<c:out value='${nextSlotUrl}'/>" title="N&auml;sta sida" class="number">&raquo;</a>
-                </c:if>
-            </div>
-        </c:if>
+
+		<c:set var="currentSlot" value="${currentSlot}" scope="request" />
+		<c:set var="lastSlot" value="${lastSlot}" scope="request" />
+		<c:set var="filterCategoryId" value="${filterCategoryId}" scope="request" />
+		<c:set var="indices" value="${indices}" scope="request" />
+		<c:set var="urlAction" value="ViewWaitingEventList" scope="request" />
+		<jsp:include page="includes/pagination.jsp" />
+
     </ww:if>
     <ww:else>
         

@@ -141,7 +141,7 @@
                 <input name="endTime" value="<ww:if test="this.formatDate(event.endDateTime.time, 'HH:mm') != '13:34'"><ww:property value="this.formatDate(event.endDateTime.time, 'HH:mm')"/></ww:if>" class="hourfield" type="textfield" onblur="completeTime(this);">					
             </div>
     
-            <calendar:textAreaField label="labels.internal.event.shortDescription" name="'shortDescription'" value="eventVersion.shortDescription" cssClass="smalltextarea" wysiwygToolbar="shortDescription" required="false"/>
+			<calendar:textAreaField label="labels.internal.event.shortDescription" name="'shortDescription'" maxLength="400" value="event.shortDescription" cssClass="smalltextarea" required="false" tabIndex="5"/>
     
             <calendar:textAreaField label="labels.internal.event.longDescription" name="'longDescription'" value="eventVersion.longDescription" cssClass="largetextarea" wysiwygToolbar="longDescription" required="false"/>
             

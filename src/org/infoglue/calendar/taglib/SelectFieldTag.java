@@ -417,7 +417,7 @@ public class SelectFieldTag extends AbstractCalendarTag
 
     public void setHeaderItem(String headerItem)
     {
-        this.headerItem = headerItem;
+        this.headerItem = this.getLabel(headerItem);
     }
 
     public void setMultiple(String multiple)
