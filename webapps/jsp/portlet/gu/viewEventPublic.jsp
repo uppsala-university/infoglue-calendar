@@ -319,9 +319,9 @@
 			</ww:if>
 			</ul>
 			<ww:if test="#eventVersion.decoratedShortDescription != null && #eventVersion.decoratedShortDescription != ''">
-				<div class="description">
+				<p class="description">
 					<ww:property value="#eventVersion.decoratedShortDescription"/>
-				</div>
+				</p>
 			</ww:if>
 			<ww:if test="#eventVersion.decoratedLongDescription != null && #eventVersion.decoratedLongDescription != ''">
 				<div class="longer_description">
@@ -356,12 +356,12 @@
 			
 		</div>	<%-- end div size2of3 unit --%>
 		
-		<div class="size1of3 unit last">
-			<ww:set name="puffImage" value="this.getResourceUrl(event, 'DetaljBild')"/>
-			<ww:if test="#puffImage != null">
+		<ww:set name="puffImage" value="this.getResourceUrl(event, 'DetaljBild')"/>
+		<ww:if test="#puffImage != null">
+			<div class="size1of3 unit last">
 				<img src="<ww:property value='#puffImage'/>" alt="<ww:property value='#eventVersion.name'/>" >
-			</ww:if>
-		</div>
+			</div>
+		</ww:if>
 		
 	</div> <%-- end div --%>
 </ww:if>
