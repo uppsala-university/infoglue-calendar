@@ -627,7 +627,7 @@
 		<!-- RESOURCE ACTIONS -->
 		<action name="CreateResource" class="org.infoglue.calendar.actions.CreateResourceAction">
 			<result name="error" type="eventProcessed">
-				<param name="viewAction">ViewEvent.action?eventId=${eventId}</param>
+				<param name="viewAction">UpdateEvent!uploadForm.action?eventId=${eventId}</param>
 				<param name="parse">true</param>
 			</result>
 			<result name="success" type="eventProcessed">
