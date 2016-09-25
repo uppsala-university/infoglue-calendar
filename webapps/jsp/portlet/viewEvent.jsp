@@ -313,10 +313,10 @@
 		</p>
 		
 		<div class="eventDescription">
-			<calendar:textValue label="labels.internal.event.shortDescription" value="eventVersion.shortDescription" cssClass="wysiwygDescription" labelCssClass="label"/>
+			<calendar:textValue label="labels.internal.event.shortDescription" value="eventVersion.decoratedShortDescription" labelCssClass="label"/>
 		</div>
 		<div class="eventDescription">
-			<calendar:textValue label="labels.internal.event.longDescription" value="eventVersion.longDescription" cssClass="wysiwygDescription" labelCssClass="label"/>
+			<calendar:textValue label="labels.internal.event.longDescription" value="eventVersion.decoratedLongDescription" cssClass="wysiwygDescription" labelCssClass="label"/>
 		</div>
 		<ww:if test="this.isActiveEventField('isInternal')">
 		<p>

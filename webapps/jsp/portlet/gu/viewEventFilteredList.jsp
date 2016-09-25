@@ -162,12 +162,18 @@
 	  
 					<div class="description clearfix">
 						<ww:set name="detailImage" value="this.getResourceUrl(#event, 'DetaljBild')"/>
+						
 						<!-- start div if image exists -->
 						<ww:if test="#detailImage != null && #detailImage != ''">
 							<div class="size3of4 unit">
 						</ww:if>
+						
 						<!-- Description -->
-						<ww:property value="#eventVersion.shortDescription"/>
+						<ww:if test="#eventVersion.decoratedShortDescription != null && #eventVersion.decoratedShortDescription != ''">
+							<p><ww:property value="#eventVersion.decoratedShortDescription"/></p>
+						</ww:if>
+						
+						<!-- Image -->
 						<ww:if test="#detailImage != null && #detailImage != ''">
 							</div><!-- end div size3of4 -->
 							<div class="size1of4 unit last">			
