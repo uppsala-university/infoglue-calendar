@@ -145,12 +145,12 @@ public class TextFieldTag extends AbstractCalendarTag
         if(this.label != null)
 	    {
 	    	sb.append("<label for=\"" + name + "\">" + this.label + "</label>" + (getMandatory() ? "<span class=\"" + requiredLabelClass + "\">" + requiredText + "</span>" : "") + " " + errorMessage + "<br/>\n");
-	    	sb.append("<input type=\"text\" id=\"" + name + "\" name=\"" + name + "\" value=\"" + ((value == null) ? "" : new StringEscapeUtils().escapeHtml(value)) + "\"" + "tabindex=\"" + tabIndex +"\"" +"class=\"" + cssClass + "\">\n");
+	    	sb.append("<input type=\"text\" id=\"" + name + "\" name=\"" + name + "\" value=\"" + ((value == null) ? "" : StringEscapeUtils.escapeHtml(value)) + "\"" + "tabindex=\"" + tabIndex +"\"" +"class=\"" + cssClass + "\">\n");
 	    }
 	    else
 	    {
 	    	sb.append("<label for=\"" + name + "\">" + this.name + "</label>" + (getMandatory() ? "<span class=\"" + requiredLabelClass + "\">requiredText</span>" : "") + " " + errorMessage + "<br/>\n");
-	    	sb.append("<input type=\"text\" id=\"" + name + "\" name=\"" + name + "\" value=\"" + ((value == null) ? "" : new StringEscapeUtils().escapeHtml(value)) + "\" " + "tabindex=\"" + tabIndex +"\"" +"class=\"" + cssClass + "\">\n");
+	    	sb.append("<input type=\"text\" id=\"" + name + "\" name=\"" + name + "\" value=\"" + ((value == null) ? "" : StringEscapeUtils.escapeHtml(value)) + "\" " + "tabindex=\"" + tabIndex +"\"" +"class=\"" + cssClass + "\">\n");
 	    }
         
         if(!skipRowDiv)
