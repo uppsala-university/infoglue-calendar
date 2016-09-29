@@ -307,7 +307,6 @@ public class UpdateEventAction extends CalendarUploadAbstractAction
 	{
 		HttpSession session = ServletActionContext.getRequest().getSession();
 		errorMessage = (String)session.getAttribute("uploadErrorMessage");
-		System.out.println("AND HERE YOU HAVE IT " + errorMessage);
 		session.removeAttribute("uploadErrorMessage");
 
 		this.event = EventController.getController().getEvent(eventId, getSession());

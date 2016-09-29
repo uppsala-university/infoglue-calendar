@@ -2004,11 +2004,6 @@ public class EventController extends BasicController
 		return getAssetKeys(null);
 	}
 
-	private boolean isUndefinedAssetKey(String assetKey)
-	{
-		return assetKey.startsWith("@assetKey") && assetKey.endsWith("@");
-	}
-
 	/**
 	 * Gets all asset keys defined in the system filtered based on the asset keys already used by the given event.
 	 * @param event
@@ -2016,21 +2011,7 @@ public class EventController extends BasicController
 	 */
 	public List<String> getAssetKeys(Event event)
 	{
-		List<String> assetKeys = new ArrayList<String>();
-
-		int i = 0;
-		String assetKey = PropertyHelper.getProperty("assetKey." + i);
-		while (assetKey != null && assetKey.length() > 0)
-		{
-			assetKeys.add(assetKey);
-
-			i++;
-			assetKey = PropertyHelper.getProperty("assetKey." + i);
-			if (isUndefinedAssetKey(assetKey))
-			{
-				assetKey = null;
-			}
-		}
+		List<String> assetKeys = PropertyHelper.getListProperty("assetKey");
 
 		if (event != null)
 		{

@@ -524,41 +524,14 @@ public class ResourceController extends BasicController
 		return result;
 	}
 
-	private boolean isUndefinedProperty(String property, String namePrefix)
-	{
-		return property == null || property.trim().equals("") ||  property.startsWith("@" + (namePrefix == null ? "" : namePrefix)) && property.endsWith("@");
-	}
-
 	public List<String> getFileTypesForAssetKey(String assetKey)
 	{
 		List<String> fileTypes = null;
 
-		int i = 0, assetKeyIndex = -1;
-		String assetKeySetting = PropertyHelper.getProperty("assetKey." + i);
-		assetKey:while (assetKeySetting != null && assetKeySetting.length() > 0)
+		String fileTypesString = PropertyHelper.getRelatedListPropertValue("assetKey", "assetKeyFileTypes", assetKey);
+		if (fileTypesString != null)
 		{
-			if (assetKeySetting.equals(assetKey))
-			{
-				assetKeyIndex = i;
-				break assetKey;
-			}
-
-			i++;
-			assetKeySetting = PropertyHelper.getProperty("assetKey." + i);
-			if (isUndefinedProperty(assetKeySetting, "assetKey"))
-			{
-				assetKeySetting = null;
-			}
-		}
-
-		if (assetKeyIndex != -1)
-		{
-			String fileTypesSetting = PropertyHelper.getProperty("assetKeyFileTypes." + assetKeyIndex);
-			log.debug("File types for asset key index <" + assetKeyIndex + ">:" + fileTypesSetting);
-			if (!isUndefinedProperty(fileTypesSetting, "assetKeyFileTypes"))
-			{
-				fileTypes = Arrays.asList(fileTypesSetting.split(","));
-			}
+			fileTypes = Arrays.asList(fileTypesString.split(","));
 		}
 
 		if (log.isDebugEnabled())

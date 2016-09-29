@@ -129,11 +129,9 @@ public class CreateResourceAction extends CalendarUploadAbstractAction
 					return Action.ERROR;
 				}
 
-                String fileName = theFile.getName();
-
-                this.fileName = fileName;
+                this.fileName = theFile.getName();
                 log.debug("FileName:" + this.fileName);
-                uploadedFile = new File(getTempFilePath() + File.separator + fileName);
+                uploadedFile = new File(getTempFilePath() + File.separator + this.fileName);
                 theFile.write(uploadedFile);
 	        }
 	    }
@@ -141,6 +139,7 @@ public class CreateResourceAction extends CalendarUploadAbstractAction
         {
 			ServletActionContext.getRequest().getSession().setAttribute("uploadErrorMessage", getLabel("labels.event.uploadForm.error.tooLargeFile"));
 			log.error("Exception uploading file. " + ex.getMessage());
+			return Action.ERROR;
         }
         catch(Exception e)
         {
@@ -154,7 +153,7 @@ public class CreateResourceAction extends CalendarUploadAbstractAction
 	        log.debug("Creating resources.....:" + this.eventId + ":" + ServletActionContext.getRequest().getParameter("eventId") + ":" + ServletActionContext.getRequest().getParameter("calendarId"));
 	        ResourceController.getController().createResource(this.eventId, this.getAssetKey(), this.getFileContentType(), this.getFileName(), uploadedFile, getSession());
         }
-        catch (Exception e) 
+        catch (Exception e)
         {
         	ServletActionContext.getRequest().getSession().setAttribute("errorMessage", "Exception saving resource to database: " + e.getMessage());
         	ActionContext.getContext().getValueStack().getContext().put("errorMessage", "Exception saving resource to database: " + e.getMessage());
@@ -169,7 +168,7 @@ public class CreateResourceAction extends CalendarUploadAbstractAction
 		String fileType = dfi.getContentType();
 		log.info("Uploaded file's file type is: " + fileType);
 		List<String> allowedFileType = ResourceController.getController().getFileTypesForAssetKey(getAssetKey());
-		return allowedFileType.contains(fileType);
+		return allowedFileType == null ? true : allowedFileType.contains(fileType);
 	}
 
 	public String getEventIdAsString()
