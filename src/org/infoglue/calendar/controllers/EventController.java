@@ -42,6 +42,7 @@ import org.infoglue.calendar.entities.Group;
 import org.infoglue.calendar.entities.Language;
 import org.infoglue.calendar.entities.Location;
 import org.infoglue.calendar.entities.Participant;
+import org.infoglue.calendar.entities.Resource;
 import org.infoglue.calendar.entities.Role;
 import org.infoglue.calendar.entities.Subscriber;
 import org.infoglue.calendar.util.EventComparator;
@@ -1993,24 +1994,39 @@ public class EventController extends BasicController
         
         return false;
     }
-    
-    public List getAssetKeys()
-    {
-        List assetKeys = new ArrayList();
-        
-        int i = 0;
-        String assetKey = PropertyHelper.getProperty("assetKey." + i);
-        while(assetKey != null && assetKey.length() > 0)
-        {
-            assetKeys.add(assetKey);
-            
-            i++;
-            assetKey = PropertyHelper.getProperty("assetKey." + i);
-        }
-        
-        return assetKeys;
-    }
 
+	/**
+	 * Calls {@linkplain #getAssetKeys(Event)} with null as Event.
+	 * @return
+	 */
+	public List getAssetKeys()
+	{
+		return getAssetKeys(null);
+	}
+
+	/**
+	 * Gets all asset keys defined in the system filtered based on the asset keys already used by the given event.
+	 * @param event
+	 * @return
+	 */
+	public List<String> getAssetKeys(Event event)
+	{
+		List<String> assetKeys = PropertyHelper.getListProperty("assetKey");
+
+		if (event != null)
+		{
+			Set<Resource> currentResources = event.getResources();
+			for (Resource resource : currentResources)
+			{
+				if (assetKeys.contains(resource.getAssetKey()))
+				{
+					log.debug("Removing assetKey since it's already assigned for the given Event");
+					assetKeys.remove(resource.getAssetKey());
+				}
+			}
+		}
+		return assetKeys;
+	}
 
     private String getRoleSQL(List roles)
     {

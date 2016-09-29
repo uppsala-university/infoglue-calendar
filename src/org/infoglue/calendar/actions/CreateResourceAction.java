@@ -24,33 +24,20 @@
 package org.infoglue.calendar.actions;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Calendar;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import javax.portlet.ActionRequest;
-import javax.servlet.ServletInputStream;
-
-import org.apache.commons.fileupload.FileUploadBase;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.portlet.PortletFileUpload;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.infoglue.calendar.controllers.EventController;
-import org.infoglue.calendar.controllers.LocationController;
 import org.infoglue.calendar.controllers.ResourceController;
-import org.infoglue.calendar.taglib.AbstractCalendarTag;
 
 import com.opensymphony.webwork.ServletActionContext;
-import com.opensymphony.webwork.util.AttributeMap;
 import com.opensymphony.xwork.Action;
 import com.opensymphony.xwork.ActionContext;
-import com.opensymphony.xwork.util.OgnlValueStack;
 
 /**
  * This action represents a Calendar Administration screen.
@@ -69,7 +56,7 @@ public class CreateResourceAction extends CalendarUploadAbstractAction
         
     private String message = "";
 	private String returnUrl = "";
-    
+
     /**
      * This is the entry point for the main listing.
      */
@@ -79,8 +66,6 @@ public class CreateResourceAction extends CalendarUploadAbstractAction
         log.debug("-------------Uploading file.....");
         
         File uploadedFile = null;
-        String maxUploadSize = "";
-        String uploadSize = "";
         
         try
         {
@@ -89,31 +74,14 @@ public class CreateResourceAction extends CalendarUploadAbstractAction
 	        //factory.setRepository(yourTempDirectory);
 
 	        PortletFileUpload upload = new PortletFileUpload(factory);
-	        
-	        String maxSize = getSetting("AssetUploadMaxFileSize");
-	        log.debug("maxSize:" + maxSize);
-	        if(maxSize != null && !maxSize.equals("") && !maxSize.equals("@AssetUploadMaxFileSize@"))
-	        {
-	        	try
-	        	{
-		        	maxUploadSize = maxSize;
-	        		upload.setSizeMax((new Long(maxSize)*1000));
-	        	}
-	        	catch (Exception e) 
-	        	{
-	        		log.warn("Faulty max size parameter sent from portlet component:" + maxSize);
-				}
-	        }
-	        else
-	        {
-	        	maxSize = "" + (10*1024);
-	        	maxUploadSize = maxSize;
-	        	upload.setSizeMax((new Long(maxSize)*1000));
-	        }
-	        
+
+			int maxSize = ResourceController.getController().getMaxUploadSize(getSetting("AssetUploadMaxFileSize"));
+			upload.setSizeMax(maxSize);
+
 	        List fileItems = upload.parseRequest(ServletActionContext.getRequest());
             log.debug("fileItems:" + fileItems.size());
 	        Iterator i = fileItems.iterator();
+	        DiskFileItem theFile = null;
 	        while(i.hasNext())
 	        {
 	            Object o = i.next();
@@ -125,8 +93,7 @@ public class CreateResourceAction extends CalendarUploadAbstractAction
 	            {
 	                String name = dfi.getFieldName();
 	                String value = dfi.getString();
-	                uploadSize = "" + (dfi.getSize() / 1000);
-	                
+
 	                log.debug("name:" + name);
 	                log.debug("value:" + value);
 	                if(name.equals("assetKey"))
@@ -148,23 +115,36 @@ public class CreateResourceAction extends CalendarUploadAbstractAction
 	            }
 	            else
 	            {
-	                String fieldName = dfi.getFieldName();
-	                String fileName = dfi.getName();
-	                uploadSize = "" + (dfi.getSize() / 1000);
-	                
-	                this.fileName = fileName;
-	                log.debug("FileName:" + this.fileName);
-	                uploadedFile = new File(getTempFilePath() + File.separator + fileName);
-	                dfi.write(uploadedFile);
+					theFile = dfi;
 	            }
+	        }
 
+			if (theFile != null)
+			{
+				log.debug("Found uploaded file.");
+				if (!validateFileType(theFile))
+				{
+					log.warn("Wrong file type uploaded. Got: " + theFile.getContentType() + ". For file: " + theFile.getName());
+					ServletActionContext.getRequest().getSession().setAttribute("uploadErrorMessage", getParameterizedLabel("labels.event.uploadForm.error.invalidContentType", theFile.getContentType()));
+					return Action.ERROR;
+				}
+
+                this.fileName = theFile.getName();
+                log.debug("FileName:" + this.fileName);
+                uploadedFile = new File(getTempFilePath() + File.separator + this.fileName);
+                theFile.write(uploadedFile);
 	        }
 	    }
+		catch (FileUploadException ex)
+        {
+			ServletActionContext.getRequest().getSession().setAttribute("uploadErrorMessage", getLabel("labels.event.uploadForm.error.tooLargeFile"));
+			log.error("Exception uploading file. " + ex.getMessage());
+			return Action.ERROR;
+        }
         catch(Exception e)
         {
-        	ServletActionContext.getRequest().getSession().setAttribute("errorMessage", "Exception uploading resource. " + e.getMessage() + ".<br/>Max upload size: " + maxUploadSize + " KB"); // + "<br/>Attempted upload size (in KB):" + uploadSize);
-        	ActionContext.getContext().getValueStack().getContext().put("errorMessage", "Exception uploading resource. " + e.getMessage() + ".<br/>Max upload size: " + maxUploadSize + " KB"); // + "<br/>Attempted upload size (in KB):" + uploadSize);
-        	log.error("Exception uploading resource. " + e.getMessage());
+			ServletActionContext.getRequest().getSession().setAttribute("uploadErrorMessage", getLabel("labels.event.uploadForm.error.general"));
+			log.error("Exception uploading resource. " + e.getMessage(), e);
         	return Action.ERROR;
         }
  
@@ -173,7 +153,7 @@ public class CreateResourceAction extends CalendarUploadAbstractAction
 	        log.debug("Creating resources.....:" + this.eventId + ":" + ServletActionContext.getRequest().getParameter("eventId") + ":" + ServletActionContext.getRequest().getParameter("calendarId"));
 	        ResourceController.getController().createResource(this.eventId, this.getAssetKey(), this.getFileContentType(), this.getFileName(), uploadedFile, getSession());
         }
-        catch (Exception e) 
+        catch (Exception e)
         {
         	ServletActionContext.getRequest().getSession().setAttribute("errorMessage", "Exception saving resource to database: " + e.getMessage());
         	ActionContext.getContext().getValueStack().getContext().put("errorMessage", "Exception saving resource to database: " + e.getMessage());
@@ -182,9 +162,16 @@ public class CreateResourceAction extends CalendarUploadAbstractAction
 		}
         
         return Action.SUCCESS;
-    } 
-    
-    public String getEventIdAsString()
+    }
+
+	private boolean validateFileType(DiskFileItem dfi) {
+		String fileType = dfi.getContentType();
+		log.info("Uploaded file's file type is: " + fileType);
+		List<String> allowedFileType = ResourceController.getController().getFileTypesForAssetKey(getAssetKey());
+		return allowedFileType == null ? true : allowedFileType.contains(fileType);
+	}
+
+	public String getEventIdAsString()
     {
         return eventId.toString();
     }
@@ -233,5 +220,4 @@ public class CreateResourceAction extends CalendarUploadAbstractAction
 	{
 		return returnUrl;
 	}
-
 }

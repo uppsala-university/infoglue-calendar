@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -504,5 +505,40 @@ public class ResourceController extends BasicController
         if(event.getStateId().equals(Event.STATE_PUBLISHED))
 		    new RemoteCacheUpdater().updateRemoteCaches(event.getCalendars());
     }
-    
+
+	public int getMaxUploadSize(String settingsValue)
+	{
+		int result = 200 * 1000; // 200 kB
+		log.debug("Max size from setting: " + settingsValue);
+		if (settingsValue != null && !settingsValue.equals("") && !settingsValue.equals("@AssetUploadMaxFileSize@"))
+		{
+			try
+			{
+				result = Integer.parseInt(settingsValue);
+			}
+			catch (Exception e)
+			{
+				log.warn("Faulty max size parameter, will use default. Value: " + settingsValue);
+			}
+		}
+		return result;
+	}
+
+	public List<String> getFileTypesForAssetKey(String assetKey)
+	{
+		List<String> fileTypes = null;
+
+		String fileTypesString = PropertyHelper.getRelatedListPropertValue("assetKey", "assetKeyFileTypes", assetKey);
+		if (fileTypesString != null)
+		{
+			fileTypes = Arrays.asList(fileTypesString.split(","));
+		}
+
+		if (log.isDebugEnabled())
+		{
+			log.debug("Found file types for asset key <" + assetKey + ">: " + fileTypes);
+		}
+
+		return fileTypes;
+	}
 }

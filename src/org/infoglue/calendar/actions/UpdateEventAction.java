@@ -34,6 +34,7 @@ import java.util.Map;
 
 import javax.portlet.ActionRequest;
 import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -95,7 +96,9 @@ public class UpdateEventAction extends CalendarUploadAbstractAction
     private String contactPhone;
     private String price;
     private Integer maximumParticipants;
-   
+    private Integer maxUploadSize;
+    private String errorMessage;
+
     private String[] locationId;
     private String[] participantUserName;
 
@@ -109,7 +112,7 @@ public class UpdateEventAction extends CalendarUploadAbstractAction
 
     private Event event;
     private List assetKeys;
-    
+
     private Calendar startCalendar;
     private Calendar endCalendar;
     private Calendar lastRegistrationCalendar;
@@ -297,18 +300,23 @@ public class UpdateEventAction extends CalendarUploadAbstractAction
         return "successPublish";
     } 
 
-    /**
-     * This is the action command for publishing an event.
-     */
-    
-    public String uploadForm() throws Exception 
-    {
-        this.event = EventController.getController().getEvent(eventId, getSession());
+	/**
+	 * This is the action command for publishing an event.
+	 */
+	public String uploadForm() throws Exception
+	{
+		HttpSession session = ServletActionContext.getRequest().getSession();
+		errorMessage = (String)session.getAttribute("uploadErrorMessage");
+		session.removeAttribute("uploadErrorMessage");
 
-        this.assetKeys = EventController.getController().getAssetKeys();
+		this.event = EventController.getController().getEvent(eventId, getSession());
 
-        return "uploadForm";
-    } 
+		this.assetKeys = EventController.getController().getAssetKeys(event);
+
+		maxUploadSize = ResourceController.getController().getMaxUploadSize(getSetting("AssetUploadMaxFileSize"));
+
+		return "uploadForm";
+	}
 
     /**
      * This is the entry point for the main listing.
@@ -682,4 +690,13 @@ public class UpdateEventAction extends CalendarUploadAbstractAction
 		this.versionLanguageId = versionLanguageId;
 	}
 
+
+	public Integer getMaxUploadSize() {
+		return maxUploadSize;
+	}
+
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
 }
