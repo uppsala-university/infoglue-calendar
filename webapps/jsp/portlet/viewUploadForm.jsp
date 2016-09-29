@@ -9,7 +9,7 @@
 
 <div class="mainCol">	
 	<div class="portlet_margin">
-		<form enctype="multipart/form-data" name="inputForm" method="POST" action="<c:out value="${createResourceUploadActionUrl}"/>&eventId=<ww:property value="event.id"/>">
+		<form class="uploadForm" enctype="multipart/form-data" name="inputForm" method="POST" action="<c:out value="${createResourceUploadActionUrl}"/>&eventId=<ww:property value="event.id"/>">
 			<input type="hidden" name="eventId" value="<ww:property value="event.id"/>"/>
 
 			<ww:if test="assetKeys.size() == 0">
@@ -25,12 +25,10 @@
 				</div>
 			</ww:else>
 
-			<div style="height:10px"></div>
 			<ww:if test="errorMessage != null">
-				<p class="Error"><ww:property value="errorMessage"/></p>
+				<p class="Error uploadError"><ww:property value="errorMessage"/></p>
 			</ww:if>
 
-			<div style="height:10px"></div>
 			<ww:if test="assetKeys.size() != 0">
 				<input type="submit" value="<ww:property value="this.getLabel('labels.internal.event.updateButton')"/>" class="button">
 			</ww:if>
