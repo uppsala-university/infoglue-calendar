@@ -243,10 +243,33 @@ public class CalendarAbstractAction extends ActionSupport
         return (String)ServletActionContext.getRequest().getAttribute("cssUrl");
     }
 
-    public Integer getNumberOfItemsPerPage()
-    {
-        return (Integer)ServletActionContext.getRequest().getAttribute("numberOfItems");
-    }
+	public Integer getNumberOfItemsPerPage()
+	{
+		Integer result = 10;
+		Object value = ServletActionContext.getRequest().getAttribute("numberOfItems");
+
+		if (value != null)
+		{
+			if (value instanceof String)
+			{
+				try
+				{
+					result = new Integer((String)value);
+				}
+				catch (NumberFormatException ex)
+				{
+					log.warn("Could not parse numberOfItems value as an integer. Using default value " + result + ". Value: " + value + ". Message: " + ex.getMessage());
+				}
+			}
+			else if (value instanceof Integer)
+			{
+				result = (Integer)value;
+			}
+		}
+
+		log.debug("Number of items to show: " + result);
+		return result;
+	}
 
     public String getUploadMaxSize()
     {
