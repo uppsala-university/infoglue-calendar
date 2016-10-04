@@ -101,9 +101,17 @@
     <ww:if test="events != null && events.size() > 0">
         <ww:set name="numberOfItems" value="numberOfItems" scope="page"/>
         <ww:set name="itemsPerPage" value="itemsPerPage" scope="page"/>
-        <c:if test="${numberOfItems == null || numberOfItems == '' || numberOfItems == 'Undefined'}">
-            <c:set var="numberOfItems" value="50"/>
-        </c:if>
+        <%
+			try
+			{
+				String numberOfItems = (String)pageContext.getAttribute("numberOfItems");
+				pageContext.setAttribute("numberOfItems", Integer.parseInt(numberOfItems));
+			}
+			catch (Exception ex)
+			{
+				pageContext.setAttribute("numberOfItems", 50);
+			}
+        %>
         <c:if test="${itemsPerPage != null && itemsPerPage != ''}">
             <c:set var="numberOfItems" value="${itemsPerPage}"/>
         </c:if>
@@ -113,7 +121,7 @@
         </c:if>
         <c:choose>
             <c:when test="${numberOfItems != -1}">
-                <calendar:slots visibleElementsId="eventsItems" visibleSlotsId="indices" lastSlotId="lastSlot" elements="${eventList}" currentSlot="${currentSlot}" slotSize="2" slotCount="10"/> <%-- ${numberOfItems} --%>
+                <calendar:slots visibleElementsId="eventsItems" visibleSlotsId="indices" lastSlotId="lastSlot" elements="${eventList}" currentSlot="${currentSlot}" slotSize="${numberOfItems}" slotCount="10"/>
             </c:when>
             <c:otherwise>
                 <c:set var="eventsItems" value="${eventList}"/>

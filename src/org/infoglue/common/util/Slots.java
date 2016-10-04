@@ -126,15 +126,15 @@ public class Slots {
 	{
 		if(slotSize <= 0)
 		{
-			throw new IllegalArgumentException("Slot size must be a positive number.");
+			throw new IllegalArgumentException("Slot size must be a positive number. Was: " + slotSize);
 		}
 		if(slotCount <= 0)
 		{
-			throw new IllegalArgumentException("Slot count must be a positive number.");
+			throw new IllegalArgumentException("Slot count must be a positive number. Was: " + slotCount);
 		}
 		if(currentSlot <= 0)
 		{
-			throw new IllegalArgumentException("Current slot must be a positive number.");
+			throw new IllegalArgumentException("Current slot must be a positive number. Was: " + currentSlot);
 		}
 		if(currentSlot > maxSlots)
 		{
