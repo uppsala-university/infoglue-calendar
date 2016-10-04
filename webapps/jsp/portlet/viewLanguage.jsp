@@ -5,13 +5,11 @@
 <%@ include file="adminHeader.jsp" %>
 <%@ include file="functionMenu.jsp" %>
 
-<div class="subfunctionarea leftCol">
-    <span class="left"></span>	
-    <span class="right">
+<nav class="subfunctionarea clearfix">
+	<div class="subfunctionarea-content">
         <a href="<c:out value="${createLanguageUrl}"/>" title="Skapa ny post"><ww:property value="this.getLabel('labels.internal.language.addLanguage')"/></a>
-    </span>	
-    <div class="clear"></div>
-</div>
+    </div>	
+</nav>
 
 <div class="mainCol">
     <div class="portlet_margin">

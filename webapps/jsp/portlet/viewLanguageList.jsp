@@ -33,13 +33,11 @@
 	<input type="hidden" name="cancelUrl" value="<c:out value="${viewListUrl}"/>"/>	
 </form>
 
-<div class="subfunctionarea leftCol">
-    <span class="left"></span>	
-    <span class="right">
+<nav class="subfunctionarea clearfix">
+	<div class="subfunctionarea-content">
         <a href="<c:out value="${createLanguageUrl}"/>" title="<ww:property value="this.getLabel('labels.internal.language.addLanguage')"/>"><ww:property value="this.getLabel('labels.internal.language.addLanguage')"/></a>
-    </span>	
-    <div class="clear"></div>
-</div>
+    </div>	
+</nav>
 
 <div class="mainCol">
     <div class="columnlabelarea">
@@ -68,14 +66,18 @@
         <ww:else>
             <div class="evenrow">
         </ww:else>
-    
-            <div class="columnLong">
-                <p class="portletHeadline"><a href="<c:out value="${languageUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.title', name)"/>"><ww:property value="name"/></a></p>
-            </div>
-            <div class="columnMedium">
-                <p><ww:property value="isoCode"/></p>
-            </div>
-            <div class="columnEnd">
+
+			<a href="<c:out value="${languageUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.title', name)"/>">
+				<div class="columnLong">
+					<p class="portletHeadline">
+					<ww:property value="name"/>
+					</p>
+				</div>
+				<div class="columnMedium">
+					<p><ww:property value="isoCode"/></p>
+				</div>
+			</a>
+			<div class="columnEnd">
             	<ww:set name="deleteConfirm" value="this.getVisualFormatter().escapeExtendedHTML(this.getParameterizedLabel('labels.internal.general.list.delete.confirm', name))" />
                 <a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '<ww:property value="#deleteConfirm"/>');" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.delete.title', name)"/>" class="delete"></a>
                 <a href="<c:out value="${languageUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', name)"/>" class="edit"></a>

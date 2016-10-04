@@ -19,7 +19,6 @@
 </portlet:actionURL>
 
 <div class="mainCol">
-    <center>
     
     <h1>Calendar Status (<ww:property value="serverName"/>)</h1>
     
@@ -87,7 +86,6 @@
       </tr>
     
     </table>
-    </center>
 
 </div>
 <div style="clear:both"></div>

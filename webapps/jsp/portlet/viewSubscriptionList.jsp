@@ -29,13 +29,11 @@
 	<input type="hidden" name="cancelUrl" value="<c:out value="${viewListUrl}"/>"/>	
 </form>
 
-<div class="subfunctionarea leftCol">
-<span class="left"></span>	
-<span class="right">
-	<a href="<c:out value="${viewSubscriptionsUrl}"/>" title="Skapa ny post"><ww:property value="this.getLabel('labels.internal.calendar.viewSubscriptions')"/></a>
-</span>	
-<div class="clear"></div>
-</div>
+<nav class="subfunctionarea clearfix">
+	<div class="subfunctionarea-content">
+		<a href="<c:out value="${viewSubscriptionsUrl}"/>" title="Skapa ny post"><ww:property value="this.getLabel('labels.internal.calendar.viewSubscriptions')"/></a>
+	</div>
+</nav>
 
 <div class="mainCol">
 

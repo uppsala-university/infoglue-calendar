@@ -10,13 +10,11 @@
 	<portlet:param name="action" value="CreateEventType!input"/>
 </portlet:renderURL>
 
-<div class="subfunctionarea leftCol">
-    <span class="left"></span>	
-    <span class="right">
+<nav class="subfunctionarea clearfix">
+	<div class="subfunctionarea-content">
         <a href="<c:out value="${createEventTypeUrl}"/>" <c:if test="${activeSubNavItem == 'NewEventType'}">class="current"</c:if> title="Skapa ny post"><ww:property value="this.getLabel('labels.internal.eventType.addEventType')"/></a>
-    </span>	
-    <div class="clear"></div>
-</div>
+    </div>	
+</nav>
 
 <div class="mainCol">
     <div class="portlet_margin">

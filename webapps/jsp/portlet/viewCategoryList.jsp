@@ -33,13 +33,11 @@
 	<input type="hidden" name="cancelUrl" value="<c:out value="${viewListUrl}"/>"/>	
 </form>
 
-<div class="subfunctionarea leftCol">
-    <span class="left"></span>	
-    <span class="right">
+<nav class="subfunctionarea clearfix">
+	<div class="subfunctionarea-content">
         <a href="<c:out value="${createCategoryUrl}"/>" title="<ww:property value="this.getLabel('labels.internal.category.addCategory.title')"/>"><ww:property value="this.getLabel('labels.internal.category.addCategory')"/></a>
-    </span>	
-    <div class="clear"></div>
-</div>
+    </div>	
+</nav>
 
 <div class="mainCol">
     <div class="columnlabelarea">

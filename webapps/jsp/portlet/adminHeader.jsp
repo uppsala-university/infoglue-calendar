@@ -1,5 +1,3 @@
-<%@page import="org.infoglue.calendar.actions.ViewCalendarAdministrationAction"%>
-<%@page import="com.opensymphony.xwork.ActionContext"%>
 <%@ taglib uri="webwork" prefix="ww" %>
 <%@ taglib uri="http://java.sun.com/portlet" prefix="portlet"%>
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
@@ -10,153 +8,94 @@
 <!DOCTYPE html>
 	<html lang="sv">
 
-	<head>
-		<title><ww:property value="this.getLabel('labels.internal.applicationTitle')"/></title>
-		<meta charset="utf-8">
-		<ww:if test="CSSUrl != null">
-			<style type="text/css" media="screen">@import url(<ww:property value="CSSUrl"/>);</style>
-		</ww:if>
-		<ww:else>
-			<style type="text/css" media="screen">@import url(/infoglueCalendar/css/calendarPortlet.css);</style>
-		</ww:else>
-		
-		<link rel="stylesheet" type="text/css" media="all" href="<%=request.getContextPath()%>/applications/jscalendar/skins/aqua/theme.css" title="aqua" />
-		<link rel="stylesheet" type="text/css" media="all" href="<%=request.getContextPath()%>/applications/jscalendar/calendar-system.css" title="system" />
+		<head>
+			<title><ww:property value="this.getLabel('labels.internal.applicationTitle')"/></title>
+			<meta charset="utf-8">
+			<ww:if test="CSSUrl != null">
+				<style type="text/css" media="screen">@import url(<ww:property value="CSSUrl"/>);</style>
+			</ww:if>
+			<ww:else>
+				<style type="text/css" media="screen">@import url(/infoglueCalendar/css/calendarPortlet.css);</style>
+			</ww:else>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			
+			<link rel="stylesheet" type="text/css" media="all" href="<%=request.getContextPath()%>/applications/jscalendar/skins/aqua/theme.css" title="aqua" />
+			<link rel="stylesheet" type="text/css" media="all" href="<%=request.getContextPath()%>/applications/jscalendar/calendar-system.css" title="system" />
 
-		<script type="text/javascript" src="<%=request.getContextPath()%>/script/dom-drag.js"></script>
-		<script type="text/javascript" src="<%=request.getContextPath()%>/script/infoglueCalendar.js"></script>
-		<script type="text/javascript" src="<%=request.getContextPath()%>/applications/ckeditor/ckeditor.js"></script>
-		
-		<style type="text/css">
-			.errorMessage {
-			    color: red;
-			}
-			.columnMediumShort {
-				width:18%;
-				float:left; 
-			}
+			<script type="text/javascript" src="<%=request.getContextPath()%>/script/dom-drag.js"></script>
+			<script type="text/javascript" src="<%=request.getContextPath()%>/script/infoglueCalendar.js"></script>
+			<script type="text/javascript" src="<%=request.getContextPath()%>/applications/ckeditor/ckeditor.js"></script>
 			
-			.languagesTabs {
-				height: 20px;	
-				margin: 0;	
-				padding-left: 10px;
-				border-bottom: 1px solid #ccc;
-			}
+			<script type="text/javascript">
 			
-			.languagesTabs li {
-				margin: 0; 
-				padding: 0;
-				display: inline;	
-				list-style-type: none;
-			}
+				function linkEvent(calendarId)
+				{
+					document.getElementById("calendarId").value = calendarId;
+					document.linkForm.submit();
+				}
 			
-			.languagesTabs a:link, .languagesTabs a:visited {	
-				float: left;
-				background: #f3f3f3;
-				font-size: 10px;	
-				line-height: 14px;	
-				padding: 2px 10px 2px 10px;
-				margin-right: 4px;	
-				border: 1px solid #ccc;	
-				border-bottom: 0px solid white;
-				text-decoration: none;	
-				color: #666;
-			}
-			
-			.languagesTabs a:link.active, .languagesTabs a:visited.active {
-				border-bottom: 1px solid #fff;
-				background: #fff;	
-				color: #000;
-			}
-			
-			.languagesTabs a:hover	{
-				background: #fff;
-			}
-			
-			.activeTab {
-				color: #000;
-				font-weight: bold;
-			}
+				function createEventFromCopy(action)
+				{
+					document.updateForm.action = action;
+					document.updateForm.submit();
+				} 
 
-			.activeTab a:link, .activeTab a:link.visited {
-				color: #000;
-				font-weight: bold;
-			}
-		
-		</style>
+				function deleteResource(resourceId)
+				{
+					document.deleteResourceForm.resourceId.value = resourceId;
+					document.deleteResourceForm.submit();
+				} 
+			
+				function includeScript(url)
+				{
+				  document.write('<script type="text/javascript" src="' + url + '"></scr' + 'ipt>'); 
+				}
+
+			</script>
+
+		</head>
+
+	<body>
 
 		<script type="text/javascript">
-		
-			function linkEvent(calendarId)
+			//alert("Calendar:" + typeof(Calendar));
+			if(typeof(Calendar) == 'undefined')
 			{
-				document.getElementById("calendarId").value = calendarId;
-				document.linkForm.submit();
+				//alert("No calendar found - let's include it..");
+				includeScript("<%=request.getContextPath()%>/applications/jscalendar/calendar.js");
+				includeScript("<%=request.getContextPath()%>/applications/jscalendar/lang/calendar-en.js");
+				includeScript("<%=request.getContextPath()%>/applications/jscalendar/calendar-setup.js");
 			}
-		
-			function createEventFromCopy(action)
-			{
-				document.updateForm.action = action;
-				document.updateForm.submit();
-			} 
-
-			function deleteResource(resourceId)
-			{
-				document.deleteResourceForm.resourceId.value = resourceId;
-				document.deleteResourceForm.submit();
-			} 
-		
-			function includeScript(url)
-			{
-			  document.write('<script type="text/javascript" src="' + url + '"></scr' + 'ipt>'); 
-			}
-
 		</script>
 
-	</head>
+		<div class="calApp">
 
-<body>
+			<div class="portlet">
 
-	<script type="text/javascript">
-		//alert("Calendar:" + typeof(Calendar));
-		if(typeof(Calendar) == 'undefined')
-		{
-			//alert("No calendar found - let's include it..");
-			includeScript("<%=request.getContextPath()%>/applications/jscalendar/calendar.js");
-			includeScript("<%=request.getContextPath()%>/applications/jscalendar/lang/calendar-en.js");
-			includeScript("<%=request.getContextPath()%>/applications/jscalendar/calendar-setup.js");
-		}
-	</script>
+				<portlet:renderURL var="viewCalendarAdministrationUrl">
+					<portlet:param name="action" value="ViewCalendarAdministration"/>
+				</portlet:renderURL>
 
-<div class="calApp">
-
-<div class="portlet">
-
-<portlet:renderURL var="viewCalendarAdministrationUrl">
-	<portlet:param name="action" value="ViewCalendarAdministration"/>
-</portlet:renderURL>
-
-<div class="head">
-	<span class="left">
-		<p class="calendarHead"><a href="<c:out value="${viewCalendarAdministrationUrl}"/>"><ww:property value="this.getLabel('labels.internal.header.heading')"/></a></p>
-		<p class="uuHead"><ww:property value="this.getLabel('labels.internal.header.subHeading')"/></p>
-	</span>	
-	<span class="right">
-		<ww:property value="this.getParameterizedLabel('labels.internal.header.loggedinUser', this.getPrincipalDisplayName())"/>
-		|
-		<a href="<ww:property value="logoutUrl"/>"><ww:property value="this.getLabel('labels.internal.header.logout')"/></a>
-		<%--
-		Request: <c:out value="${request.remoteUser}"/><br/>
-		Request: <c:out value="${request.remoteHost}"/><br/>
-		<%=request.getContextPath()%><br/>
-		Host: <%=request.getRemoteHost()%><br/>
-		Class: <%=request.getClass().getName()%><br/>
-		Host: <%=request.getRemoteHost()%><br/>
-		<%=request.getRemoteUser()%><br/>
-		<%=request.isUserInRole("admin")%><br/>
-		<%=request.isUserInRole("cmsUser")%><br/>
-		<%=request.getUserPrincipal().toString()%><br/>
-		RemoteUser: <ww:property value="this.getRequestClass()"/><br/>
-		--%>
-	</span>
-    <!--<div class="clear"></div>-->
-</div>
+				<header class="clearfix">
+					<div class="header-content">
+						<a href="<c:out value='${viewCalendarAdministrationUrl}'/>" class="left header-content-logo">
+							Uppsala universitets kalendarium
+						</a>
+						<span class="header-content-login right">	
+							Inloggad som <ww:property value="this.getInfoGluePrincipal().firstName"/> <ww:property value="this.getInfoGluePrincipal().lastName"/> | <a href="<ww:property value="logoutUrl"/>">Logga ut</a>
+							<%--
+							Request: <c:out value="${request.remoteUser}"/><br/>
+							Request: <c:out value="${request.remoteHost}"/><br/>
+							<%=request.getContextPath()%><br/>
+							Host: <%=request.getRemoteHost()%><br/>
+							Class: <%=request.getClass().getName()%><br/>
+							Host: <%=request.getRemoteHost()%><br/>
+							<%=request.getRemoteUser()%><br/>
+							<%=request.isUserInRole("admin")%><br/>
+							<%=request.isUserInRole("cmsUser")%><br/>
+							<%=request.getUserPrincipal().toString()%><br/>
+							RemoteUser: <ww:property value="this.getRequestClass()"/><br/>
+							--%>
+						</span>
+					</div>
+				</header>

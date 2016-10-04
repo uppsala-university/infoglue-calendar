@@ -11,13 +11,11 @@
 	<calendar:evalParam name="eventTypeId" value="${param.eventTypeId}"/>
 </portlet:renderURL>
 
-<div class="subfunctionarea leftCol">
-    <span class="left"></span>	
-    <span class="right">
+<nav class="subfunctionarea clearfix">
+	<div class="subfunctionarea-content">
         <a href="<c:out value="${createAttributeCategoryUrl}"/>" <c:if test="${activeSubNavItem == 'NewEventTypeCategoryAttribute'}">class="current"</c:if> title="Skapa ny post"><ww:property value="this.getLabel('labels.internal.eventType.addAvailableCategory')"/></a>
-    </span>	
-    <div class="clear"></div>
-</div>
+    </div>	
+</nav>
  
 <div class="mainCol">
     <div class="portlet_margin">

@@ -26,9 +26,7 @@
 
 
      
-        <div class="portlet_margin">
-		
-	
+        <div class="portlet_margin is-margin-bottom">
 		
 		<ww:set name="eventId" value="eventId" scope="page"/>
 		<ww:if test="event.lastRegistrationDateTime != null">
@@ -312,10 +310,10 @@
 			</ww:if>
 		</p>
 		
-		<div class="eventDescription">
+		<div class="is-margin-bottom is-max-width">
 			<calendar:textValue label="labels.internal.event.shortDescription" value="eventVersion.decoratedShortDescription" labelCssClass="label"/>
 		</div>
-		<div class="eventDescription">
+		<div class="is-margin-bottom is-max-width">
 			<calendar:textValue label="labels.internal.event.longDescription" value="eventVersion.decoratedLongDescription" cssClass="wysiwygDescription" labelCssClass="label"/>
 		</div>
 		<ww:if test="this.isActiveEventField('isInternal')">

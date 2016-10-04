@@ -61,13 +61,17 @@
         <ww:else>
             <div class="evenrow">
         </ww:else>
-    
-            <div class="columnLong">
-                <p class="portletHeadline"><a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '&#196;r du s&#228;ker p&#229; att du vill radera &quot;<ww:property value="#name"/>&quot;');" title="V&#228;lj '<ww:property value="name"/>'"><ww:property value="name"/></a></p>
-            </div>
-            <div class="columnMedium">
-                <p><ww:property value="description"/></p>
-            </div>
+		
+			<a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '&#196;r du s&#228;ker p&#229; att du vill radera &quot;<ww:property value="#name"/>&quot;');" title="V&#228;lj '<ww:property value="name"/>'">
+				<div class="columnLong">
+					<p class="portletHeadline">
+					<ww:property value="name"/>
+					</p>
+				</div>
+				<div class="columnMedium">
+					<p><ww:property value="description"/></p>
+				</div>
+			</a>
             <div class="columnEnd">
             </div>
             <div class="clear"></div>

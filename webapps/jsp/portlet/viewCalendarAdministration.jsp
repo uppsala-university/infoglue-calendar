@@ -6,8 +6,9 @@
 <c:set var="activeNavItem" value="Events" scope="page"/>
 
 <%@ include file="adminHeader.jsp" %>
-<%@ include file="functionMenu.jsp" %>
-
+<div class="event">
+	<%@ include file="functionMenu.jsp" %>
+</div>
 <%@ include file="eventSubFunctionMenu.jsp" %>
 
 <ww:if test="infoGlueRemoteUser == 'eventPublisher'">
@@ -32,9 +33,9 @@
 
 <div class="mainCol">
     <div class="portlet_margin">
-    <h1><ww:property value="this.getLabel('labels.internal.applicationSubHeader')"/></h1>
-	<p><ww:property value="this.getLabel('labels.internal.applicationIntroduction')"/></p>
-    <p><a id="newEventLink" href="<c:out value="${createEventUrl}"/>"><ww:property value="this.getLabel('labels.internal.event.addEvent')"/></a></p>
+		<h1><ww:property value="this.getLabel('labels.internal.applicationSubHeader')"/></h1>
+		<p><ww:property value="this.getLabel('labels.internal.applicationIntroduction')"/></p>
+		<p><a id="newEventLink" href="<c:out value="${createEventUrl}"/>"><ww:property value="this.getLabel('labels.internal.event.addEvent')"/></a></p>
     </div>
 </div>
 <div style="clear:both"></div>

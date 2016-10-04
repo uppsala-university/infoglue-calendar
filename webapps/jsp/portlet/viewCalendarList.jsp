@@ -33,13 +33,11 @@
 	<input type="hidden" name="cancelUrl" value="<c:out value="${viewListUrl}"/>"/>	
 </form>
 
-<div class="subfunctionarea leftCol">
-    <span class="left"></span>	
-    <span class="right">
+<nav class="subfunctionarea clearfix">
+	<div class="subfunctionarea-content">
         <a href="<c:out value="${createCalendarUrl}"/>" title="<ww:property value="this.getLabel('labels.internal.calendar.addCalendar.title')"/>"><ww:property value="this.getLabel('labels.internal.calendar.addCalendar')"/></a>
-    </span>	
-    <div class="clear"></div>
-</div>
+    </div>	
+</nav>
 
 <div class="mainCol">
     <div class="columnlabelarea">
@@ -69,20 +67,24 @@
         <ww:else>
             <div class="evenrow">
         </ww:else>
-    
+		
+		<a href="<c:out value="${calendarUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.title', name)"/>">
             <div class="columnLong">
-                <p class="portletHeadline"><a href="<c:out value="${calendarUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.title', name)"/>"><ww:property value="name"/></a></p>
+                <p class="portletHeadline">
+					<ww:property value="name"/>
+				</p>
             </div>
             <div class="columnMedium">
                 <p><ww:property value="description"/></p>
             </div>
-            <div class="columnEnd">
-            	<ww:set name="deleteConfirm" value="this.getVisualFormatter().escapeExtendedHTML(this.getParameterizedLabel('labels.internal.general.list.delete.confirm', name))" />
-                <a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '<ww:property value="#deleteConfirm"/>');" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.delete.title', name)"/>" class="delete"></a>
-                <a href="<c:out value="${calendarUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', name)"/>" class="edit"></a>
-            </div>
-            <div class="clear"></div>
-        </div>
+		</a>
+		<div class="columnEnd">
+			<ww:set name="deleteConfirm" value="this.getVisualFormatter().escapeExtendedHTML(this.getParameterizedLabel('labels.internal.general.list.delete.confirm', name))" />
+			<a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '<ww:property value="#deleteConfirm"/>');" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.delete.title', name)"/>" class="delete"></a>
+			<a href="<c:out value="${calendarUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', name)"/>" class="edit"></a>
+		</div>
+        <div class="clear"></div>
+	</div>
             
     </ww:iterator>
     

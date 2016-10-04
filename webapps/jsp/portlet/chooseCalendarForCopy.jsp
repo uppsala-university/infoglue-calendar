@@ -37,12 +37,16 @@
             <div class="evenrow">
         </ww:else>
     
-            <div class="columnLong">
-                <p class="portletHeadline"><a href="<c:out value="${createEventUrl}"/>" title="Välj '<ww:property value="name"/>'"><ww:property value="name"/></a></p>
-            </div>
-            <div class="columnMedium">
-                <p><ww:property value="description"/></p>
-            </div>
+			<a href="<c:out value="${createEventUrl}"/>" title="Välj '<ww:property value="name"/>'">
+				<div class="columnLong">
+					<p class="portletHeadline">
+						<ww:property value="name"/>
+					</p>
+				</div>
+				<div class="columnMedium">
+					<p><ww:property value="description"/></p>
+				</div>
+			</a>
             <div class="columnEnd">
             </div>
             <div class="clear"></div>

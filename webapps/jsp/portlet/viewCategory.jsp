@@ -24,13 +24,11 @@
 	<calendar:evalParam name="parentCategoryId" value="${param.categoryId}"/>
 </portlet:renderURL>
 
-<div class="subfunctionarea leftCol">
-    <span class="left"></span>	
-    <span class="right">
+<nav class="subfunctionarea clearfix">
+	<div class="subfunctionarea-content">
         <a href="<c:out value="${createCategoryUrl}"/>" title="Skapa ny post"><ww:property value="this.getLabel('labels.internal.category.addCategory')"/></a>
-    </span>	
-    <div class="clear"></div>
-</div>
+    </div>	
+</nav>
 
 <ww:set name="categoryId" value="categoryId" scope="page"/>
 <ww:set name="language" value="language"/>

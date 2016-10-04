@@ -22,21 +22,12 @@
 <calendar:hasRole id="eventPublisher" roleName="EventPublisher"/>
 
 <c:if test="${calendarSuperUser == true}">	
-    <div class="subfunctionarea leftCol">
-    
-        <ul class="subMenu">
-            <li class="first">
-                <a href="<c:out value="${viewSettingsUrl}"/>" <c:if test="${activeEventSubNavItem == 'Settings'}">class="current"</c:if>><ww:property value="this.getLabel('labels.internal.applicationAdministerSettings')"/></a>	
-            </li>
-            <li>
-                <a href="<c:out value="${viewAuthorizationSwitchManagementUrl}"/>" <c:if test="${activeEventSubNavItem== 'AuthorizationSwitchManagement'}">class="current"</c:if>>Auth transfer</a> 
-            </li>    
-            <li>	
-                <a href="<c:out value="${viewApplicationStateUrl}"/>" <c:if test="${activeEventSubNavItem== 'ViewApplicationState'}">class="current"</c:if>>AppState</a>
-            </li>
-            <li>
-                <a href="<c:out value="${viewLabelsUrl}"/>" <c:if test="${activeEventSubNavItem == 'Labels'}">class="current"</c:if>><ww:property value="this.getLabel('labels.internal.applicationAdministerLabels')"/></a>
-            </li>
-        </ul>
-    </div>
+   <nav class="subfunctionarea clearfix">
+		<div class="subfunctionarea-content">
+			<a href="<c:out value="${viewSettingsUrl}"/>" <c:if test="${activeEventSubNavItem == 'Settings'}">class="current"</c:if>><ww:property value="this.getLabel('labels.internal.applicationAdministerSettings')"/></a>	
+			<a href="<c:out value="${viewAuthorizationSwitchManagementUrl}"/>" <c:if test="${activeEventSubNavItem== 'AuthorizationSwitchManagement'}">class="current"</c:if>>Auth transfer</a> 
+			<a href="<c:out value="${viewApplicationStateUrl}"/>" <c:if test="${activeEventSubNavItem== 'ViewApplicationState'}">class="current"</c:if>>AppState</a>
+			<a href="<c:out value="${viewLabelsUrl}"/>" <c:if test="${activeEventSubNavItem == 'Labels'}">class="current"</c:if>><ww:property value="this.getLabel('labels.internal.applicationAdministerLabels')"/></a>
+		</div>
+	</nav>
 </c:if>
