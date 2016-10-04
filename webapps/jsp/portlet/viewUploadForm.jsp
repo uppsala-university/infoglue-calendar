@@ -20,7 +20,7 @@
 				<ww:set name="labelKey" value="AssetUploadMaxFileSize"/>
 				<ww:set name="defaultValue" value="this.getSetting(#labelKey, true, false)"/>
 				<div class="fieldrow">
-					<label for="file"><ww:property value="this.getLabel('labels.internal.event.fileToAttach')"/> (max <ww:property value="this.getMaxUploadSize()"/> kB):</label><br>
+					<label for="file"><ww:property value="this.getLabel('labels.internal.event.fileToAttach')"/> (max <ww:property value="this.formatFileSize(this.getMaxUploadSize())"/>):</label><br>
 					<input type="file" name="file" id="file" class="button"/>
 				</div>
 			</ww:else>

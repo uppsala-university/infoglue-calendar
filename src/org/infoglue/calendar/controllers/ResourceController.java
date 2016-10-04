@@ -510,7 +510,7 @@ public class ResourceController extends BasicController
 	{
 		int result = 200 * 1000; // 200 kB
 		log.debug("Max size from setting: " + settingsValue);
-		if (settingsValue != null && !settingsValue.equals("") && !settingsValue.equals("@AssetUploadMaxFileSize@"))
+		if (!PropertyHelper.isUndefinedProperty(settingsValue, null))
 		{
 			try
 			{
