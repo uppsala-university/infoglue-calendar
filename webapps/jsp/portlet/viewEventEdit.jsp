@@ -28,7 +28,7 @@
 
 <div class="mainCol">
     <div class="portlet_margin">
-        
+        <%-- Language --%> 
         <ww:if test="skipLanguageTabs != true">
         
             <ww:if test="event.versions.size() > 1">
@@ -96,9 +96,9 @@
             <input type="hidden" name="publishEventUrl" value="http://<%=hostName%><c:out value="${publishEventUrl}"/>"/>
     
  			<fieldset>
-				<legend class="arrow-up">Grundinformation</legend>  
+				<legend class="arrow-up"><ww:property value="this.getLabel('labels.internal.event.baseInfoHeader')"/></legend>  
 				<section style="display:block">
-					<%-- evenemangets namn --%>
+					<%-- Event title --%>
 					<ww:if test="this.getLabel('labels.internal.event.nameInfo') != 'labels.internal.event.nameInfo'">							
 						<a class="inputLink" href="#" onclick="return false;">
 							<img class="infocon" src="<%=request.getContextPath()%>/images/infoicon.png" />
@@ -114,19 +114,14 @@
 						<calendar:textField label="labels.internal.event.name" name="'name'" value="eventVersion.name" cssClass="longtextfield"/>
 					</ww:else>
 			
-					<%-- 
-					<calendar:textField label="labels.internal.event.title" name="'title'" value="eventVersion.title" cssClass="longtextfield"/>
-					--%>
 					<input type="hidden" name="title" id="title"/>
-					
-					
-					<%-- vem som får delta / målgrupp --%> 
+										
+					<%-- Internal or open --%> 
 		            <ww:if test="this.isActiveEventField('isInternal')">
 						<calendar:radioButtonField label="labels.internal.event.isInternal" name="'isInternal'" required="true" valueMap="internalEventMap" selectedValue="event.isInternal"/>
 					</ww:if>					
 					
-
-					 <%-- föreläsare --%>   
+					<%-- Lecturer --%>   
 		            <ww:if test="this.isActiveEventField('lecturer')">
 						<ww:if test="eventVersion == null && alternativeEventVersion != null">
 							<calendar:textAreaField label="labels.internal.event.lecturer" name="'lecturer'" value="alternativeEventVersion.lecturer" cssClass="smalltextarea"/>
@@ -136,7 +131,7 @@
 						</ww:else>
 					</ww:if>
 					
-					<%-- kort beskrivning --%>  
+					<%-- Short description --%>  
 					<ww:if test="this.getLabel('labels.internal.event.shortDescriptionInfo') != 'labels.internal.event.shortDescriptionInfo'">												
 						<a class="inputLink" href="#" onclick="return false;">
 							<img class="infocon" src="<%=request.getContextPath()%>/images/infoicon.png" />
@@ -146,8 +141,8 @@
 						</a>
 					</ww:if>
 					<calendar:textAreaField label="labels.internal.event.shortDescription" name="'shortDescription'" value="eventVersion.shortDescription" maxLength="400" cssClass="smalltextarea" required="false"/>
-					
-					<%-- beskrivning --%>   
+
+					<%-- Description --%>   
 					<ww:if test="this.getLabel('labels.internal.event.longDescriptionInfo') != 'labels.internal.event.longDescriptionInfo'">																	
 						<a class="inputLink" href="#" onclick="return false;">
 							<img class="infocon" src="<%=request.getContextPath()%>/images/infoicon.png" />
@@ -161,7 +156,7 @@
 			</fieldset>
 
 			<fieldset>
-				<legend class="arrow-up">Tid och plats</legend>  
+				<legend class="arrow-up"><ww:property value="this.getLabel('labels.internal.event.dateHeader')"/></legend>  
 				<section style="display:block">
 					<ww:if test="this.getLabel('labels.internal.event.dateInfo') != 'labels.internal.event.dateInfo'">		
 						<a class="inputLink" href="#" onclick="return false;">
@@ -191,7 +186,7 @@
 								<p class="errorMessage"><ww:property value="this.getLabel('#fieldErrors.startDateTime.get(0)')"/></p>
 							</ww:if>																
 						</div>
-					
+
 						<div class="fieldrow-column">
 							<label id="labelEndDateTime" for="endDateTime">
 								<span class="label-date">
@@ -215,13 +210,21 @@
 						</div>
 						
 					</div>
-					
-					<%-- Plats --%>
-					<ww:if test="this.isActiveEventField('locationId')">
-						<calendar:selectField label="labels.internal.event.location" name="'locationId'" multiple="true" value="locations" selectedValueSet="event.locations" headerItem="Anger annan plats istället nedan" cssClass="listBox"/>
+
+					<%-- Location --%>
+					<ww:if test="this.getLabel('labels.internal.event.locationInfo') != 'labels.internal.event.locationInfo'">
+						<a class="inputLink" href="#" onclick="return false;">
+							<img class="infocon" src="<%=request.getContextPath()%>/images/infoicon.png" />
+							<p class="labelInfo"><ww:property value="this.getLabel('labels.internal.event.locationInfo')"/>
+							</p>
+						</a>
 					</ww:if>
 					
-					<%-- Annan plats --%> 
+					<ww:if test="this.isActiveEventField('locationId')">
+						<calendar:selectField label="labels.internal.event.location" name="'locationId'" multiple="true" value="locations" selectedValueSet="event.locations" headerItem="labels.internal.event.locationDefault" cssClass="listBox"/>
+					</ww:if>
+
+					<%-- Alternative location --%> 
 					<ww:if test="this.isActiveEventField('alternativeLocation')">
 						<ww:if test="eventVersion == null && alternativeEventVersion != null">
 							<calendar:textField label="labels.internal.event.alternativeLocation" name="'alternativeLocation'" value="alternativeEventVersion.alternativeLocation" cssClass="longtextfield"/>
@@ -231,7 +234,7 @@
 						</ww:else>
 					</ww:if>
 					
-					<%-- Lokal --%>  
+					<%-- Custom location --%>  
 					<ww:if test="this.isActiveEventField('customLocation')">
 						<ww:if test="eventVersion == null && alternativeEventVersion != null">
 							<calendar:textField label="labels.internal.event.customLocation" name="'customLocation'" value="alternativeEventVersion.customLocation" cssClass="longtextfield"/>
@@ -246,7 +249,13 @@
 			<fieldset>
 				<legend class="arrow-up"><ww:property value="this.getLabel('labels.internal.event.organizerName')"/></legend>
 				<section style="display:block;">				
-					<%-- arrangör --%> 
+					<%-- Organizer name --%> 
+					<ww:if test="this.getLabel('labels.internal.event.organizerNameInfo') != 'labels.internal.event.organizerNameInfo'">		
+						<a class="inputLink" href="#" onclick="return false;"><img class="infocon" src="<%=request.getContextPath()%>/images/infoicon.png" />
+							<p class="labelInfo"><ww:property value="this.getLabel('labels.internal.event.organizerNameInfo')"/>
+							</p>
+						</a>
+					</ww:if>
 					 <ww:if test="this.isActiveEventField('organizerName')">
 						<ww:if test="eventVersion == null && alternativeEventVersion != null">
 							<calendar:textField label="labels.internal.event.organizerName" name="'organizerName'" value="alternativeEventVersion.organizerName" cssClass="longtextfield" required="false"/>
@@ -256,7 +265,7 @@
 						</ww:else>
 					</ww:if>
 					
-					<%-- hemsida --%>
+					<%-- Homepage --%>
 					 <ww:if test="this.isActiveEventField('eventUrl')">
 						<ww:if test="eventVersion == null && alternativeEventVersion != null">
 							<calendar:textField label="labels.internal.event.eventUrl" name="'eventUrl'" value="alternativeEventVersion.eventUrl" cssClass="longtextfield"/>
@@ -266,45 +275,51 @@
 						</ww:else>
 					</ww:if>
 					
-					<%-- organiserat av UU --%> 
+					<%-- Organized by UU (hidden and always selected)  --%>                    
+
 					<ww:if test="this.isActiveEventField('isOrganizedByGU')">
-						<calendar:checkboxField label="labels.internal.event.isOrganizedByGU" name="'isOrganizedByGU'" valueMap="isOrganizedByGUMap" selectedValues="event.isOrganizedByGU"/>
+						<input:hidden name="'isOrganizedByGU'" valueMap="isOrganizedByGUMap" selectedValues="isOrganizedByGU" />
 					</ww:if>
-					
-					<%-- kontaktperson --%>  
+
+					<%-- Contact name --%>  
 		            <ww:if test="this.isActiveEventField('contactName')">
 						<calendar:textField label="labels.internal.event.contactName" name="'contactName'" value="event.contactName" cssClass="longtextfield" required="true"/>
 					</ww:if>
-           
-					<%-- kontaktperson mail --%>  
+
+					<%-- Contact email --%>  
 					<ww:if test="this.isActiveEventField('contactEmail')">
 						<calendar:textField label="labels.internal.event.contactEmail" name="'contactEmail'" value="event.contactEmail" cssClass="longtextfield"/>
 					</ww:if>
-            					
-					<%-- kontaktperson telefon --%>   
+
+					<%-- Contact phone --%>   
 					<ww:if test="this.isActiveEventField('contactPhone')">
 						<calendar:textField label="labels.internal.event.contactPhone" name="'contactPhone'" value="event.contactPhone" cssClass="longtextfield"/>
 					</ww:if>
-				</div>
+				</section>
 			</fieldset>
- 
- 			<fieldset <c:if test="${!isCalendarOwner}" > style="display:none"</c:if>>
-
+			<calendar:hasRole id="isCalendarOwner" roleName="CalendarOwner"/>
+			<fieldset <c:if test="${!isCalendarOwner}" > style="display:none"</c:if>>
 				<legend class="arrow-down"><ww:property value="this.getLabel('labels.internal.event.entryInfo')"/></legend>
-
-				<section style="display:none">			
-					<%-- anmälningsformulär --%> 
+				<section style="display:none">
+					<p><ww:property value="this.getLabel('labels.internal.event.registrationInfo')"/></p>			
+					<%-- Participants --%> 
+					<ww:if test="this.getLabel('labels.internal.event.maximumParticipantsInfo') != 'labels.internal.event.maximumParticipantsInfo'">
+						<a class="inputLink" href="#" onclick="return false;">
+							<img class="infocon" src="<%=request.getContextPath()%>/images/infoicon.png" />
+							<p class="labelInfo"><ww:property value="this.getLabel('labels.internal.event.maximumParticipantsInfo')"/></p>
+						</a>
+					</ww:if>
 					<calendar:selectField label="labels.internal.event.entryForm" name="'entryFormId'" multiple="false" value="entryFormEventTypes" selectedValue="event.entryFormId" headerItem="Choose entry form" cssClass="listBox"/>
 					
-					<%-- avgift --%> 
+					<%-- Participation fee --%> 
 					<ww:if test="this.isActiveEventField('price')">
 						<calendar:textField label="labels.internal.event.price" name="'price'" value="event.price" cssClass="longtextfield"/>
 					</ww:if>					
 
-					<%-- max antal deltagare --%> 
+					<%-- Maximum number of participants --%> 
 					<calendar:textField label="labels.internal.event.maximumParticipants" name="'maximumParticipants'" value="event.maximumParticipants" cssClass="longtextfield"/>
 
-					<%-- sista anmälningsdag och tid --%>  
+					<%-- Participation deadline --%>    
 				     <div class="fieldrow">
 						<label for="lastRegistrationDateTime">
 							<ww:property value="this.getLabel('labels.internal.event.lastRegistrationDate')"/>						
@@ -323,7 +338,7 @@
 			</fieldset>
 
 			<fieldset>
-				<legend class="arrow-up">Publicering av evenemang</legend>
+				<legend class="arrow-up"><ww:property value="this.getLabel('labels.internal.event.topicFieldsHeader')"/></legend>
 				<section style="display:block">
 					<ww:if test="this.getLabel('labels.internal.event.topicFieldsInfo') != 'labels.internal.event.topicFieldsInfo'">		
 						<a class="inputLink" href="#" onclick="return false;">
@@ -358,11 +373,11 @@
 						<ww:if test="#attribute.inputType == 'textfield'">
 							<calendar:textField label="${title}" name="#attributeName" value="#attributeValue" required="${required}" cssClass="longtextfield"/>
 						</ww:if>		
-			
+
 						<ww:if test="#attribute.inputType == 'textarea'">
 							<calendar:textAreaField label="${title}" name="#attributeName" value="#attributeValue" required="${required}" cssClass="smalltextarea"/>
 						</ww:if>		
-			
+
 						<ww:if test="#attribute.inputType == 'select'">
 							<ww:set name="attributeValues" value="#attributeValue"/>
 							<ww:if test="#attributeValue != null">
@@ -370,11 +385,11 @@
 							</ww:if>
 							<calendar:selectField label="${title}" name="#attributeName" multiple="true" value="#attribute.contentTypeAttributeParameterValues" selectedValues="#attributeValues" required="${required}" cssClass="listBox"/>
 						</ww:if>		
-			
+
 						<ww:if test="#attribute.inputType == 'radiobutton'">
 							<calendar:radioButtonField label="${title}" name="#attributeName" valueMap="#attribute.contentTypeAttributeParameterValuesAsMap" selectedValue="#attributeValue" required="${required}"/>
 						</ww:if>		
-			
+
 						<ww:if test="#attribute.inputType == 'checkbox'">
 							<ww:set name="attributeValues" value="#attributeValue"/>
 							<ww:if test="#attributeValue != null">
@@ -382,14 +397,14 @@
 							</ww:if>
 							<calendar:checkboxField label="${title}" name="#attributeName" valueMap="#attribute.contentTypeAttributeParameterValuesAsMap" selectedValues="#attributeValues" required="${required}"/>
 						</ww:if>		
-			
+
 						<ww:if test="#attribute.inputType == 'hidden'">
 							<calendar:hiddenField name="#attributeName" value="#attributeValue"/>
 						</ww:if>		
-					
+
 						<ww:set name="count" value="#count + 1"/>
 					</ww:iterator>
-						
+
 					<ww:iterator value="event.owningCalendar.eventType.categoryAttributes" status="rowstatus">
 						<ww:set name="categoryAttribute" value="top" scope="page"/>
 						<ww:set name="categoryAttributeIndex" value="#rowstatus.index" scope="page"/>
@@ -398,10 +413,19 @@
 						<input type="hidden" name="categoryAttributeId_<ww:property value="#rowstatus.index"/>" value="<ww:property value="top.id"/>"/>
 						<calendar:selectField label="top.name" name="${categoryAttributeName}" multiple="true" value="top.category.getSortedChildren(languageCode)" selectedValues="getCategoryAttributeValues(top.id)" selectedValueList="#selectedCategories" cssClass="listBox" required="true"/>
 					</ww:iterator>
-			            
-           		</section>
+				</section>
 			</fieldset>
-            
+			
+			<div class="confirm">
+				<p>
+					<input type="checkbox" name="agree" value="agree_terms" tabIndex="100">
+					<ww:if test="this.getLabel('labels.internal.event.eventConfirm') == null">
+						<ww:property value="this.getLabel('labels.internal.event.confirmMessageEdit')"/>
+					</ww:if>
+					<ww:property value="this.getLabel('labels.internal.event.eventConfirm')"/>
+				</p>
+			</div>  
+			
             <input type="submit" value="<ww:property value="this.getLabel('labels.internal.event.updateButton')"/>" class="button">
             
             <portlet:renderURL var="viewEventUrl">
@@ -431,8 +455,8 @@
 			 this.className = 'arrow-up';
 		} else {
 			this.className = 'arrow-down';  
-		};			
-			
+		};
+		
 		//Show or hide the div
 		var sections = this.parentNode.getElementsByTagName("section");
 		var section;
@@ -471,19 +495,15 @@
 
     	if (lastRegistrationTime != "" && !validateTime(lastRegistrationTime))
     	{
-    		
     		document.inputForm.lastRegistrationTime.focus();
     		return false;
     	}
         
     	if (!document.inputForm.agree.checked) {
               document.inputForm.agree.focus();
-               alert("Du m\u00E5ste fylla i kryssrutan f\u00F6r att g\u00E5 vidare");
-
+                alert("<ww:property value="this.getLabel('labels.internal.event.confirmationRequiredMessage')"/>");
             return false;
 		}
-
-
     	return true;
     }
 
@@ -493,7 +513,7 @@
     	var match 		= myRegexp.test(aTimeString);
     	return match;
     }
-
+	
 	function completeTime(textfield)
     {
     	if(textfield.value.length == 2)
@@ -514,16 +534,17 @@
         button         :    "trigger_startDateTime",  // trigger for the calendar (button ID)
         align          :    "BR",           // alignment (defaults to "Bl")
         singleClick    :    true,
-        firstDay  	   : 	1        
+        firstDay  	   : 	1
     });
 
+	//  Enable click event on start date time field 
     Calendar.setup({
         inputField     :    "startDateTime",     // id of the input field
         ifFormat       :    "%Y-%m-%d",      // format of the input field
         button         :    "startDateTime",  // trigger for the calendar (startDateTime)
         align          :    "BR",           // alignment (defaults to "Bl")
         singleClick    :    true,
-        firstDay  	   : 	1        
+        firstDay  	   : 	1
     });
 
     Calendar.setup({
@@ -532,19 +553,18 @@
         button         :    "trigger_endDateTime",  // trigger for the calendar (button ID)
         align          :    "BR",           // alignment (defaults to "Bl")
         singleClick    :    true,
-        firstDay  	   : 	1    
+        firstDay  	   : 	1
     });
-
     Calendar.setup({
         inputField     :    "endDateTime",     // id of the input field
         ifFormat       :    "%Y-%m-%d",      // format of the input field
         button         :    "endDateTime",  // trigger for the calendar (button ID)
         align          :    "BR",           // alignment (defaults to "Bl")
         singleClick    :    true,
-        firstDay  	   : 	1    
+        firstDay  	   : 	1
     });
 
-    Calendar.setup({
+	Calendar.setup({
         inputField     :    "lastRegistrationDateTime",     // id of the input field
         ifFormat       :    "%Y-%m-%d",      // format of the input field
         button         :    "trigger_lastRegistrationDateTime",  // trigger for the calendar (button ID)

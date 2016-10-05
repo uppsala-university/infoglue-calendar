@@ -23,10 +23,6 @@
 		<calendar:hasRole id="calendarOwner" roleName="CalendarOwner"/>
 		<calendar:hasRole id="eventPublisher" roleName="EventPublisher"/>
 
-		<!--
-		<a href="<c:out value="${viewEventsUrl}"/>" <c:if test="${activeNavItem == 'Events'}">class="current"</c:if>><ww:property value="this.getLabel('labels.internal.applicationHome')"/></a>    
-		-->
-		
 		<a id="newEventLink" href="<c:out value="${createEventUrl}"/>" <c:if test="${activeEventSubNavItem == 'NewEvent'}">class="current"</c:if>><ww:property value="this.getLabel('labels.internal.event.addEvent')"/></a> 
 
 		<c:if test="${calendarOwner == true}">    

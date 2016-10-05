@@ -50,31 +50,17 @@
 <calendar:hasRole id="eventPublisher" roleName="EventPublisher"/>
 	
 <div class="functionarea <c:out value='${activeNavItem}'/>">
-	
-  <nav class="menuAdmin">	
-	
-	<%--User: <ww:property value="infoGlueRemoteUserRoles"/> <ww:property value="infoGlueRemoteUserGroups"/>--%>
-	
-	<%--
-	<a href="<c:out value="${viewWaitingEventsUrl}"/>" <c:if test="${activeNavItem == 'WaitingEvents'}">class="current"</c:if>><ww:property value="this.getLabel('labels.internal.applicationWaitingEvents')"/></a> 
-	<a href="<c:out value="${viewEventSearchFormUrl}"/>" <c:if test="${activeNavItem == 'EventSearch'}">class="current"</c:if>><ww:property value="this.getLabel('labels.internal.applicationSearchEvents')"/></a> 
-	<b><ww:property value="this.getLabel('labels.internal.applicationAdministrate')"/></b> 
-	--%>
+  <nav class="menuAdmin">		
 	<c:if test="${calendarAdministrator == true}">
         <a href="<c:out value="${viewEventsUrl}"/>" <c:if test="${activeNavItem == 'Events'}">class="current"</c:if>><ww:property value="this.getLabel('labels.internal.applicationHome')"/></a>
 		<a href="<c:out value="${viewCategoryUrl}"/>" <c:if test="${activeNavItem == 'Categories'}">class="current"</c:if>><ww:property value="this.getLabel('labels.internal.applicationAdministerCategories')"/></a> 
 		<a href="<c:out value="${viewCalendarListUrl}"/>" <c:if test="${activeNavItem == 'Calendars'}">class="current"</c:if>><ww:property value="this.getLabel('labels.internal.applicationAdministerCalendars')"/></a> 
 		<a href="<c:out value="${viewEventTypeListUrl}"/>" <c:if test="${activeNavItem == 'EventTypes'}">class="current"</c:if>><ww:property value="this.getLabel('labels.internal.applicationAdministerEventTypes')"/></a> 
 		<a href="<c:out value="${viewLocationListUrl}"/>" <c:if test="${activeNavItem == 'Locations'}">class="current"</c:if>><ww:property value="this.getLabel('labels.internal.applicationAdministerLocations')"/></a>
-
-	</c:if>
-	
-	<c:if test="${calendarSuperUser == true}">
-		<%--<a href="<c:out value="${viewAuthorizationSwitchManagementUrl}"/>" <c:if test="${activeNavItem == 'AuthorizationSwitchManagement'}">class="current"</c:if>>Auth transfer</a> 
-			<a href="<c:out value="${viewApplicationStateUrl}"/>" <c:if test="${activeNavItem == 'ViewApplicationState'}">class="current"</c:if>>AppState</a> --%> 
+	</c:if>	
+	<c:if test="${calendarSuperUser == true}"> 
 		<a href="<c:out value="${viewSettingsUrl}"/>" <c:if test="${activeNavItem == 'Settings'}">class="current"</c:if>><ww:property value="this.getLabel('labels.internal.applicationAdministerSettings')"/></a> 
-		<%--<a href="<c:out value="${viewLabelsUrl}"/>" <c:if test="${activeNavItem == 'Labels'}">class="current"</c:if>><ww:property value="this.getLabel('labels.internal.applicationAdministerLabels')"/></a> --%>
 		<a href="<c:out value="${viewLanguagesUrl}"/>" <c:if test="${activeNavItem == 'Languages'}">class="current"</c:if>><ww:property value="this.getLabel('labels.internal.applicationAdministerLanguages')"/></a> 
 	</c:if>			
   </nav>
-</div>	
+</div>
