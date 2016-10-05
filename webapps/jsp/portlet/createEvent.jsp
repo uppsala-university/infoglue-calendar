@@ -348,7 +348,7 @@
 				</p>
 			</div>            
 
-			<input type="submit" value="<ww:property value="this.getLabel('labels.internal.event.createButton')"/>" class="button submit" tabIndex="101">
+			<input type="submit" value="<ww:property value="this.getLabel('labels.internal.event.createButton')"/>" class="button submit save" tabIndex="101">
 			<input type="button" onclick="history.back();" value="<ww:property value="this.getLabel('labels.internal.applicationCancel')"/>" class="button cancel" tabIndex="102">
 		</form>
 	</div>

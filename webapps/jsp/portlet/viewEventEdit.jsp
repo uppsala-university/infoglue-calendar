@@ -482,7 +482,7 @@
 
 			</div>  
 			
-            <input type="submit" value="<ww:property value="this.getLabel('labels.internal.event.updateButton')"/>" class="button">
+            <input type="submit" value="<ww:property value="this.getLabel('labels.internal.event.updateButton')"/>" class="button save">
             
             <portlet:renderURL var="viewEventUrl">
                 <portlet:param name="action" value="ViewEvent"/>
