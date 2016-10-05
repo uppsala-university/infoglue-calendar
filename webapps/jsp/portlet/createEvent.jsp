@@ -355,21 +355,22 @@
 </div>
 
 <script type="text/javascript">
-	// Show and hide fieldset content
+	<%-- Show and hide fieldset content --%>
 	var legends = document.getElementsByTagName("legend");
-	for(var i=0; i < legends.length; i++) {
+	
+	for(var i=0; i<legends.length; i++) {
 		legends[i].addEventListener("click", showHide);
 	};
 		
 	function showHide() {		
-		//Update the legend class
+		<%-- Update the legend class --%>
 		if (this.className == 'arrow-down') { 
 			 this.className = 'arrow-up';
 		} else {
 			this.className = 'arrow-down';  
 		};
 		
-		//Show or hide the div
+		<%-- Show or hide the div --%>
 		var sections = this.parentNode.getElementsByTagName("section");
 		var section;
 
@@ -411,10 +412,11 @@
     		return false;
     	}
         
-    	if (!document.inputForm.agree.checked) {
-              document.inputForm.agree.focus();
-               alert("<ww:property value="this.getLabel('labels.internal.event.confirmationRequiredMessage')"/>");
-			   return false;
+    	if (!document.inputForm.agree.checked) 
+		{
+			document.inputForm.agree.focus();
+			alert("<ww:property value="this.getLabel('labels.internal.event.confirmationRequiredMessage')"/>");
+			return false;
 		}
     	return true;
     }
@@ -434,65 +436,65 @@
     	}
     }
 	
-	// Validate form
+	<%-- Validate form --%>
     function validateForm() {
     	document.inputForm.title.value = document.inputForm.name.value;
     	return validateTimes();
     }
 
     Calendar.setup({
-        inputField     :    "startDateTime",     // id of the input field
-        ifFormat       :    "%Y-%m-%d",      // format of the input field
-        button         :    "trigger_startDateTime",  // trigger for the calendar (button ID)
-        align          :    "BR",           // alignment (defaults to "Bl")
+        inputField     :    "startDateTime",     <%-- id of the input field --%>
+        ifFormat       :    "%Y-%m-%d",      <%-- format of the input field --%>
+        button         :    "trigger_startDateTime",  <%-- trigger for the calendar (button ID) --%>
+        align          :    "BR",           <%-- alignment (defaults to "Bl") --%>
         singleClick    :    true,
         firstDay  	   : 	1
     });
 
-	//  Enable click event on start date time field 
+	<%--  Enable click event on start date time field --%>
     Calendar.setup({
-        inputField     :    "startDateTime",     // id of the input field
-        ifFormat       :    "%Y-%m-%d",      // format of the input field
-        button         :    "startDateTime",  // trigger for the calendar (input field)
-        align          :    "BR",           // alignment (defaults to "Bl")
+        inputField     :    "startDateTime",      <%-- id of the input field --%>
+        ifFormat       :    "%Y-%m-%d",       <%-- format of the input field --%>
+        button         :    "startDateTime",   <%-- trigger for the calendar (startDateTime) --%>
+        align          :    "BR",            <%-- alignment (defaults to "Bl") --%>
         singleClick    :    true,
         firstDay  	   : 	1
     });
 
     Calendar.setup({
-        inputField     :    "endDateTime",     // id of the input field
-        ifFormat       :    "%Y-%m-%d",      // format of the input field
-        button         :    "trigger_endDateTime",  // trigger for the calendar (button ID)
-        align          :    "BR",           // alignment (defaults to "Bl")
+        inputField     :    "endDateTime",     <%-- id of the input field --%>
+        ifFormat       :    "%Y-%m-%d",      <%-- format of the input field --%>
+        button         :    "trigger_endDateTime",   <%-- trigger for the calendar (button ID) --%>
+        align          :    "BR",            <%-- alignment (defaults to "Bl") --%>
         singleClick    :    true,
-        firstDay       : 	1
+        firstDay  	   : 	1
     });
 
     Calendar.setup({
-        inputField     :    "endDateTime",     // id of the input field
-        ifFormat       :    "%Y-%m-%d",      // format of the input field
-        button         :    "endDateTime",  // trigger for the calendar (input field)
-        align          :    "BR",           // alignment (defaults to "Bl")
+        inputField     :    "endDateTime",      <%-- id of the input field --%>
+        ifFormat       :    "%Y-%m-%d",      <%-- format of the input field --%>
+        button         :    "endDateTime",   <%-- trigger for the calendar (button ID) --%>
+        align          :    "BR",            <%-- alignment (defaults to "Bl") --%>
         singleClick    :    true,
-        firstDay       : 	1
+        firstDay  	   : 	1
     });
 
 	Calendar.setup({
-        inputField     :    "lastRegistrationDateTime",     // id of the input field
-        ifFormat       :    "%Y-%m-%d",      // format of the input field
-        button         :    "trigger_lastRegistrationDateTime",  // trigger for the calendar (button ID)
-        align          :    "BR",           // alignment (defaults to "Bl")
+        inputField     :    "lastRegistrationDateTime",     <%-- id of the input field --%>
+        ifFormat       :    "%Y-%m-%d",      <%-- format of the input field --%>
+        button         :    "trigger_lastRegistrationDateTime",   <%-- trigger for the calendar (button ID) --%>
+        align          :    "BR",            <%-- alignment (defaults to "Bl") --%>
         singleClick    :    true,
-        firstDay  	   : 	1
+        firstDay  	   : 	1    
     });
 
     Calendar.setup({
-        inputField     :    "lastRegistrationDateTime",     // id of the input field
-        ifFormat       :    "%Y-%m-%d",      // format of the input field
-        button         :    "lastRegistrationDateTime",  // trigger for the calendar (input field)
-        align          :    "BR",           // alignment (defaults to "Bl")
+        inputField     :    "lastRegistrationDateTime",     <%-- id of the input field --%>
+        ifFormat       :    "%Y-%m-%d",      <%-- format of the input field --%>
+        button         :    "lastRegistrationDateTime",   <%-- trigger for the calendar (button ID) --%>
+        align          :    "BR",            <%-- alignment (defaults to "Bl") --%>
         singleClick    :    true,
-        firstDay  	   : 	1
+        firstDay  	   : 	1    
     });
 </script>
 
