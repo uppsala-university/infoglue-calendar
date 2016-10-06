@@ -24,8 +24,11 @@
 package org.infoglue.calendar.actions;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItem;
@@ -129,7 +132,8 @@ public class CreateResourceAction extends CalendarUploadAbstractAction
 					return Action.ERROR;
 				}
 
-                this.fileName = theFile.getName();
+				this.fileName = correctFileName(theFile.getName());
+
                 log.debug("FileName:" + this.fileName);
                 uploadedFile = new File(getTempFilePath() + File.separator + this.fileName);
                 theFile.write(uploadedFile);
@@ -169,6 +173,58 @@ public class CreateResourceAction extends CalendarUploadAbstractAction
 		log.info("Uploaded file's file type is: " + fileType);
 		List<String> allowedFileType = ResourceController.getController().getFileTypesForAssetKey(getAssetKey());
 		return allowedFileType == null ? true : allowedFileType.contains(fileType);
+	}
+
+	private String correctFileName(String fileName)
+	{
+		String defaultCharacter = "-";
+		Map<String, String> replacementMapping = new HashMap<String, String>();
+		// \u00D6 \u00C4 \u00C5 \u00f6 \u00E4 \u00E5  Ö Ä Å ö ä å
+		replacementMapping.put("\u00C4", "a");
+		replacementMapping.put("\u00C5", "a");
+		replacementMapping.put("\u00E4", "a");
+		replacementMapping.put("\u00E5", "a");
+		replacementMapping.put("\u00D6", "o");
+		replacementMapping.put("\u00F6", "o");
+
+		StringBuffer sb = new StringBuffer();
+		int n = fileName.length();
+		for (int i = 0; i < n; i++) 
+		{
+			char c = fileName.charAt(i);
+			if(c < 128 && c > 32)
+			{
+				if (Character.isLetterOrDigit(c) ||  c == '-' || c == '_' || c == '.')
+				{
+					sb.append(c);
+				}
+				else
+				{
+					String replaceChar = replacementMapping.get("" + c);
+					if (replaceChar != null && !replaceChar.equals(""))
+					{
+						sb.append(replaceChar);
+					}
+					else
+					{
+						sb.append(defaultCharacter);
+					}
+				}
+			}
+			else
+			{
+				String replaceChar = replacementMapping.get("" + c);
+				if (replaceChar != null && !replaceChar.equals(""))
+				{
+					sb.append(replaceChar);
+				}
+				else
+				{
+					sb.append(defaultCharacter);
+				}
+			}
+		}
+		return sb.toString().toLowerCase();
 	}
 
 	public String getEventIdAsString()
