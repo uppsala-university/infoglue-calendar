@@ -79,10 +79,12 @@
 				<header class="clearfix">
 					<div class="header-content">
 						<a href="<c:out value='${viewCalendarAdministrationUrl}'/>" class="left header-content-logo">
-							Uppsala universitets kalendarium
+							<ww:property value="this.getLabel('labels.internal.header.heading')"/>
 						</a>
 						<span class="header-content-login right">	
-							Inloggad som <ww:property value="this.getInfoGluePrincipal().firstName"/> <ww:property value="this.getInfoGluePrincipal().lastName"/> | <a href="<ww:property value="logoutUrl"/>">Logga ut</a>
+							<ww:property value="this.getParameterizedLabel('labels.internal.header.loggedinUser', this.getPrincipalDisplayName())"/>
+							|
+							<a href="<ww:property value="logoutUrl"/>"><ww:property value="this.getLabel('labels.internal.header.logout')"/></a>
 							<%--
 							Request: <c:out value="${request.remoteUser}"/><br/>
 							Request: <c:out value="${request.remoteHost}"/><br/>
