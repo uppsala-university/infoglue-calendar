@@ -97,14 +97,15 @@
         </ww:else>
     
             <div class="columnMedium">
-                <p class="portletHeadline"><a href="<c:out value="${attributeCategoryUrl}"/>" title="Visa kategori"><ww:property value="name"/> (<ww:property value="internalName"/>)</a></p>
+                <p class="portletHeadline"><a href="<c:out value="${attributeCategoryUrl}"/>" title="<ww:property value="this.getLabel('labels.internal.eventType.list.title')"/>"><ww:property value="name"/> (<ww:property value="internalName"/>)</a></p>
             </div>
             <div class="columnLong">
                 <p><ww:property value="description"/></p>
             </div>
             <div class="columnEnd">
-                <a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '&#196;r du s&#228;ker p&#229; att du vill radera &quot;<ww:property value="name"/>&quot;');" title="Radera kategori" class="delete"></a>
-                <a href="<c:out value="${attributeCategoryUrl}"/>" title="Redigera kategori" class="edit"></a>
+                <ww:set name="deleteConfirm" value="this.getVisualFormatter().escapeExtendedHTML(this.getParameterizedLabel('labels.internal.general.list.delete.confirm', name))" />
+                <a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '<ww:property value="#deleteConfirm"/>');" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.delete.title', name)"/>" class="delete"></a>
+                <a href="<c:out value="${attributeCategoryUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', name)"/>" class="edit"></a>
             </div>
             <div class="clear"></div>
         </div>
