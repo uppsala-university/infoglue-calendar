@@ -106,7 +106,7 @@
         </ww:else>
     
             <div class="columnMedium">
-                <p class="portletHeadline"><a href="<c:out value="${eventUrl}"/>" title="Visa '<ww:property value="#eventVersion.name"/>'"><ww:property value="#eventVersion.name"/><ww:if test="#eventVersion == null"><ww:property value="#event.id"/></ww:if></a>
+                <p class="portletHeadline"><a href="<c:out value="${eventUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.title', #eventVersion.name)"/>"><ww:property value="#eventVersion.name"/><ww:if test="#eventVersion == null"><ww:property value="#event.id"/></ww:if></a>
                 Inl&auml;nkade i <ww:iterator value="calendars"><ww:property value="name"/>,</ww:iterator><br/>
                 <ww:iterator value="owningCalendar.eventType.categoryAttributes">
                     <ww:if test="top.name == 'Evenemangstyp' || top.name == 'Eventtyp'">

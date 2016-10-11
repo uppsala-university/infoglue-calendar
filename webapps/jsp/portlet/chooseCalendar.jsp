@@ -39,7 +39,7 @@
                 <div class="evenrow">
             </ww:else>
 			
-				<a href="<c:out value="${createEventUrl}"/>" title="V&#228;lj '<ww:property value="name"/>'">
+				<a href="<c:out value="${createEventUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.title', name)"/>">
 					<div class="columnLong">
 						<p class="portletHeadline">
 							<ww:property value="name"/>
@@ -96,7 +96,7 @@
             </ww:else>
         
                 <div class="columnLong">
-                    <p class="portletHeadline"><a href="<c:out value="${createEventUrl}"/>" title="V&#228;lj '<ww:property value="name"/>'"><ww:property value="name"/></a></p>
+                    <p class="portletHeadline"><a href="<c:out value="${createEventUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.title', name)"/>"><ww:property value="name"/></a></p>
                 </div>
                 <div class="columnMedium">
                     <p><ww:property value="description"/></p>

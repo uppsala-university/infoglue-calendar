@@ -155,7 +155,7 @@
         </ww:else>
     
             <div class="columnMedium">
-                <p class="portletHeadline"><a href="<c:out value="${eventUrl}"/>" title="Visa '<ww:property value="#eventVersion.name"/>'"><ww:property value="#eventVersion.name"/></a></p>
+                <p class="portletHeadline"><a href="<c:out value="${eventUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.title', #eventVersion.name)"/>"><ww:property value="#eventVersion.name"/></a></p>
             </div>
             <div class="columnMedium">
                 <div class="eventDescription"><ww:property value="#eventVersion.shortDescription"/>&nbsp;</div>
