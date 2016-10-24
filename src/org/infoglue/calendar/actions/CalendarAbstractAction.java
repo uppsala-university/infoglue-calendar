@@ -24,6 +24,8 @@
 package org.infoglue.calendar.actions;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.security.Principal;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -48,6 +50,7 @@ import java.util.TreeSet;
 import javax.portlet.RenderRequest;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.FlushMode;
@@ -1385,6 +1388,16 @@ public class CalendarAbstractAction extends ActionSupport
 		}
 
 		return name;
+	}
+
+	public String htmlEncodeValue(String value)
+	{
+		try {
+			return URLEncoder.encode(value, "utf-8");
+		} catch (UnsupportedEncodingException ex) {
+			log.error("Tried to encode value witsh unknown encoding. Message: " + ex.getMessage());
+			return value;
+		}
 	}
 
 }

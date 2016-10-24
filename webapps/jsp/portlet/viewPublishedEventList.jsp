@@ -37,30 +37,6 @@
     <portlet:renderURL var="filterUrl">
         <portlet:param name="action" value="ViewPublishedEventList"/>
     </portlet:renderURL>
-    
-    <portlet:renderURL var="viewListUrl">
-        <portlet:param name="action" value="ViewPublishedEventList"/>
-    </portlet:renderURL>
-    
-    <portlet:renderURL var="confirmUrl">
-        <portlet:param name="action" value="Confirm"/>
-    </portlet:renderURL>
-    
-    <script type="text/javascript">
-        function submitDelete(okUrl, confirmMessage)
-        {
-            //alert("okUrl:" + okUrl);
-            document.confirmForm.okUrl.value = okUrl;
-            document.confirmForm.confirmMessage.value = confirmMessage;
-            document.confirmForm.submit();
-        }
-    </script>
-    <form name="confirmForm" action="<c:out value="${confirmUrl}"/>" method="post">
-        <input type="hidden" name="confirmTitle" value="<ww:property value="this.getLabel('labels.internal.general.list.delete.confirm.header')"/>"/>
-        <input type="hidden" name="confirmMessage" value="Fixa detta"/>
-        <input type="hidden" name="okUrl" value=""/>
-        <input type="hidden" name="cancelUrl" value="<c:out value="${viewListUrl}"/>"/>	
-    </form>
 
     <ww:if test="categoryId == null">
         <div id="columnFilterArea" class="columnlabelarea" style="display:none;">
@@ -142,8 +118,8 @@
                 <p style="white-space: nowrap;"><ww:property value="this.formatDate(startDateTime.time, 'yyyy-MM-dd')"/></p>
             </div>
             <div class="columnEnd">
-            	<ww:set name="deleteConfirm" value="this.getVisualFormatter().escapeExtendedHTML(this.getParameterizedLabel('labels.internal.general.list.delete.confirm', #eventVersion.name))" />
-                <a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '<ww:property value="#deleteConfirm"/>');" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.delete.title', #eventVersion.name)"/>" class="delete"></a>
+				<c:set var="cancelViewAction" scope="request">ViewPublishedEventList</c:set>
+				<%@ include file="includes/deleteEventAction.jsp" %>
                 <a href="<c:out value="${eventUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', #eventVersion.name)"/>" class="edit"></a>
             </div>
             <div class="clear"></div>
