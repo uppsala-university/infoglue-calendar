@@ -32,7 +32,7 @@
 
 <form name="deleteForm" action="<c:out value="${confirmUrl}"/>" method="post">
 	<input type="hidden" name="confirmTitle" value="<ww:property value="this.htmlEncodeValue(this.getLabel('labels.internal.general.list.delete.confirm.header'))"/>"/>
-	<input type="hidden" name="confirmMessage" value="<ww:property value="this.htmlEncodeValue(this.getParameterizedLabel(\'labels.internal.general.list.delete.confirm\', #eventVersion.name))"/>"/>
+	<input type="hidden" name="confirmMessage" value="<ww:property value="this.htmlEncodeValue(this.getParameterizedLabel('labels.internal.general.list.delete.confirm', #eventVersion.name))"/>"/>
 	<input type="hidden" name="okUrl" value="<c:out value="${deleteUrl}"/>"/>
 	<input type="hidden" name="cancelUrl" value="<c:out value="${cancelUrl}"/>"/>	
 </form>

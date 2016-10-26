@@ -129,8 +129,7 @@
             </div>
     
             <div class="columnEnd">
-                <a href="<c:out value="${deleteUrl}"/>" title="Radera '<ww:property value="#eventVersion.name"/>'" class="delete"></a>
-                <!--<a href="<c:out value="${eventUrl}"/>" title="Redigera '<ww:property value="#eventVersion.name"/>'" class="edit"></a>-->
+                <a href="<c:out value="${deleteUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.delete.title', #eventVersion.name)"/>" class="delete"></a>
             </div>
             <div class="clear"></div>
         </div>

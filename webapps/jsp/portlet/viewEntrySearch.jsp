@@ -276,7 +276,7 @@
                     
                     <ww:if test="top == 'Name'">
                         <div class="columnMediumShort">
-                            <p class="portletHeadline"><a href="<c:out value="${viewEntryRenderURL}"/>" title="Redigera '<c:out value="${firstName}"/>'"><c:out value="${entryId}"/> - <c:out value="${firstName}"/> <c:out value="${lastName}"/></a></p>
+                            <p class="portletHeadline"><a href="<c:out value="${viewEntryRenderURL}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', firstName)"/>"><c:out value="${entryId}"/> - <c:out value="${firstName}"/> <c:out value="${lastName}"/></a></p>
                         </div>
                     </ww:if>
                     <ww:if test="top == 'Event'">
@@ -313,7 +313,7 @@
                 </ww:iterator>
                     <div class="columnEnd">
                         <a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '&#196;r du s&#228;ker p&#229; att du vill radera &quot;<ww:property value="#name"/>&quot;');" title="Radera '<ww:property value="entry.firstName"/>'" class="delete"></a>
-                        <a href="<c:out value="${viewEntryRenderURL}"/>" title="Redigera '<ww:property value="entry.firstName"/>'" class="edit"></a>
+                        <a href="<c:out value="${viewEntryRenderURL}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', entry.firstName)"/>" class="edit"></a>
                     </div>
                     <div class="clear"></div>
                 

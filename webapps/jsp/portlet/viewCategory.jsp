@@ -179,14 +179,14 @@
         </ww:else>
     
             <div class="columnLong">
-                <p class="portletHeadline"><a href="<c:out value="${categoryUrl}"/>" title="Redigera '<ww:property value="#name"/>'"><ww:property value="#name"/> (<ww:property value="internalName"/>)</a></p>
+                <p class="portletHeadline"><a href="<c:out value="${categoryUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', #name)"/>"><ww:property value="#name"/> (<ww:property value="internalName"/>)</a></p>
             </div>
             <div class="columnMedium">
                 <p><ww:property value="description"/></p>
             </div>
             <div class="columnEnd">
                 <a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '&#196;r du s&#228;ker p&#229; att du vill radera &quot;<ww:property value="#name"/>&quot;');" title="Radera '<ww:property value="#name"/>'" class="delete"></a>
-                <a href="<c:out value="${categoryUrl}"/>" title="Redigera '<ww:property value="#name"/>'" class="edit"></a>
+                <a href="<c:out value="${categoryUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', #name)"/>" class="edit"></a>
             </div>
             <div class="clear"></div>
         </div>
