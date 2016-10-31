@@ -43,10 +43,9 @@
 			<a href="<c:out value="${createSubscriptionUrl}"/>" title="Skapa ny post"><ww:property value="this.getLabel('labels.internal.subscription.addSubscription')"/></a>
 		<div class="clear"></div>
 	</div>
-    <div class="columnlabelarea">
+    <div class="row clearfix columnlabelarea">
         <div class="columnLong"><p><ww:property value="this.getLabel('labels.internal.subscribedCalendarNames')"/></p></div>
         <div class="columnMedium"><p><ww:property value="this.getLabel('labels.internal.calendar.description')"/></p></div>
-        <div class="clear"></div>
     </div>
     
     <ww:iterator value="subscribers" status="rowstatus">
@@ -59,13 +58,8 @@
             <portlet:param name="subscriptionId" value='<%= pageContext.getAttribute("subscriptionId").toString() %>'/>
         </portlet:actionURL>
         
-        <ww:if test="#rowstatus.odd == true">
-            <div class="oddrow">
-        </ww:if>
-        <ww:else>
-            <div class="evenrow">
-        </ww:else>
-    
+
+        <div class="row clearfix">
             <div class="columnLong">
                 <p class="portletHeadline"><ww:property value="top.calendar.name"/></p>
             </div>
@@ -75,21 +69,18 @@
             <div class="columnEnd">
                 <a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '&#196;r du s&#228;ker p&#229; att du vill radera &quot;<ww:property value="#name"/>&quot;');" title="Radera '<ww:property value="top.calendar.name"/>'" class="delete"></a>
             </div>
-            <div class="clear"></div>
+
         </div>
             
     </ww:iterator>
     
     <ww:if test="subscribers == null || subscribers.size() == 0">
-        <div class="oddrow">
+        <div class="row clearfix">
             <div class="columnLong"><p class="portletHeadline"><ww:property value="this.getLabel('labels.internal.applicationNoItemsFound')"/></a></p></div>
             <div class="columnMedium"></div>
             <div class="columnEnd"></div>
-            <div class="clear"></div>
         </div>
     </ww:if>
 </div>
-
-<div style="clear:both"></div>
 
 <%@ include file="adminFooter.jsp" %>

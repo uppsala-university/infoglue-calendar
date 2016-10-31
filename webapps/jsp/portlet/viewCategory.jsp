@@ -146,10 +146,9 @@
     </div>
     
     
-    <div class="columnlabelarea">
+    <div class="columnlabelarea row clearfix">
         <div class="columnLong"><p><ww:property value="this.getLabel('labels.internal.category.childCategories')"/></p></div>
         <div class="columnMedium"><p><ww:property value="this.getLabel('labels.internal.category.description')"/></p></div>
-        <div class="clear"></div>
     </div>
 
 	<ww:set name="sortedChildren" value="this.getSortedChildren(category.children)"/>
@@ -171,37 +170,32 @@
             <portlet:param name="deleteCategoryId" value='<%= pageContext.getAttribute("categoryId").toString() %>'/>
         </portlet:actionURL>
                 
-        <ww:if test="#rowstatus.odd == true">
-            <div class="oddrow">
-        </ww:if>
-        <ww:else>
-            <div class="evenrow">
-        </ww:else>
-    
-            <div class="columnLong">
-                <p class="portletHeadline"><a href="<c:out value="${categoryUrl}"/>" title="Redigera '<ww:property value="#name"/>'"><ww:property value="#name"/> (<ww:property value="internalName"/>)</a></p>
-            </div>
-            <div class="columnMedium">
-                <p><ww:property value="description"/></p>
-            </div>
+        <div class="row clearfix">
+			<a href="<c:out value="${categoryUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.title', #name)"/>'">
+				<div class="columnLong">
+					<p class="portletHeadline">
+						<ww:property value="#name"/> (<ww:property value="internalName"/>)
+					</p>
+				</div>
+				<div class="columnMedium">
+					<p><ww:property value="description"/></p>
+				</div>
+			</a>
             <div class="columnEnd">
                 <a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '&#196;r du s&#228;ker p&#229; att du vill radera &quot;<ww:property value="#name"/>&quot;');" title="Radera '<ww:property value="#name"/>'" class="delete"></a>
                 <a href="<c:out value="${categoryUrl}"/>" title="Redigera '<ww:property value="#name"/>'" class="edit"></a>
             </div>
-            <div class="clear"></div>
         </div>
     </ww:iterator>
     
     <ww:if test="category.children == null || category.children.size() == 0">
-        <div class="oddrow">
+        <div class="row clearfix">
             <div class="columnLong"><p class="portletHeadline"><ww:property value="this.getLabel('labels.internal.applicationNoItemsFound')"/></a></p></div>
             <div class="columnMedium"></div>
             <div class="columnEnd"></div>
-            <div class="clear"></div>
         </div>
     </ww:if>
 
 </div>
-<div style="clear:both"></div>
 
 <%@ include file="adminFooter.jsp" %>

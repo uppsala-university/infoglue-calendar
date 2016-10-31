@@ -65,19 +65,16 @@
             <portlet:param name="locationId" value='<%= pageContext.getAttribute("locationId").toString() %>'/>
         </portlet:actionURL>
     
-        <ww:if test="#rowstatus.odd == true">
-            <div class="oddrow">
-        </ww:if>
-        <ww:else>
-            <div class="evenrow">
-        </ww:else>
-    
-            <div class="columnLong">
-                <p class="portletHeadline"><a href="<c:out value="${locationUrl}"/>" title="Redigera '<ww:property value="#name"/>'"><ww:property value="#name"/></a></p>
-            </div>
-            <div class="columnMedium">
-                <p><ww:property value="description"/></p>
-            </div>
+        <div class="row clearfix">
+   
+			<a href="<c:out value="${locationUrl}"/>" title="Redigera '<ww:property value="#name"/>'">
+				<div class="columnLong">
+					<p class="portletHeadline"><ww:property value="#name"/></p>
+				</div>
+				<div class="columnMedium">
+					<p><ww:property value="description"/></p>
+				</div>
+			</a>
             <div class="columnEnd">
                 <a href="javascript:submitDelete('<c:out value="${deleteLocationUrl}"/>', '&#196;r du s&#228;ker p&#229; att du vill radera &quot;<ww:property value="name"/>&quot;');" title="Radera '<ww:property value="name"/>'" class="delete"></a>
                 <a href="<c:out value="${locationUrl}"/>" title="Redigera '<ww:property value="name"/>'" class="edit"></a>
@@ -88,15 +85,12 @@
     </ww:iterator>
     
     <ww:if test="locations == null || locations.size() == 0">
-        <div class="oddrow">
+        <div class="row clearfix">
             <div class="columnLong"><p class="portletHeadline"><ww:property value="this.getLabel('labels.internal.applicationNoItemsFound')"/></a></p></div>
             <div class="columnMedium"></div>
             <div class="columnEnd"></div>
-            <div class="clear"></div>
         </div>
     </ww:if>
 </div>
-
-<div style="clear:both"></div>
 
 <%@ include file="adminFooter.jsp" %>

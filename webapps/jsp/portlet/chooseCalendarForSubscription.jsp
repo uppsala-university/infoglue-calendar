@@ -27,12 +27,7 @@
             <portlet:param name="calendarId" value='<%= pageContext.getAttribute("calendarId").toString() %>'/>
         </portlet:actionURL>
         
-        <ww:if test="#rowstatus.odd == true">
-            <div class="oddrow">
-        </ww:if>
-        <ww:else>
-            <div class="evenrow">
-        </ww:else>
+		<div class="row clearfix">
 
 			<a href="<c:out value="${createEventSubscriptionUrl}"/>" title="Välj '<ww:property value="name"/>'">
 				<div class="columnLong">
@@ -46,21 +41,18 @@
 			</a>
             <div class="columnEnd">
             </div>
-            <div class="clear"></div>
         </div>
             
     </ww:iterator>
     
     <ww:if test="calendars == null || calendars.size() == 0">
-        <div class="oddrow">
+        <div class="row clearfix">
             <div class="columnLong"><p class="portletHeadline"><ww:property value="this.getLabel('labels.internal.applicationNoItemsFound')"/></a></p></div>
             <div class="columnMedium"></div>
             <div class="columnEnd"></div>
-            <div class="clear"></div>
         </div>
     </ww:if>
     
 </div>
-<div style="clear:both;"></div>
 
 <%@ include file="adminFooter.jsp" %>

@@ -40,10 +40,9 @@
 </nav>
 
 <div class="mainCol">
-    <div class="columnlabelarea">
+    <div class="columnlabelarea row clearfix">
         <div class="columnLong"><p><ww:property value="this.getLabel('labels.internal.calendar.name')"/></p></div>
         <div class="columnMedium"><p><ww:property value="this.getLabel('labels.internal.calendar.description')"/></p></div>
-        <div class="clear"></div>
     </div>
     
     <ww:iterator value="calendars" status="rowstatus">
@@ -61,43 +60,34 @@
             <portlet:param name="calendarId" value='<%= pageContext.getAttribute("calendarId").toString() %>'/>
         </portlet:actionURL>
                 
-        <ww:if test="#rowstatus.odd == true">
-            <div class="oddrow">
-        </ww:if>
-        <ww:else>
-            <div class="evenrow">
-        </ww:else>
-		
-		<a href="<c:out value="${calendarUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.title', name)"/>">
-            <div class="columnLong">
-                <p class="portletHeadline">
-					<ww:property value="name"/>
-				</p>
-            </div>
-            <div class="columnMedium">
-                <p><ww:property value="description"/></p>
-            </div>
-		</a>
-		<div class="columnEnd">
-			<ww:set name="deleteConfirm" value="this.getVisualFormatter().escapeExtendedHTML(this.getParameterizedLabel('labels.internal.general.list.delete.confirm', name))" />
-			<a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '<ww:property value="#deleteConfirm"/>');" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.delete.title', name)"/>" class="delete"></a>
-			<a href="<c:out value="${calendarUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', name)"/>" class="edit"></a>
+        <div class="row clearfix">		
+			<a href="<c:out value="${calendarUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.title', name)"/>">
+				<div class="columnLong">
+					<p class="portletHeadline">
+						<ww:property value="name"/>
+					</p>
+				</div>
+				<div class="columnMedium">
+					<p><ww:property value="description"/></p>
+				</div>
+			</a>
+			<div class="columnEnd">
+				<ww:set name="deleteConfirm" value="this.getVisualFormatter().escapeExtendedHTML(this.getParameterizedLabel('labels.internal.general.list.delete.confirm', name))" />
+				<a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '<ww:property value="#deleteConfirm"/>');" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.delete.title', name)"/>" class="delete"></a>
+				<a href="<c:out value="${calendarUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', name)"/>" class="edit"></a>
+			</div>
 		</div>
-        <div class="clear"></div>
-	</div>
             
     </ww:iterator>
     
     <ww:if test="calendars == null || calendars.size() == 0">
-        <div class="oddrow">
+        <div class="row clearfix">
             <div class="columnLong"><p class="portletHeadline"><ww:property value="this.getLabel('labels.internal.applicationNoItemsFound')"/></a></p></div>
             <div class="columnMedium"></div>
             <div class="columnEnd"></div>
-            <div class="clear"></div>
         </div>
     </ww:if>
 
 </div>
-<div style="clear:both"></div>
 
 <%@ include file="adminFooter.jsp" %>
