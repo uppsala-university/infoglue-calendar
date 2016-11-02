@@ -5,6 +5,8 @@
 
 CKEDITOR.editorConfig = function( config ) {
 	// IG Defaults
+	config.contentsCss = '/infoglueCalendar/applications/ckeditor/uu-contents.css';
+	
 	config.toolbar_longDescription = [
 		{ name: 'basicstyles', items: ['Bold','Italic'] },
 		{ name: 'links', items: ['Link','Unlink'] },

@@ -122,23 +122,23 @@
                 <portlet:param name="eventId" value="1"/>
             </portlet:renderURL>
                     
-            <div class="columnlabelarea">
+            <div class="columnlabelarea row clearfix">
                 <ww:iterator value="resultValues">
                    
                     <ww:if test="top == 'Name'">
-                        <div class="columnMediumShort"><p>#<ww:property value="this.getLabel('labels.internal.soba.idColumnHeader')"/> - <ww:property value="this.getLabel('labels.internal.soba.nameColumnHeader')"/></p></div>
+                        <div class="columnShort"><p>#<ww:property value="this.getLabel('labels.internal.soba.idColumnHeader')"/> - <ww:property value="this.getLabel('labels.internal.soba.nameColumnHeader')"/></p></div>
                     </ww:if>
                     <ww:if test="top == 'Event'">
                         <div class="columnShort"><p><ww:property value="this.getLabel('labels.internal.soba.eventColumnHeader')"/></p></div>
                     </ww:if>
                     <ww:if test="top == 'Email'">
-                        <div class="columnMediumShort"><p><ww:property value="this.getLabel('labels.internal.soba.emailColumnHeader')"/></p></div>
+                        <div class="columnShort"><p><ww:property value="this.getLabel('labels.internal.soba.emailColumnHeader')"/></p></div>
                     </ww:if>
                     <ww:if test="top == 'Organisation'">
-                        <div class="columnMediumShort"><p><ww:property value="this.getLabel('labels.internal.soba.organisationColumnHeader')"/></p></div>	
+                        <div class="columnShort"><p><ww:property value="this.getLabel('labels.internal.soba.organisationColumnHeader')"/></p></div>	
                     </ww:if>
                     <ww:if test="top == 'Address'">
-                        <div class="columnMediumShort"><p><ww:property value="this.getLabel('labels.internal.soba.addressColumnHeader')"/></p></div>
+                        <div class="columnShort"><p><ww:property value="this.getLabel('labels.internal.soba.addressColumnHeader')"/></p></div>
                     </ww:if>
                     <ww:if test="top == 'Zipcode'">
                         <div class="columnShort"><p><ww:property value="this.getLabel('labels.internal.soba.zipcodeColumnHeader')"/></p></div>
@@ -270,7 +270,7 @@
 	                <ww:iterator value="resultValues">
 	                    
 	                    <ww:if test="top == 'Name'">
-	                        <div class="columnMediumShort">
+	                        <div class="columnShort">
 	                            <p class="portletHeadline"><a href="<c:out value="${viewEntryRenderURL}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', firstName)"/>"><c:out value="${entryId}"/> - <c:out value="${firstName}"/> <c:out value="${lastName}"/></a></p>
 	                        </div>
 	                    </ww:if>
@@ -280,17 +280,17 @@
 	                        </div>
 	                    </ww:if>
 	                    <ww:if test="top == 'Email'">
-	                        <div class="columnMediumShort">
+	                        <div class="columnShort">
 	                            <p><c:out value="${email}"/></p>
 	                        </div>
 	                    </ww:if>
 	                    <ww:if test="top == 'Organisation'">
-	                        <div class="columnMediumShort">
+	                        <div class="columnShort">
 	                            <p><c:out value="${organisation}"/></p>
 	                        </div>
 	                    </ww:if>
 	                    <ww:if test="top == 'Address'">
-	                        <div class="columnMediumShort">
+	                        <div class="columnShort">
 	                            <p><c:out value="${address}"/></p>
 	                        </div>
 	                    </ww:if>
