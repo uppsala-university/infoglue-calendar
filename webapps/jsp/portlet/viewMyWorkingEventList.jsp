@@ -49,7 +49,7 @@
         </portlet:renderURL>
 
  		<div class="row clearfix">
-			<a href="<c:out value="${eventUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.title', #eventVersion.name)"/>">            <div class="columnMedium">
+			<a href="<c:out value="${eventUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.title', #eventVersion.name)"/>">
 				<div class="columnMedium">
 	                <p class="portletHeadline">
 	                	<ww:property value="#eventVersion.name"/><ww:if test="#eventVersion == null"><ww:property value="#event.id"/></ww:if>
@@ -69,10 +69,10 @@
 	                <div class="eventDescription"><ww:property value="#eventVersion.shortDescription"/>&nbsp;</div>
 	            </div>
 	            <div class="columnShort">
-	                <p><ww:property value="owningCalendar.name"/>nbsp;</p>
+	                <p><ww:property value="owningCalendar.name"/>&nbsp;</p>
 	            </div>
 	            <div class="columnDate">
-	                <p style="white-space: nowrap;"><ww:property value="this.formatDate(startDateTime.time, 'yyyy-MM-dd')"/>nbsp;</p>
+	                <p style="white-space: nowrap;"><ww:property value="this.formatDate(startDateTime.time, 'yyyy-MM-dd')"/>&nbsp;</p>
 	            </div>
 			</a>
 
@@ -100,7 +100,9 @@
             
         <ww:if test="events == null || events.size() == 0">
             <div class="row clearfix">
-                <div class="columnMedium"><p class="portletHeadline"><ww:property value="this.getLabel('labels.internal.applicationNoItemsFound')"/></a></p></div>
+                <div class="columnMedium">
+					<p class="portletHeadline"><ww:property value="this.getLabel('labels.internal.applicationNoItemsFound')"/></a></p>
+				</div>
                 <div class="columnMedium">&nbsp;</div>
 				<div class="columnShort">&nbsp;</div>
 				<div class="columnDate">&nbsp;</div>

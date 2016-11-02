@@ -41,7 +41,7 @@
 
 <div class="mainCol">
 
-    <div class="columnlabelarea">
+    <div class="columnlabelarea row clearfix">
         <div class="columnLong"><p><ww:property value="this.getLabel('labels.internal.location.name')"/></p></div>
         <div class="columnMedium"><p><ww:property value="this.getLabel('labels.internal.location.description')"/></p></div>
     </div>
