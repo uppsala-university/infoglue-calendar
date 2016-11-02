@@ -265,52 +265,53 @@
                     </c:if>			
                 </portlet:actionURL>
                         
+ 				<div class="row clearfix">
+            	
+	                <ww:iterator value="resultValues">
+	                    
+	                    <ww:if test="top == 'Name'">
+	                        <div class="columnMediumShort">
+	                            <p class="portletHeadline"><a href="<c:out value="${viewEntryRenderURL}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', firstName)"/>"><c:out value="${entryId}"/> - <c:out value="${firstName}"/> <c:out value="${lastName}"/></a></p>
+	                        </div>
+	                    </ww:if>
+	                    <ww:if test="top == 'Event'">
+	                        <div class="columnShort">
+	                            <p><c:out value="${event.name}"/></p>
+	                        </div>
+	                    </ww:if>
+	                    <ww:if test="top == 'Email'">
+	                        <div class="columnMediumShort">
+	                            <p><c:out value="${email}"/></p>
+	                        </div>
+	                    </ww:if>
+	                    <ww:if test="top == 'Organisation'">
+	                        <div class="columnMediumShort">
+	                            <p><c:out value="${organisation}"/></p>
+	                        </div>
+	                    </ww:if>
+	                    <ww:if test="top == 'Address'">
+	                        <div class="columnMediumShort">
+	                            <p><c:out value="${address}"/></p>
+	                        </div>
+	                    </ww:if>
+	                    <ww:if test="top == 'Zipcode'">
+	                        <div class="columnShort">
+	                            <p><c:out value="${zipcode}"/></p>
+	                        </div>
+	                    </ww:if>
+	                    <ww:if test="top == 'City'">
+	                        <div class="columnShort">
+	                            <p><c:out value="${city}"/></p>			   		
+	                        </div>
+	                    </ww:if>
+	        
+	                </ww:iterator>
 
-				<div class="row clearfix">
-					<ww:iterator value="resultValues">
-						
-						<ww:if test="top == 'Name'">
-							<div class="columnMediumShort">
-								<p class="portletHeadline"><a href="<c:out value="${viewEntryRenderURL}"/>" title="Redigera '<c:out value="${firstName}"/>'"><c:out value="${entryId}"/> - <c:out value="${firstName}"/> <c:out value="${lastName}"/></a></p>
-							</div>
-						</ww:if>
-						<ww:if test="top == 'Event'">
-							<div class="columnShort">
-								<p><c:out value="${event.name}"/></p>
-							</div>
-						</ww:if>
-						<ww:if test="top == 'Email'">
-							<div class="columnMediumShort">
-								<p><c:out value="${email}"/></p>
-							</div>
-						</ww:if>
-						<ww:if test="top == 'Organisation'">
-							<div class="columnMediumShort">
-								<p><c:out value="${organisation}"/></p>
-							</div>
-						</ww:if>
-						<ww:if test="top == 'Address'">
-							<div class="columnMediumShort">
-								<p><c:out value="${address}"/></p>
-							</div>
-						</ww:if>
-						<ww:if test="top == 'Zipcode'">
-							<div class="columnShort">
-								<p><c:out value="${zipcode}"/></p>
-							</div>
-						</ww:if>
-						<ww:if test="top == 'City'">
-							<div class="columnShort">
-								<p><c:out value="${city}"/></p>			   		
-							</div>
-						</ww:if>
-			
-					</ww:iterator>
-                    <div class="columnEnd">
+                   <div class="columnEnd">
                         <a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '&#196;r du s&#228;ker p&#229; att du vill radera &quot;<ww:property value="#name"/>&quot;');" title="Radera '<ww:property value="entry.firstName"/>'" class="delete"></a>
-                        <a href="<c:out value="${viewEntryRenderURL}"/>" title="Redigera '<ww:property value="entry.firstName"/>'" class="edit"></a>
+                        <a href="<c:out value="${viewEntryRenderURL}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', entry.firstName)"/>" class="edit"></a>
                     </div>
-                
+
                 </div>
             
             </ww:iterator>

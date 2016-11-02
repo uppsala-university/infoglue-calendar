@@ -27,7 +27,7 @@
 	}
 </script>
 <form name="confirmForm" action="<c:out value="${confirmUrl}"/>" method="post">
-	<input type="hidden" name="confirmTitle" value="Radera - bekr&#228;fta"/>
+	<input type="hidden" name="confirmTitle" value="<ww:property value="this.htmlEncodeValue(this.getLabel('labels.internal.general.list.delete.confirm.header'))"/>"/>
 	<input type="hidden" name="confirmMessage" value="Fixa detta"/>
 	<input type="hidden" name="okUrl" value=""/>
 	<input type="hidden" name="cancelUrl" value="<c:out value="${viewListUrl}"/>"/>	
@@ -44,7 +44,6 @@
     <div class="columnlabelarea">
         <div class="columnLong"><p><ww:property value="this.getLabel('labels.internal.location.name')"/></p></div>
         <div class="columnMedium"><p><ww:property value="this.getLabel('labels.internal.location.description')"/></p></div>
-        <div class="clear"></div>
     </div>
     
     <ww:iterator value="locations" status="rowstatus">
@@ -64,25 +63,22 @@
             <portlet:param name="action" value="DeleteLocation"/>
             <portlet:param name="locationId" value='<%= pageContext.getAttribute("locationId").toString() %>'/>
         </portlet:actionURL>
-    
-        <div class="row clearfix">
-   
-			<a href="<c:out value="${locationUrl}"/>" title="Redigera '<ww:property value="#name"/>'">
-				<div class="columnLong">
+		
+		<div class="row clearfix">
+			<a href="<c:out value="${locationUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', #name)"/>"><ww:property value="#name"/>				<div class="columnLong">
 					<p class="portletHeadline"><ww:property value="#name"/></p>
 				</div>
 				<div class="columnMedium">
 					<p><ww:property value="description"/></p>
 				</div>
 			</a>
-            <div class="columnEnd">
-                <a href="javascript:submitDelete('<c:out value="${deleteLocationUrl}"/>', '&#196;r du s&#228;ker p&#229; att du vill radera &quot;<ww:property value="name"/>&quot;');" title="Radera '<ww:property value="name"/>'" class="delete"></a>
-                <a href="<c:out value="${locationUrl}"/>" title="Redigera '<ww:property value="name"/>'" class="edit"></a>
-            </div>
-            <div class="clear"></div>
-        </div>
-    
-    </ww:iterator>
+			<div class="columnEnd">
+				<a href="javascript:submitDelete('<c:out value="${deleteLocationUrl}"/>', '<ww:property value="this.htmlEncodeValue(this.getParameterizedLabel('labels.internal.general.list.delete.confirm', #name))"/>');" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.delete.title', #name)"/>" class="delete"></a>
+				<a href="<c:out value="${locationUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', #name)"/>" class="edit"></a>
+			</div>
+		</div>
+	
+	</ww:iterator>
     
     <ww:if test="locations == null || locations.size() == 0">
         <div class="row clearfix">

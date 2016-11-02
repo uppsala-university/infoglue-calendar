@@ -27,7 +27,7 @@
 	}
 </script>
 <form name="confirmForm" action="<c:out value="${confirmUrl}"/>" method="post">
-	<input type="hidden" name="confirmTitle" value="<ww:property value="this.getLabel('labels.internal.general.list.delete.confirm.header')"/>"/>
+	<input type="hidden" name="confirmTitle" value="<ww:property value="this.htmlEncodeValue(this.getLabel('labels.internal.general.list.delete.confirm.header'))"/>"/>
 	<input type="hidden" name="confirmMessage" value="Fixa detta"/>
 	<input type="hidden" name="okUrl" value=""/>
 	<input type="hidden" name="cancelUrl" value="<c:out value="${viewListUrl}"/>"/>	
@@ -70,7 +70,7 @@
 				</div>
 			</a>
             <div class="columnEnd">
-            	<ww:set name="deleteConfirm" value="this.getVisualFormatter().escapeExtendedHTML(this.getParameterizedLabel('labels.internal.general.list.delete.confirm', name))" />
+                <ww:set name="deleteConfirm" value="this.htmlEncodeValue(this.getParameterizedLabel('labels.internal.general.list.delete.confirm', name))" />
                 <a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '<ww:property value="#deleteConfirm"/>');" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.delete.title', name)"/>'" class="delete"></a>
                 <a href="<c:out value="${eventTypeUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', name)"/>" class="edit"></a>
             </div>

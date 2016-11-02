@@ -36,30 +36,6 @@
     <portlet:renderURL var="filterUrl">
         <portlet:param name="action" value="ViewPublishedEventList"/>
     </portlet:renderURL>
-    
-    <portlet:renderURL var="viewListUrl">
-        <portlet:param name="action" value="ViewPublishedEventList"/>
-    </portlet:renderURL>
-    
-    <portlet:renderURL var="confirmUrl">
-        <portlet:param name="action" value="Confirm"/>
-    </portlet:renderURL>
-    
-    <script type="text/javascript">
-        function submitDelete(okUrl, confirmMessage)
-        {
-            //alert("okUrl:" + okUrl);
-            document.confirmForm.okUrl.value = okUrl;
-            document.confirmForm.confirmMessage.value = confirmMessage;
-            document.confirmForm.submit();
-        }
-    </script>
-    <form name="confirmForm" action="<c:out value="${confirmUrl}"/>" method="post">
-        <input type="hidden" name="confirmTitle" value="<ww:property value="this.getLabel('labels.internal.general.list.delete.confirm.header')"/>"/>
-        <input type="hidden" name="confirmMessage" value="Fixa detta"/>
-        <input type="hidden" name="okUrl" value=""/>
-        <input type="hidden" name="cancelUrl" value="<c:out value="${viewListUrl}"/>"/>	
-    </form>
 
     <ww:if test="categoryId == null">
         <div id="columnFilterArea" class="columnlabelarea row clearfix" style="display:none;">
@@ -110,40 +86,40 @@
             <portlet:param name="action" value="DeleteEvent!published"/>
             <calendar:evalParam name="eventId" value="${eventId}"/>
         </portlet:actionURL>
-            
-        <div class="row clearfix">    
-			<a href="<c:out value="${eventUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.title', #eventVersion.name)"/>">            
-				<div class="columnMedium">
-					<p class="portletHeadline">
-						<ww:property value="#eventVersion.name"/><ww:if test="#eventVersion == null"><ww:property value="#event.id"/></ww:if>
-					</p>
+        
+        <div class="row clearfix">
+			<a href="<c:out value="${eventUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.title', #eventVersion.name)"/>">
+	            <div class="columnMedium">
+	                <p class="portletHeadline">
+	                	<ww:property value="#eventVersion.name"/><ww:if test="#eventVersion == null"><ww:property value="#event.id"/></ww:if>
+	                </p>
 					<p class="row-category">
-						<ww:iterator value="owningCalendar.eventType.categoryAttributes">
-							<ww:if test="top.name == 'Evenemangstyp' || top.name == 'Eventtyp'">
-								<ww:set name="selectedCategories" value="this.getEventCategories('#event', top)"/>
-								<ww:iterator value="#selectedCategories" status="rowstatus">
-									<ww:property value="top.getLocalizedName(#languageCode, 'sv')"/><ww:if test="!#rowstatus.last">, </ww:if>
-								</ww:iterator>
-							</ww:if>
-						</ww:iterator>
-					</p>
-				</div>
-				<div class="columnMedium">
-					<p class="eventDescription"><ww:property value="#eventVersion.shortDescription"/>&nbsp;</p>
-				</div>
-				<div class="columnShort">
-					<p><ww:property value="owningCalendar.name"/></p>
-				</div>
-				<div class="columnDate">
-					<p style="white-space: nowrap;"><ww:property value="this.formatDate(startDateTime.time, 'yyyy-MM-dd')"/></p>
-				</div>
+	                    <ww:iterator value="owningCalendar.eventType.categoryAttributes">
+	                        <ww:if test="top.name == 'Evenemangstyp' || top.name == 'Eventtyp'">
+	                            <ww:set name="selectedCategories" value="this.getEventCategories('#event', top)"/>
+	                            <ww:iterator value="#selectedCategories" status="rowstatus">
+	                                <ww:property value="top.getLocalizedName(#languageCode, 'sv')"/><ww:if test="!#rowstatus.last">, </ww:if>
+	                            </ww:iterator>
+	                        </ww:if>
+	                    </ww:iterator>
+	                </p>
+	            </div>
+	            <div class="columnMedium">
+	                <div class="eventDescription"><ww:property value="#eventVersion.shortDescription"/>&nbsp;</div>
+	            </div>
+	            <div class="columnShort">
+	                <p><ww:property value="owningCalendar.name"/>&nbsp;</p>
+	            </div>
+	            <div class="columnDate">
+	                <p style="white-space: nowrap;"><ww:property value="this.formatDate(startDateTime.time, 'yyyy-MM-dd')"/>&nbsp;</p>
+	            </div>
 			</a>
-			<div class="columnEnd">
-				<ww:set name="deleteConfirm" value="this.getVisualFormatter().escapeExtendedHTML(this.getParameterizedLabel('labels.internal.general.list.delete.confirm', #eventVersion.name))" />
-				<a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '<ww:property value="#deleteConfirm"/>');" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.delete.title', #eventVersion.name)"/>" class="delete"></a>
-				<a href="<c:out value="${eventUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', #eventVersion.name)"/>" class="edit"></a>
-			</div>
-		</div>
+            <div class="columnEnd">
+				<c:set var="cancelViewAction" scope="request">ViewPublishedEventList</c:set>
+				<%@ include file="includes/deleteEventAction.jsp" %>
+                <a href="<c:out value="${eventUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', #eventVersion.name)"/>" class="edit"></a>
+            </div>
+        </div>
     
     </ww:iterator>
     

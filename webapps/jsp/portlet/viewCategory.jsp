@@ -170,8 +170,8 @@
             <portlet:param name="deleteCategoryId" value='<%= pageContext.getAttribute("categoryId").toString() %>'/>
         </portlet:actionURL>
                 
-        <div class="row clearfix">
-			<a href="<c:out value="${categoryUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.title', #name)"/>'">
+		 <div class="row clearfix">
+		 	<a href="<c:out value="${categoryUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', #name)"/>"><ww:property value="#name"/> (<ww:property value="internalName"/>) <div class="row clearfix">
 				<div class="columnLong">
 					<p class="portletHeadline">
 						<ww:property value="#name"/> (<ww:property value="internalName"/>)
@@ -181,13 +181,13 @@
 					<p><ww:property value="description"/></p>
 				</div>
 			</a>
-            <div class="columnEnd">
-                <a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '&#196;r du s&#228;ker p&#229; att du vill radera &quot;<ww:property value="#name"/>&quot;');" title="Radera '<ww:property value="#name"/>'" class="delete"></a>
-                <a href="<c:out value="${categoryUrl}"/>" title="Redigera '<ww:property value="#name"/>'" class="edit"></a>
-            </div>
-        </div>
-    </ww:iterator>
-    
+			 <div class="columnEnd">
+				<a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '&#196;r du s&#228;ker p&#229; att du vill radera &quot;<ww:property value="#name"/>&quot;');" title="Radera '<ww:property value="#name"/>'" class="delete"></a>
+				<a href="<c:out value="${categoryUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', #name)"/>" class="edit"></a>
+			</div>
+		</div>
+	</ww:iterator>
+
     <ww:if test="category.children == null || category.children.size() == 0">
         <div class="row clearfix">
             <div class="columnLong"><p class="portletHeadline"><ww:property value="this.getLabel('labels.internal.applicationNoItemsFound')"/></a></p></div>
