@@ -12,12 +12,11 @@
 
 <div class="mainCol">
 
-    <div class="columnlabelarea">
+    <div class="row clearfix columnlabelarea">
         <div class="columnMedium"><p><ww:property value="this.getLabel('labels.internal.event.name')"/></p></div>
         <div class="columnMedium"><p><ww:property value="this.getLabel('labels.internal.event.description')"/></p></div>
         <div class="columnShort"><p><ww:property value="this.getLabel('labels.internal.event.owningCalendar')"/></p></div>
         <div class="columnDate"><p><ww:property value="this.getLabel('labels.internal.event.startDate')"/></p></div>
-        <div class="clear"></div>
     </div>
     
     <ww:set name="languageCode" value="this.getLanguageCode()"/>
@@ -49,40 +48,39 @@
             <portlet:param name="eventId" value='<%= pageContext.getAttribute("eventId").toString() %>'/>
         </portlet:renderURL>
 
-        <ww:if test="#rowstatus.odd == true">
-            <div class="oddrow">
-        </ww:if>
-        <ww:else>
-            <div class="evenrow">
-        </ww:else>
-    
-            <div class="columnMedium">
-                <p class="portletHeadline"><a href="<c:out value="${eventUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.title', #eventVersion.name)"/>"><ww:property value="#eventVersion.name"/><ww:if test="#eventVersion == null"><ww:property value="#event.id"/></ww:if></a>
-                <ww:iterator value="owningCalendar.eventType.categoryAttributes">
-                    <ww:if test="top.name == 'Evenemangstyp' || top.name == 'Eventtyp'">
-                        <ww:set name="selectedCategories" value="this.getEventCategories('#event', top)"/>
-                        <ww:iterator value="#selectedCategories" status="rowstatus">
-                            <ww:property value="top.getLocalizedName(#languageCode, 'sv')"/><ww:if test="!#rowstatus.last">, </ww:if>
-                        </ww:iterator>
-                    </ww:if>
-                </ww:iterator>
-                </p>
-            </div>
-            <div class="columnMedium">
-                <div class="eventDescription"><ww:property value="#eventVersion.shortDescription"/>&nbsp;</div>
-            </div>
-            <div class="columnShort">
-                <p><ww:property value="owningCalendar.name"/></p>
-            </div>
-            <div class="columnDate">
-                <p style="white-space: nowrap;"><ww:property value="this.formatDate(startDateTime.time, 'yyyy-MM-dd')"/></p>
-            </div>
+ 		<div class="row clearfix">
+			<a href="<c:out value="${eventUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.title', #eventVersion.name)"/>">            <div class="columnMedium">
+				<div class="columnMedium">
+	                <p class="portletHeadline">
+	                	<ww:property value="#eventVersion.name"/><ww:if test="#eventVersion == null"><ww:property value="#event.id"/></ww:if>
+	                </p>
+					<p class="row-category">
+		                <ww:iterator value="owningCalendar.eventType.categoryAttributes">
+		                    <ww:if test="top.name == 'Evenemangstyp' || top.name == 'Eventtyp'">
+		                        <ww:set name="selectedCategories" value="this.getEventCategories('#event', top)"/>
+		                        <ww:iterator value="#selectedCategories" status="rowstatus">
+		                            <ww:property value="top.getLocalizedName(#languageCode, 'sv')"/><ww:if test="!#rowstatus.last">, </ww:if>
+		                        </ww:iterator>
+		                    </ww:if>
+		                </ww:iterator>
+	                </p>
+	            </div>
+	            <div class="columnMedium">
+	                <div class="eventDescription"><ww:property value="#eventVersion.shortDescription"/>&nbsp;</div>
+	            </div>
+	            <div class="columnShort">
+	                <p><ww:property value="owningCalendar.name"/>nbsp;</p>
+	            </div>
+	            <div class="columnDate">
+	                <p style="white-space: nowrap;"><ww:property value="this.formatDate(startDateTime.time, 'yyyy-MM-dd')"/>nbsp;</p>
+	            </div>
+			</a>
+
             <div class="columnEnd">
 				<c:set var="cancelViewAction" scope="request">MyWorkingEventlist</c:set>
 				<%@ include file="includes/deleteEventAction.jsp" %>
                 <a href="<c:out value="${eventUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', #eventVersion.name)"/>" class="edit"></a>
             </div>
-            <div class="clear"></div>
         </div>
         
     </ww:iterator>
@@ -101,17 +99,17 @@
     <ww:else>
             
         <ww:if test="events == null || events.size() == 0">
-            <div class="oddrow">
-                <div class="columnLong"><p class="portletHeadline"><ww:property value="this.getLabel('labels.internal.applicationNoItemsFound')"/></a></p></div>
-                <div class="columnMedium"></div>
+            <div class="row clearfix">
+                <div class="columnMedium"><p class="portletHeadline"><ww:property value="this.getLabel('labels.internal.applicationNoItemsFound')"/></a></p></div>
+                <div class="columnMedium">&nbsp;</div>
+				<div class="columnShort">&nbsp;</div>
+				<div class="columnDate">&nbsp;</div>
                 <div class="columnEnd"></div>
-                <div class="clear"></div>
             </div>
         </ww:if>
     
     </ww:else>
 </div>		
 
-<div style="clear:both"></div>
 
 <%@ include file="adminFooter.jsp" %>

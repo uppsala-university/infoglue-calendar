@@ -119,7 +119,7 @@
 							</label>
 							
 							<ww:if test="#fieldErrors.startDateTime != null">
-								<p class="errorMessage"><ww:property value="this.getLabel('#fieldErrors.startDateTime.get(0)')"/></p>
+								<span class="errorMessage"><ww:property value="this.getLabel('#fieldErrors.startDateTime.get(0)')"/></span>
 							</ww:if>
 						</div>
 						
@@ -141,7 +141,7 @@
 							</label>
 							
 							<ww:if test="#fieldErrors.endDateTime != null">
-								<p class="errorMessage"><ww:property value="this.getLabel('#fieldErrors.endDateTime.get(0)')"/></p>
+								<span class="errorMessage"><ww:property value="this.getLabel('#fieldErrors.endDateTime.get(0)')"/></span>
 							</ww:if>
 						</div>
 					</div>
@@ -253,9 +253,9 @@
 						</label>
 
 						<ww:if test="#fieldErrors.lastRegistrationDateTime != null">
-							<p class="errorMessage">
+							<span class="errorMessage">
 								<ww:property value="this.getLabel('#fieldErrors.lastRegistrationDateTime.get(0)')"/>
-							</p>
+							</span>
 						</ww:if>
 					</div>
 				</section>

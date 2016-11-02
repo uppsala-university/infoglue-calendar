@@ -40,10 +40,9 @@
 </nav>
 
 <div class="mainCol">
-    <div class="columnlabelarea">
+    <div class="row clearfix columnlabelarea">
         <div class="columnLong"><p><ww:property value="this.getLabel('labels.internal.language.name')"/></p></div>
         <div class="columnMedium"><p><ww:property value="this.getLabel('labels.internal.language.isoCode')"/></p></div>
-        <div class="clear"></div>
     </div>
     
     <ww:iterator value="languages" status="rowstatus">
@@ -60,12 +59,7 @@
             <portlet:param name="systemLanguageId" value='<%= pageContext.getAttribute("systemLanguageId").toString() %>'/>
         </portlet:actionURL>
     
-        <ww:if test="#rowstatus.odd == true">
-            <div class="oddrow">
-        </ww:if>
-        <ww:else>
-            <div class="evenrow">
-        </ww:else>
+        <div class="row clearfix">
 
 			<a href="<c:out value="${languageUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.title', name)"/>">
 				<div class="columnLong">
@@ -82,21 +76,17 @@
                 <a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '<ww:property value="#deleteConfirm"/>');" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.delete.title', name)"/>" class="delete"></a>
                 <a href="<c:out value="${languageUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', name)"/>" class="edit"></a>
             </div>
-            <div class="clear"></div>
         </div>
     
     </ww:iterator>
     
     <ww:if test="languages == null || languages.size() == 0">
-        <div class="oddrow">
+        <div class="row clearfix">
             <div class="columnLong"><p class="portletHeadline"><ww:property value="this.getLabel('labels.internal.applicationNoItemsFound')"/></a></p></div>
             <div class="columnMedium"></div>
             <div class="columnEnd"></div>
-            <div class="clear"></div>
         </div>
     </ww:if>
 </div>
-
-<div style="clear:both"></div>
 
 <%@ include file="adminFooter.jsp" %>

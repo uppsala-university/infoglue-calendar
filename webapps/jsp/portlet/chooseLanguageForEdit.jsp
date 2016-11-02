@@ -14,10 +14,9 @@
         <p class="instruction"><ww:property value="this.getLabel('labels.internal.application.chooseLanguageForEditIntro')"/></p>
     </div> 
     
-    <div class="columnlabelarea">
+    <div class="columnlabelarea row clearfix">
         <div class="columnLong"><p><ww:property value="this.getLabel('labels.internal.language.name')"/></p></div>
         <div class="columnMedium"><p><ww:property value="this.getLabel('labels.internal.language.isoCode')"/></p></div>
-        <div class="clear"></div>
     </div>
     
     <ww:set name="skipLanguageTabs" value="skipLanguageTabs" scope="page"/>
@@ -33,12 +32,7 @@
             <calendar:evalParam name="skipLanguageTabs" value="${skipLanguageTabs}"/>
         </portlet:renderURL>
         
-        <ww:if test="#rowstatus.odd == true">
-            <div class="oddrow">
-        </ww:if>
-        <ww:else>
-            <div class="evenrow">
-        </ww:else>
+        <div class="row clearfix">
 
 			<a href="<c:out value="${editEventUrl}"/>" title="Välj '<ww:property value="name"/>'">
 				<div class="columnLong">
@@ -52,21 +46,18 @@
 			</a>
             <div class="columnEnd">
             </div>
-            <div class="clear"></div>
         </div>
             
     </ww:iterator>
     
     <ww:if test="availableLanguages == null || availableLanguages.size() == 0">
-        <div class="oddrow">
+        <div class="row clearfix">
             <div class="columnLong"><p class="portletHeadline"><ww:property value="this.getLabel('labels.internal.applicationNoItemsFound')"/></a></p></div>
             <div class="columnMedium"></div>
             <div class="columnEnd"></div>
-            <div class="clear"></div>
         </div>
     </ww:if>
     
 </div>
-<div style="clear:both;"></div>
 
 <%@ include file="adminFooter.jsp" %>

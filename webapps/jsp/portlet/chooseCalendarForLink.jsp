@@ -13,10 +13,9 @@
         <p class="instruction"><ww:property value="this.getLabel('labels.internal.application.chooseCalendarForLinkIntro')"/></p>
     </div>
     
-    <div class="columnlabelarea">
+    <div class="columnlabelarea row clearfix">
         <div class="columnLong"><p><ww:property value="this.getLabel('labels.internal.calendar.name')"/></p></div>
         <div class="columnMedium"><p><ww:property value="this.getLabel('labels.internal.calendar.description')"/></p></div>
-        <div class="clear"></div>
     </div>
     
     <ww:set name="eventId" value="eventId" scope="page"/>
@@ -40,13 +39,8 @@
             <portlet:param name="eventId" value='<%= pageContext.getAttribute("eventId").toString() %>'/>
         </portlet:actionURL>
         
-        <ww:if test="#rowstatus.odd == true">
-            <div class="oddrow">
-        </ww:if>
-        <ww:else>
-            <div class="evenrow">
-        </ww:else>
-		
+		<div class="row clearfix">
+        
 			<a href="javascript:linkEvent('<ww:property value="id"/>');" title="Välj '<ww:property value="name"/>'">    
 				<div class="columnLong">
 					<p class="portletHeadline">
@@ -59,21 +53,18 @@
 			</a>
             <div class="columnEnd">
             </div>
-            <div class="clear"></div>
         </div>
             
     </ww:iterator>
     
     <ww:if test="calendars == null || calendars.size() == 0">
-        <div class="oddrow">
+        <div class="row clearfix">
             <div class="columnLong"><p class="portletHeadline"><ww:property value="this.getLabel('labels.internal.applicationNoItemsFound')"/></a></p></div>
             <div class="columnMedium"></div>
             <div class="columnEnd"></div>
-            <div class="clear"></div>
         </div>
     </ww:if>
     
 </div>
-<div style="clear:both;"></div>
 
 <%@ include file="adminFooter.jsp" %>

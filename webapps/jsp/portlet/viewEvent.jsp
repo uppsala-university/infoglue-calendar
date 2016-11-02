@@ -104,7 +104,7 @@
 						<ww:set name="publishButtonLabel" value="this.getParameterizedLabel('labels.internal.event.submitLanguageVersionForPublishEvent', #attr.languageName)"/>
 					</ww:else>
 					
-					<input onclick="document.location.href='<c:out value="${submitForPublishEventActionUrl}"/>';" type="button" value="<ww:property value="#publishButtonLabel"/>" class="button"/>
+					<input onclick="document.location.href='<c:out value="${submitForPublishEventActionUrl}"/>';" type="button" value="<ww:property value="#publishButtonLabel"/>" class="button save"/>
 				</ww:if>	
 			</ww:if>
 			

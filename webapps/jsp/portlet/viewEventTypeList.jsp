@@ -40,10 +40,9 @@
 </nav>
 
 <div class="mainCol">
-    <div class="columnlabelarea">
+    <div class="row clearfix columnlabelarea">
         <div class="columnLong"><p><ww:property value="this.getLabel('labels.internal.eventType.name')"/></p></div>
         <div class="columnMedium"><p><ww:property value="this.getLabel('labels.internal.eventType.description')"/></p></div>
-        <div class="clear"></div>
     </div>
     
     <ww:iterator value="eventTypes" status="rowstatus">
@@ -61,39 +60,31 @@
             <portlet:param name="eventTypeId" value='<%= pageContext.getAttribute("eventTypeId").toString() %>'/>
         </portlet:actionURL>
     
-        <ww:if test="#rowstatus.odd == true">
-            <div class="oddrow">
-        </ww:if>
-        <ww:else>
-            <div class="evenrow">
-        </ww:else>
-    
-            <div class="columnLong">
-                <p class="portletHeadline"><a href="<c:out value="${eventTypeUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.title', name)"/>"><ww:property value="name"/></a></p>
-            </div>
-            <div class="columnMedium">
-                <p><ww:property value="description"/></p>
-            </div>
+		<div class="row clearfix">
+        	<a href="<c:out value="${eventTypeUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.title', name)"/>">
+				<div class="columnLong">
+					<p class="portletHeadline"><ww:property value="name"/></p>
+				</div>
+				<div class="columnMedium">
+					<p><ww:property value="description"/></p>
+				</div>
+			</a>
             <div class="columnEnd">
                 <ww:set name="deleteConfirm" value="this.htmlEncodeValue(this.getParameterizedLabel('labels.internal.general.list.delete.confirm', name))" />
                 <a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '<ww:property value="#deleteConfirm"/>');" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.delete.title', name)"/>'" class="delete"></a>
                 <a href="<c:out value="${eventTypeUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', name)"/>" class="edit"></a>
             </div>
-            <div class="clear"></div>
         </div>
     
     </ww:iterator>
     
     <ww:if test="eventTypes == null || eventTypes.size() == 0">
-        <div class="oddrow">
+        <div class="row clearfix">
             <div class="columnLong"><p class="portletHeadline"><ww:property value="this.getLabel('labels.internal.applicationNoItemsFound')"/></a></p></div>
             <div class="columnMedium"></div>
             <div class="columnEnd"></div>
-            <div class="clear"></div>
         </div>
     </ww:if>
 </div>
-
-<div style="clear:both"></div>
 
 <%@ include file="adminFooter.jsp" %>

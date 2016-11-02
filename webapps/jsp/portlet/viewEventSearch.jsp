@@ -25,13 +25,12 @@
         </h1>
     </div>
     
-    <div class="columnlabelarea">
-        <div class="columnMedium"><p><ww:property value="this.getLabel('labels.internal.event.name')"/></p></div>
+    <div class="columnlabelarea row clearfix">
+        <div class="columnShort"><p><ww:property value="this.getLabel('labels.internal.event.name')"/></p></div>
         <div class="columnMedium"><p><ww:property value="this.getLabel('labels.internal.event.description')"/></p></div>
         <div class="columnShort"><p><ww:property value="this.getLabel('labels.internal.event.owningCalendar')"/></p></div>
         <div class="columnShort"><p><ww:property value="this.getLabel('labels.internal.event.state')"/></p></div>
         <div class="columnDate"><p><ww:property value="this.getLabel('labels.internal.event.startDate')"/></p></div>
-        <div class="clear"></div>
     </div>
     
     <portlet:renderURL var="viewListUrl">
@@ -147,35 +146,31 @@
             <portlet:param name="eventId" value='<%= pageContext.getAttribute("eventId").toString() %>'/>
         </portlet:actionURL>
             
-        <ww:if test="#rowstatus.odd == true">
-            <div class="oddrow">
-        </ww:if>
-        <ww:else>
-            <div class="evenrow">
-        </ww:else>
-    
-            <div class="columnMedium">
-                <p class="portletHeadline"><a href="<c:out value="${eventUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.title', #eventVersion.name)"/>"><ww:property value="#eventVersion.name"/></a></p>
-            </div>
-            <div class="columnMedium">
-                <div class="eventDescription"><ww:property value="#eventVersion.shortDescription"/>&nbsp;</div>
-            </div>
-            <div class="columnShort">
-                <p><ww:property value="owningCalendar.name"/>&nbsp;</p>
-            </div>
-            <div class="columnShort">
-                <p><ww:property value="this.getState(stateId)"/>&nbsp;</p>
-            </div>
-            <div class="columnDate">
-                <p><ww:property value="this.formatDate(startDateTime.time, 'yyyy-MM-dd')"/>&nbsp;</p>
-            </div>
+        <div class="row clearfix">
+			<a href="<c:out value="${eventUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.title', #eventVersion.name)"/>">
+				<div class="columnShort">
+					<p class="portletHeadline"><ww:property value="#eventVersion.name"/></p>
+				</div>
+				<div class="columnMedium">
+					<p class="eventDescription"><ww:property value="#eventVersion.shortDescription"/>&nbsp;</p>
+				</div>
+				<div class="columnShort">
+					<p><ww:property value="owningCalendar.name"/>&nbsp;</p>
+				</div>
+				<div class="columnShort">
+					<p><ww:property value="this.getState(stateId)"/>&nbsp;</p>
+				</div>
+				<div class="columnDate">
+					<p><ww:property value="this.formatDate(startDateTime.time, 'yyyy-MM-dd')"/>&nbsp;</p>
+				</div>
+			</a>
             <div class="columnEnd">
                 <ww:if test="this.getIsEventOwner(top)">
                     <a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '&#196;r du s&#228;ker p&#229; att du vill radera &quot;<ww:property value="#eventVersion.name"/>&quot;');" title="Radera '<ww:property value="#eventVersion.name"/>'" class="delete"></a>
                 </ww:if>
                 <a href="<c:out value="${eventUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', #eventVersion.name)"/>" class="edit"></a>
             </div>
-            <div class="clear"></div>
+
         </div>
     </ww:iterator>
     
@@ -237,17 +232,16 @@
     <ww:else>
     
         <ww:if test="events == null || events.size() == 0">
-            <div class="oddrow">
-                <div class="columnLong"><p class="portletHeadline"><ww:property value="this.getLabel('labels.internal.applicationNoItemsFound')"/></a></p></div>
+            <div class="row clearfix">
+                <div class="columnLong">
+					<p class="portletHeadline"><ww:property value="this.getLabel('labels.internal.applicationNoItemsFound')"/></a></p>
+				</div>
                 <div class="columnMedium"></div>
                 <div class="columnEnd"></div>
-                <div class="clear"></div>
             </div>
         </ww:if>
     
     </ww:else>
 </div>
-
-<div style="clear:both"></div>
 
 <%@ include file="adminFooter.jsp" %>
