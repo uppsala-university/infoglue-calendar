@@ -13,8 +13,8 @@
 
 <nav class="subfunctionarea clearfix">
 	<div class="subfunctionarea-content">
-        <a href="<c:out value="${createAttributeCategoryUrl}"/>" <c:if test="${activeSubNavItem == 'NewEventTypeCategoryAttribute'}">class="current"</c:if> title="Skapa ny post"><ww:property value="this.getLabel('labels.internal.eventType.addAvailableCategory')"/></a>
-    </div>	
+        <a href="<c:out value="${createAttributeCategoryUrl}"/>" <c:if test="${activeSubNavItem == 'NewEventTypeCategoryAttribute'}">class="current"</c:if> title="<ww:property value="this.getLabel('labels.internal.eventType.category.add.title')"/>"><ww:property value="this.getLabel('labels.internal.eventType.addAvailableCategory')"/></a>
+    </div>
 </nav>
  
 <div class="mainCol">

@@ -198,8 +198,8 @@
 								</span>
 
 								<input readonly id="startDateTime" name="startDateTime" value="<ww:property value="this.formatDate(event.startDateTime.time, 'yyyy-MM-dd')"/>" class="datefield" type="textfield">
-								<img src="<%=request.getContextPath()%>/images/calendar.gif" id="trigger_startDateTime" style="border: 0px solid black; cursor: pointer;" title="Date selector">
-								<img src="<%=request.getContextPath()%>/images/delete.gif" style="border: 0px solid black; cursor: pointer;" title="Remove value" onclick="document.getElementById('startDateTime').value = '';">			
+								<img src="<%=request.getContextPath()%>/images/calendar.gif" id="trigger_startDateTime" style="border: 0px solid black; cursor: pointer;" title="<ww:property value="this.getLabel('labels.internal.event.datePicker.title')"/>">
+								<img src="<%=request.getContextPath()%>/images/delete.gif" style="border: 0px solid black; cursor: pointer;" title="<ww:property value="this.getLabel('labels.internal.event.trash.title')"/>" onclick="document.getElementById('startDateTime').value = '';">			
 							</label>
 
 							<label id="startTime" for="startTime">
@@ -221,8 +221,8 @@
 									<ww:property value="this.getLabel('labels.internal.event.endDate')"/>
 								</span>
 								<input readonly id="endDateTime" name="endDateTime" value="<ww:property value="this.formatDate(event.endDateTime.time, 'yyyy-MM-dd')"/>" class="datefield" type="textfield">
-								<img src="<%=request.getContextPath()%>/images/calendar.gif" id="trigger_endDateTime" style="border: 0px solid black; cursor: pointer;" title="Date selector">
-								<img src="<%=request.getContextPath()%>/images/delete.gif" style="border: 0px solid black; cursor: pointer;" title="Remove value" onclick="document.getElementById('endDateTime').value = '';">
+								<img src="<%=request.getContextPath()%>/images/calendar.gif" id="trigger_endDateTime" style="border: 0px solid black; cursor: pointer;" title="<ww:property value="this.getLabel('labels.internal.event.datePicker.title')"/>">
+								<img src="<%=request.getContextPath()%>/images/delete.gif" style="border: 0px solid black; cursor: pointer;" title="<ww:property value="this.getLabel('labels.internal.event.trash.title')"/>" onclick="document.getElementById('endDateTime').value = '';">
 							</label>
 							
 							<label id="endTime" for="endTime">
@@ -369,8 +369,8 @@
 						<label for="lastRegistrationDateTime">
 							<ww:property value="this.getLabel('labels.internal.event.lastRegistrationDate')"/>						
 							<input readonly id="lastRegistrationDateTime" name="lastRegistrationDateTime" value="<ww:property value="this.formatDate(event.lastRegistrationDateTime.time, 'yyyy-MM-dd')"/>" class="datefield" type="textfield">
-							<img src="<%=request.getContextPath()%>/images/calendar.gif" id="trigger_lastRegistrationDateTime" style="border: 0px solid black; cursor: pointer;" title="Date selector">
-							<img src="<%=request.getContextPath()%>/images/delete.gif" style="border: 0px solid black; cursor: pointer;" title="Remove value" onclick="document.getElementById('lastRegistrationDateTime').value = '';">			
+							<img src="<%=request.getContextPath()%>/images/calendar.gif" id="trigger_lastRegistrationDateTime" style="border: 0px solid black; cursor: pointer;" title="<ww:property value="this.getLabel('labels.internal.event.datePicker.title')"/>">
+							<img src="<%=request.getContextPath()%>/images/delete.gif" style="border: 0px solid black; cursor: pointer;" title="<ww:property value="this.getLabel('labels.internal.event.trash.title')"/>" onclick="document.getElementById('lastRegistrationDateTime').value = '';">			
 							<input name="lastRegistrationTime" value="<ww:property value="this.formatDate(event.lastRegistrationDateTime.time, 'HH:mm')"/>" class="hourfield" type="textfield" onblur="completeTime(this);">
 						</label>
 

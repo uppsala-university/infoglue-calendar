@@ -64,7 +64,7 @@
         </portlet:actionURL>
             
         <div class="row clearfix">
-			<a href="<c:out value="${categoryUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.title', #name)"/>'">
+			<a href="<c:out value="${categoryUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.title', #name)"/>">
 				<div class="columnMedium">
 					<p class="portletHeadline"><ww:property value="#name"/> (<ww:property value="internalName"/>)</p>
 				</div>

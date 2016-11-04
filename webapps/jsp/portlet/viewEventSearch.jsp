@@ -68,8 +68,13 @@
             document.slotForm.submit();
         }
     </script>
+
+	<portlet:renderURL var="confirmUrl">
+		<portlet:param name="action" value="Confirm"/>
+	</portlet:renderURL>
+
     <form name="confirmForm" action="<c:out value="${confirmUrl}"/>" method="post">
-        <input type="hidden" name="confirmTitle" value="Radera - bekr&#228;fta"/>
+        <input type="hidden" name="confirmTitle" value="<ww:property value="this.htmlEncodeValue(this.getLabel('labels.internal.general.list.delete.confirm.header'))" />"/>
         <input type="hidden" name="confirmMessage" value="Fixa detta"/>
         <input type="hidden" name="okUrl" value=""/>
         <input type="hidden" name="cancelUrl" value="<c:out value="${viewListUrl}"/>"/>	
@@ -166,7 +171,8 @@
 			</a>
             <div class="columnEnd">
                 <ww:if test="this.getIsEventOwner(top)">
-                    <a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '&#196;r du s&#228;ker p&#229; att du vill radera &quot;<ww:property value="#eventVersion.name"/>&quot;');" title="Radera '<ww:property value="#eventVersion.name"/>'" class="delete"></a>
+	                <ww:set name="deleteConfirm" value="this.getVisualFormatter().escapeExtendedHTML(this.getParameterizedLabel('labels.internal.general.list.delete.confirm', #eventVersion.name))" />
+                    <a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '<ww:property value="#deleteConfirm"/>');" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.delete.title', #eventVersion.name)"/>" class="delete"></a>
                 </ww:if>
                 <a href="<c:out value="${eventUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', #eventVersion.name)"/>" class="edit"></a>
             </div>

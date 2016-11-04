@@ -41,7 +41,7 @@
             <div class="fieldrow">
                 <label for="startDateTime"><ww:property value="this.getLabel('labels.internal.event.searchStartDate')"/></label><br />
                 <input id="startDateTime" name="startDateTime" value="<ww:property value="startDateTime"/>" class="datefield" type="textfield">
-                <img src="<%=request.getContextPath()%>/images/calendar.gif" id="trigger_startDateTime" style="border: 0px solid black; cursor: pointer;" title="Date selector">
+                <img src="<%=request.getContextPath()%>/images/calendar.gif" id="trigger_startDateTime" style="border: 0px solid black; cursor: pointer;" title="<ww:property value="this.getLabel('labels.internal.event.datePicker.title')"/>">
                 <input name="startTime" value="<ww:property value="startTime"/>" class="hourfield" type="textfield">					
             </div>
     
@@ -49,7 +49,7 @@
             <div class="fieldrow">
                 <label for="endDateTime"><ww:property value="this.getLabel('labels.internal.event.searchEndDate')"/></label><br />
                 <input id="endDateTime" name="endDateTime" value="<ww:property value="endDateTime"/>" class="datefield" type="textfield">
-                <img src="<%=request.getContextPath()%>/images/calendar.gif" id="trigger_endDateTime" style="border: 0px solid black; cursor: pointer;" title="Date selector">
+                <img src="<%=request.getContextPath()%>/images/calendar.gif" id="trigger_endDateTime" style="border: 0px solid black; cursor: pointer;" title="<ww:property value="this.getLabel('labels.internal.event.datePicker.title')"/>">
                 <input name="endTime" value="<ww:property value="endTime"/>" class="hourfield" type="textfield">					
             </div>
 

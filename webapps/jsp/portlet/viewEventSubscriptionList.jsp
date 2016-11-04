@@ -30,7 +30,7 @@
 	}
 </script>
 <form name="confirmForm" action="<c:out value="${confirmUrl}"/>" method="post">
-	<input type="hidden" name="confirmTitle" value="Radera - bekr&#228;fta"/>
+	<input type="hidden" name="confirmTitle" value="<ww:property value="this.htmlEncodeValue(this.getLabel('labels.internal.general.list.delete.confirm.header'))" />"/>
 	<input type="hidden" name="confirmMessage" value="Fixa detta"/>
 	<input type="hidden" name="okUrl" value=""/>
 	<input type="hidden" name="cancelUrl" value="<c:out value="${viewListUrl}"/>"/>	
@@ -40,7 +40,7 @@
 
 <div class="mainCol">
 	<div class="pageAlternative">
-			<a href="<c:out value="${createSubscriptionUrl}"/>" title="Skapa ny post"><ww:property value="this.getLabel('labels.internal.subscription.addSubscription')"/></a>
+			<a href="<c:out value="${createSubscriptionUrl}"/>" title="<ww:property value="this.getLabel('labels.internal.subscription.add.title')"/>"><ww:property value="this.getLabel('labels.internal.subscription.addSubscription')"/></a>
 		<div class="clear"></div>
 	</div>
     <div class="row clearfix columnlabelarea">
@@ -67,7 +67,8 @@
                 <p><ww:property value="top.calendar.description"/></p>
             </div>
             <div class="columnEnd">
-                <a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '&#196;r du s&#228;ker p&#229; att du vill radera &quot;<ww:property value="#name"/>&quot;');" title="Radera '<ww:property value="top.calendar.name"/>'" class="delete"></a>
+	            <ww:set name="deleteConfirm" value="this.getVisualFormatter().escapeExtendedHTML(this.getParameterizedLabel('labels.internal.general.list.delete.confirm', top.calendar.name))" />
+                <a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '<ww:property value="#deleteConfirm"/>');" title="<ww:property value="this.getParameterizedLabel('labels.internal.subscription.list.delete.title', top.calendar.name)"/>" class="delete"></a>
             </div>
 
         </div>

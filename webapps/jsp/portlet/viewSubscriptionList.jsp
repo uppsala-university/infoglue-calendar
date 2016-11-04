@@ -5,8 +5,10 @@
 <%@ include file="adminHeader.jsp" %>
 <%@ include file="functionMenu.jsp" %>
 
+<ww:set name="calendarId" value="calendarId" scope="page"/>
 <portlet:renderURL var="viewListUrl">
-	<portlet:param name="action" value="ViewEventSubscriptionList"/>
+	<portlet:param name="action" value="ViewSubscriptionList"/>
+	<portlet:param name="calendarId" value='<%= pageContext.getAttribute("calendarId").toString() %>'/>
 </portlet:renderURL>
 
 <portlet:renderURL var="confirmUrl">
@@ -23,17 +25,11 @@
 	}
 </script>
 <form name="confirmForm" action="<c:out value="${confirmUrl}"/>" method="post">
-	<input type="hidden" name="confirmTitle" value="Radera - bekr&#228;fta"/>
+	<input type="hidden" name="confirmTitle" value="<ww:property value="this.htmlEncodeValue(this.getLabel('labels.internal.general.list.delete.confirm.header'))" />"/>
 	<input type="hidden" name="confirmMessage" value="Fixa detta"/>
 	<input type="hidden" name="okUrl" value=""/>
 	<input type="hidden" name="cancelUrl" value="<c:out value="${viewListUrl}"/>"/>	
 </form>
-
-<nav class="subfunctionarea clearfix">
-	<div class="subfunctionarea-content">
-		<a href="<c:out value="${viewSubscriptionsUrl}"/>" title="Skapa ny post"><ww:property value="this.getLabel('labels.internal.calendar.viewSubscriptions')"/></a>
-	</div>
-</nav>
 
 <div class="mainCol">
 
@@ -56,7 +52,8 @@
                 <p class="portletHeadline"><ww:property value="top.email"/></p>
             </div>
             <div class="columnEnd">
-                <a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '&#196;r du s&#228;ker p&#229; att du vill radera &quot;<ww:property value="top.email"/>&quot;');" title="Radera '<ww:property value="top.email"/>'" class="delete"></a>
+	            <ww:set name="deleteConfirm" value="this.getVisualFormatter().escapeExtendedHTML(this.getParameterizedLabel('labels.internal.general.list.delete.confirm', top.email))" />
+                <a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '<ww:property value="#deleteConfirm"/>');" title="<ww:property value="this.getParameterizedLabel('labels.internal.subscription.list.delete.person.title', top.email)"/>" class="delete"></a>
             </div>
         </div>
             
