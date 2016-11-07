@@ -6,9 +6,9 @@
 <c:set var="activeNavItem" value="Events" scope="page"/>
 
 <%@ include file="adminHeader.jsp" %>
-<div class="event">
-	<%@ include file="functionMenu.jsp" %>
-</div>
+
+<%@ include file="functionMenu.jsp" %>
+
 <%@ include file="eventSubFunctionMenu.jsp" %>
 
 <ww:if test="infoGlueRemoteUser == 'eventPublisher'">

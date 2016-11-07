@@ -17,16 +17,17 @@
 </portlet:renderURL>
 
 <div class="mainCol">
-    <div class="portlet_margin">
+    <div class="portlet_margin no-subfunctionarea">
+        <h1>
+            <ww:property value="this.getLabel('labels.internal.entry.createNewEntryThankYou')"/>
+		</h1>
         <p>
-            <ww:property value="this.getLabel('labels.internal.entry.createNewEntryThankYou')"/><br/>
-            <br/>
-            <ww:property value="this.getLabel('labels.internal.entry.createNewEntryThankYouText')"/><br/>
-            <br/>
+            <ww:property value="this.getLabel('labels.internal.entry.createNewEntryThankYouText')"/>
+		</p>
+        </p>
             <a href="<c:out value="${eventUrl}"/>"><ww:property value="this.getLabel('labels.internal.event.eventSubmittedHome')"/></a>	
         </p>
     </div>
 </div>
-<div style="clear:both;"></div>
 
 <%@ include file="adminFooter.jsp" %>

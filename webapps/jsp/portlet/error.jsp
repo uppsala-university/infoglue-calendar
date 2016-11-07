@@ -8,10 +8,10 @@
 <%@ include file="adminHeader.jsp" %>
 
 <div class="mainCol">
-    <div class="portlet_margin">
+    <div class="portlet_margin no-subfunctionarea">
     
         <h1>Error</h1>
-        <p style="color: red;">
+        <p class="errorMessage">
             <ww:property value="#errorMessage"/>
         </p>
         <p>
@@ -20,13 +20,7 @@
         <p>
             <a href="javascript:history.back();">Tillbaka</a>
         </p>	
-    <!--
-    <ww:if test="#error != null">
-        <ww:property value="#error.message"/>
-    </ww:if>
-    -->
     </div>
 </div>
-<div style="clear:both;"></div>
 
 <%@ include file="adminFooter.jsp" %>
