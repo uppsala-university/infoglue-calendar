@@ -15,8 +15,7 @@
 </portlet:renderURL>
 
 <div class="mainCol">
-    <div class="portlet_margin">
-        <p>
+    <div class="portlet_margin no-subfunctionarea">
 
 			<ww:set name="pushUrl" value="this.getLabel('labels.internal.searchIndex.indexToPushUrl')" scope="page"/>
 			<ww:set name="eventPageUrl" value="this.getLabel('labels.internal.searchIndex.eventPageUrl')" scope="page"/>
@@ -47,25 +46,22 @@
 
 				if(iReply.isReplyOK()) {
 				%>
-					<ww:property value="this.getLabel('labels.internal.event.eventPublishedText')"/>
-					<br>
-					<a href="<c:out value="${homeActionUrl}"/>"><ww:property value="this.getLabel('labels.internal.event.eventSubmittedHome')"/></a>	
-					<ww:set name="eventId" value="eventId" scope="page"/>
-					<br />
+					<h1><ww:property value="this.getLabel('labels.internal.event.eventPublishedText')"/></h1>
+					<p>
+						<a href="<c:out value="${homeActionUrl}"/>"><ww:property value="this.getLabel('labels.internal.event.eventSubmittedHome')"/></a>	
+						<ww:set name="eventId" value="eventId" scope="page"/>
+					</p>
 				<%
 				} else {
 				%>
-					<ww:property value="this.getLabel('labels.internal.searchIndex.indexFailed')"/><%= eventId %>
-					<br>
-					<a href="<c:out value="${homeActionUrl}"/>"><ww:property value="this.getLabel('labels.internal.event.eventSubmittedHome')"/></a>		
-					<br />
+					<h1><ww:property value="this.getLabel('labels.internal.searchIndex.indexFailed')"/><%= eventId %></h1>
+					<p>
+						<a href="<c:out value="${homeActionUrl}"/>"><ww:property value="this.getLabel('labels.internal.event.eventSubmittedHome')"/></a>
+					</p>
 				<%
 				}
 			%>
-
-        </p>
     </div>
 </div>
-<div style="clear:both;"></div>
 
 <%@ include file="adminFooter.jsp" %>
