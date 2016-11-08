@@ -197,8 +197,9 @@
 		</portlet:renderURL>
 
 		<form name="deleteLinkForm" method="POST" action="<c:out value="${confirmUrl}"/>">
-			<input type="hidden" name="confirmTitle" value="Radera - bekr&#228;fta"/>
-			<input type="hidden" name="confirmMessage" value="&#196;r du s&#228;ker p&#229; att du vill radera &quot;<c:out value="${name}"/>&quot;"/>
+			<input type="hidden" name="confirmTitle" value="<ww:property value="this.htmlEncodeValue(this.getLabel('labels.internal.general.list.delete.confirm.header'))" />"/>
+			<ww:set name="deleteConfirm" value="this.getVisualFormatter().escapeExtendedHTML(this.getParameterizedLabel('labels.internal.general.list.delete.confirm', eventVersion.name))" />
+			<input type="hidden" name="confirmMessage" value="<ww:property value="#deleteConfirm"/>"/>
 			<input type="hidden" name="okUrl" value="<%= java.net.URLEncoder.encode(pageContext.getAttribute("deleteUrl").toString(), "utf-8") %>"/>
 			<input type="hidden" name="cancelUrl" value="<%= java.net.URLEncoder.encode(pageContext.getAttribute("viewListUrl").toString(), "utf-8") %>"/>
 
@@ -209,8 +210,9 @@
 		</form>	
 
 		<form name="deleteVersionLinkForm" method="POST" action="<c:out value="${confirmUrl}"/>">
-			<input type="hidden" name="confirmTitle" value="Radera - bekr&#228;fta"/>
-			<input type="hidden" name="confirmMessage" value="&#196;r du s&#228;ker p&#229; att du vill radera den <c:out value="${eventVersion.language.name}"/> versionen av &quot;<c:out value="${name}"/>&quot;"/>
+			<input type="hidden" name="confirmTitle" value="<ww:property value="this.htmlEncodeValue(this.getLabel('labels.internal.general.list.delete.confirm.header'))" />"/>
+			<ww:set name="deleteConfirm" value="this.htmlEncodeValue(this.getParameterizedLabel('labels.internal.eventVersion.delete.confirm', eventVersion.language.name))" />
+			<input type="hidden" name="confirmMessage" value="<ww:property value="#deleteConfirm"/>"/>
 			<input type="hidden" name="okUrl" value="<%= java.net.URLEncoder.encode(pageContext.getAttribute("deleteVersionUrl").toString(), "utf-8") %>"/>
 			<input type="hidden" name="cancelUrl" value="<%= java.net.URLEncoder.encode(pageContext.getAttribute("viewListUrl").toString(), "utf-8") %>"/>
 

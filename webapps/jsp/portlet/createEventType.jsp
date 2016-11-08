@@ -12,8 +12,8 @@
 
 <nav class="subfunctionarea clearfix">
 	<div class="subfunctionarea-content">
-        <a href="<c:out value="${createEventTypeUrl}"/>" <c:if test="${activeSubNavItem == 'NewEventType'}">class="current"</c:if> title="Skapa ny post"><ww:property value="this.getLabel('labels.internal.eventType.addEventType')"/></a>
-    </div>	
+		<a href="<c:out value="${createEventTypeUrl}"/>" <c:if test="${activeSubNavItem == 'NewEventType'}">class="current"</c:if> title="<ww:property value="this.getLabel('labels.internal.eventType.addEventType.title')"/>"><ww:property value="this.getLabel('labels.internal.eventType.addEventType')"/></a>
+	</div>
 </nav>
 
 <div class="mainCol">

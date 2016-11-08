@@ -12,7 +12,7 @@
 
 <nav class="subfunctionarea clearfix">
 	<div class="subfunctionarea-content">
-        <a href="<c:out value="${createCalendarUrl}"/>" <c:if test="${activeSubNavItem == 'NewCalendar'}">class="current"</c:if> title="Skapa ny post"><ww:property value="this.getLabel('labels.internal.calendar.addCalendar')"/></a>
+		<a href="<c:out value="${createCalendarUrl}"/>" <c:if test="${activeSubNavItem == 'NewCalendar'}">class="current"</c:if> title="<ww:property value="this.getLabel('labels.internal.calendar.addCalendar.title')"/>"><ww:property value="this.getLabel('labels.internal.calendar.addCalendar')"/></a>
 	</div>
 </nav>
 

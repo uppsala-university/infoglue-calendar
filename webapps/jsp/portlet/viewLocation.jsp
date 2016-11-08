@@ -54,9 +54,10 @@
 
 <nav class="subfunctionarea clearfix">
 	<div class="subfunctionarea-content">
-		<a href="<c:out value="${createLocationUrl}"/>" title="<ww:property value="this.getLabel('labels.internal.location.addLocation.title')"/>"><ww:property value="this.getLabel('labels.internal.location.addLocation')"/></a>
+		<a href="<c:out value="${createLocationUrl}"/>" title="<ww:property value="this.getLabel('labels.internal.location.viewLocation.title')"/>"><ww:property value="this.getLabel('labels.internal.location.viewLocation')"/></a>
 	</div>
 </nav>
+
 
 <div class="mainCol">
 

@@ -12,8 +12,8 @@
 
 <nav class="subfunctionarea clearfix">
 	<div class="subfunctionarea-content">
-        <a href="<c:out value="${createLanguageUrl}"/>" <c:if test="${activeSubNavItem == 'NewLanguage'}">class="current"</c:if> title="Skapa ny post"><ww:property value="this.getLabel('labels.internal.language.addLanguage')"/></a>
-    </div>	
+		<a href="<c:out value="${createLanguageUrl}"/>" <c:if test="${activeSubNavItem == 'NewLanguage'}">class="current"</c:if> title="<ww:property value="this.getLabel('labels.internal.language.addLanguage.title')"/>"><ww:property value="this.getLabel('labels.internal.language.addLanguage')"/></a>
+	</div>
 </nav>
 
 <div class="mainCol">

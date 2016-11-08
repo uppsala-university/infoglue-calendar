@@ -26,7 +26,7 @@
 
 <nav class="subfunctionarea clearfix">
 	<div class="subfunctionarea-content">
-        <a href="<c:out value="${createCategoryUrl}"/>" title="Skapa ny post"><ww:property value="this.getLabel('labels.internal.category.addCategory')"/></a>
+        <a href="<c:out value="${createCategoryUrl}"/>" title="<ww:property value="this.getLabel('labels.internal.category.viewCategory.title')"/>"><ww:property value="this.getLabel('labels.internal.category.viewCategory')"/></a>
     </div>	
 </nav>
 
@@ -87,7 +87,7 @@
 </portlet:renderURL>
 
 <form name="confirmForm" action="<c:out value="${confirmUrl}"/>" method="post">
-	<input type="hidden" name="confirmTitle" value="Radera - bekr&#228;fta"/>
+	<input type="hidden" name="confirmTitle" value="<ww:property value="this.htmlEncodeValue(this.getLabel('labels.internal.general.list.delete.confirm.header'))" />"/>
 	<input type="hidden" name="confirmMessage" value="Fixa detta"/>
 	<input type="hidden" name="okUrl" value=""/>
 	<input type="hidden" name="cancelUrl" value="<c:out value="${viewListUrl}"/>"/>	
@@ -181,8 +181,9 @@
 					<p><ww:property value="description"/></p>
 				</div>
 			</a>
-			 <div class="columnEnd">
-				<a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '&#196;r du s&#228;ker p&#229; att du vill radera &quot;<ww:property value="#name"/>&quot;');" title="Radera '<ww:property value="#name"/>'" class="delete"></a>
+			<div class="columnEnd">
+				<ww:set name="deleteConfirm" value="this.getVisualFormatter().escapeExtendedHTML(this.getParameterizedLabel('labels.internal.general.list.delete.confirm', #name))" />
+				<a href="javascript:submitDelete('<c:out value="${deleteUrl}"/>', '<ww:property value="#deleteConfirm"/>');" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.delete.title', #name)"/>" class="delete"></a>
 				<a href="<c:out value="${categoryUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', #name)"/>" class="edit"></a>
 			</div>
 		</div>

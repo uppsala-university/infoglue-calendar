@@ -39,7 +39,7 @@
 
 <nav class="subfunctionarea clearfix">
 	<div class="subfunctionarea-content">
-		<a href="<c:out value="${createAttributeCategoryUrl}"/>" title="Skapa ny post"><ww:property value="this.getLabel('labels.internal.eventType.addAvailableCategory')"/></a>
+		<a href="<c:out value="${createAttributeCategoryUrl}"/>" title="<ww:property value="this.getLabel('labels.internal.eventType.addAvailableCategory')"/>"><ww:property value="this.getLabel('labels.internal.eventType.addAvailableCategory')"/></a>
 	</div>
 </nav>
 

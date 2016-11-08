@@ -7,8 +7,8 @@
 
 <nav class="subfunctionarea clearfix">
 	<div class="subfunctionarea-content">
-        <a href="<c:out value="${createLanguageUrl}"/>" title="Skapa ny post"><ww:property value="this.getLabel('labels.internal.language.addLanguage')"/></a>
-    </div>	
+		<a href="<c:out value="${createLanguageUrl}"/>" title="<ww:property value="this.getLabel('labels.internal.language.viewLanguage.title')"/>"><ww:property value="this.getLabel('labels.internal.language.viewLanguage')"/></a>
+	</div>
 </nav>
 
 <div class="mainCol">

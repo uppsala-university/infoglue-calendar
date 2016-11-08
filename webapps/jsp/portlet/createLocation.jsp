@@ -12,8 +12,8 @@
 
 <nav class="subfunctionarea clearfix">
 	<div class="subfunctionarea-content">
-        <a href="<c:out value="${createLocationUrl}"/>" <c:if test="${activeSubNavItem == 'NewLocation'}">class="current"</c:if> title="Skapa ny post"><ww:property value="this.getLabel('labels.internal.location.addLocation')"/></a>
-    </div>	
+		<a href="<c:out value="${createLocationUrl}"/>" <c:if test="${activeSubNavItem == 'NewLocation'}">class="current"</c:if> title="<ww:property value="this.getLabel('labels.internal.location.addLocation.title')"/>"><ww:property value="this.getLabel('labels.internal.location.addLocation')"/></a>
+	</div>
 </nav>
 
 <div class="mainCol">

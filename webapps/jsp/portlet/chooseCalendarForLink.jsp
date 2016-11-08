@@ -38,10 +38,10 @@
             <portlet:param name="calendarId" value='<%= pageContext.getAttribute("calendarId").toString() %>'/>
             <portlet:param name="eventId" value='<%= pageContext.getAttribute("eventId").toString() %>'/>
         </portlet:actionURL>
-        
+
 		<div class="row clearfix">
-        
-			<a href="javascript:linkEvent('<ww:property value="id"/>');" title="Välj '<ww:property value="name"/>'">    
+
+			<a href="javascript:linkEvent('<ww:property value="id"/>');" title="<ww:property value="this.getVisualFormatter().escapeExtendedHTML(this.getParameterizedLabel('labels.internal.general.list.select.title', name))"/>">
 				<div class="columnLong">
 					<p class="portletHeadline">
 					<ww:property value="name"/>

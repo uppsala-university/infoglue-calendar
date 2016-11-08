@@ -14,7 +14,7 @@
 
 <nav class="subfunctionarea clearfix">
 	<div class="subfunctionarea-content">
-        <a href="<c:out value="${viewSubscriptionsUrl}"/>" title="Skapa ny post"><ww:property value="this.getLabel('labels.internal.calendar.viewSubscriptions')"/></a>
+        <a href="<c:out value="${viewSubscriptionsUrl}"/>" title="<ww:property value="this.getLabel('labels.internal.calendar.viewSubscriptions.title')"/>"><ww:property value="this.getLabel('labels.internal.calendar.viewSubscriptions')"/></a>
 	</div>
 </nav>
 

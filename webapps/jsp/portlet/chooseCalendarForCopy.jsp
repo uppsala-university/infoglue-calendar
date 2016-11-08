@@ -31,7 +31,7 @@
         
 		<div class="row clearfix">
         
-			<a href="<c:out value="${createEventUrl}"/>" title="Välj '<ww:property value="name"/>'">
+			<a href="<c:out value="${createEventUrl}"/>" title="<ww:property value="this.getVisualFormatter().escapeExtendedHTML(this.getParameterizedLabel('labels.internal.general.list.select.title', name))"/>">
 				<div class="columnLong">
 					<p class="portletHeadline">
 						<ww:property value="name"/>
