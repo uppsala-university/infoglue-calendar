@@ -10,6 +10,12 @@
 	<portlet:param name="action" value="CreateLanguage!input"/>
 </portlet:renderURL>
 
+<nav class="subfunctionarea clearfix">
+	<div class="subfunctionarea-content">
+		<a href="<c:out value="${createLanguageUrl}"/>" <c:if test="${activeSubNavItem == 'NewLanguage'}">class="current"</c:if> title="<ww:property value="this.getLabel('labels.internal.language.addLanguage.title')"/>"><ww:property value="this.getLabel('labels.internal.language.addLanguage')"/></a>
+	</div>
+</nav>
+
 <div class="mainCol">
     <div class="portlet_margin">
         <portlet:actionURL var="createLanguageActionUrl">

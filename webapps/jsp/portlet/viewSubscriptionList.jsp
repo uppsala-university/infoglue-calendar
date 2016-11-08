@@ -31,6 +31,12 @@
 	<input type="hidden" name="cancelUrl" value="<c:out value="${viewListUrl}"/>"/>	
 </form>
 
+<nav class="subfunctionarea clearfix">
+	<div class="subfunctionarea-content">
+		<a href="<c:out value="${viewSubscriptionsUrl}"/>" title="<ww:property value="this.getLabel('labels.internal.calendar.viewSubscriptions')"/>"><ww:property value="this.getLabel('labels.internal.calendar.viewSubscriptions')"/></a>
+	</div>
+</nav>
+
 <div class="mainCol">
 
     <div class="columnlabelarea row clearfix">

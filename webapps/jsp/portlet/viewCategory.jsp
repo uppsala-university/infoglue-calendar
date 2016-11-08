@@ -26,7 +26,7 @@
 
 <nav class="subfunctionarea clearfix">
 	<div class="subfunctionarea-content">
-        <a href="<c:out value="${createCategoryUrl}"/>" title="<ww:property value="this.getLabel('labels.internal.category.addCategory.title')"/>"><ww:property value="this.getLabel('labels.internal.category.addCategory')"/></a>
+        <a href="<c:out value="${createCategoryUrl}"/>" title="<ww:property value="this.getLabel('labels.internal.category.viewCategory.title')"/>"><ww:property value="this.getLabel('labels.internal.category.viewCategory')"/></a>
     </div>	
 </nav>
 

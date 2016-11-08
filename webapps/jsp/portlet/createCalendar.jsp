@@ -10,6 +10,12 @@
 	<portlet:param name="action" value="CreateCalendar!input"/>
 </portlet:renderURL>
 
+<nav class="subfunctionarea clearfix">
+	<div class="subfunctionarea-content">
+		<a href="<c:out value="${createCalendarUrl}"/>" <c:if test="${activeSubNavItem == 'NewCalendar'}">class="current"</c:if> title="<ww:property value="this.getLabel('labels.internal.calendar.addCalendar.title')"/>"><ww:property value="this.getLabel('labels.internal.calendar.addCalendar')"/></a>
+	</div>
+</nav>
+
 <div class="mainCol">
     <div class="portlet_margin">
     
