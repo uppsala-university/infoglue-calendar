@@ -111,7 +111,7 @@ public class UpdateEventAction extends CalendarUploadAbstractAction
     private List attributes;
 
     private Event event;
-    private List assetKeys;
+    private List<String[]> assetKeyMapping;
 
     private Calendar startCalendar;
     private Calendar endCalendar;
@@ -311,11 +311,27 @@ public class UpdateEventAction extends CalendarUploadAbstractAction
 
 		this.event = EventController.getController().getEvent(eventId, getSession());
 
-		this.assetKeys = EventController.getController().getAssetKeys(event);
+		setupAssetKeyValues();
 
 		maxUploadSize = ResourceController.getController().getMaxUploadSize(getSetting("AssetUploadMaxFileSize"));
 
 		return "uploadForm";
+	}
+
+
+	private void setupAssetKeyValues() {
+		List<String> assetKeys = EventController.getController().getAssetKeys(event);
+		this.assetKeyMapping = new ArrayList<String[]>();
+		for (String assetKey : assetKeys)
+		{
+			String labelKey = "labels.event.uploadForm.assetKey.displayName." + assetKey;
+			String assetDisplayName = getLabel(labelKey);
+			if (assetDisplayName.equals(labelKey))
+			{
+				assetDisplayName = assetKey;
+			}
+			this.assetKeyMapping.add(new String[] {assetKey, assetDisplayName});
+		}
 	}
 
     /**
@@ -620,9 +636,9 @@ public class UpdateEventAction extends CalendarUploadAbstractAction
             this.lastRegistrationTime = (lastRegistrationTime.indexOf(":") == -1 ? (lastRegistrationTime + ":00") : lastRegistrationTime);
     }
     
-    public List getAssetKeys()
+    public List<String[]> getAssetKeyMapping()
     {
-        return assetKeys;
+        return assetKeyMapping;
     }
 
     public Event getEvent()

@@ -1400,5 +1400,20 @@ public class CalendarAbstractAction extends ActionSupport
 		}
 	}
 
+	public String formatFileSize(long size) {
+		if(size <= 0) return "0";
+		final String[] units = new String[] { "B", "kB", "MB", "GB", "TB" };
+		int zeroCount = 0;
+		char[] digitList = ("" + size).toCharArray();
+		digitCounter:for (int i = digitList.length - 1; i >= 0; --i)
+		{
+			if (digitList[i] != '0') {
+				break digitCounter;
+			}
+			zeroCount++;
+		}
+		int digitGroups = Math.round(zeroCount / 3.0f);
+		return new java.text.DecimalFormat("#,##0.#######").format(size/Math.pow(1000, digitGroups)) + " " + units[digitGroups];
+	}
 }
 
