@@ -23,10 +23,9 @@
 
 package org.infoglue.calendar.actions;
 
-import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.security.Principal;
+import java.text.DecimalFormatSymbols;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,7 +33,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -45,12 +43,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
-import javax.portlet.RenderRequest;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.FlushMode;
@@ -1413,7 +1406,8 @@ public class CalendarAbstractAction extends ActionSupport
 			zeroCount++;
 		}
 		int digitGroups = Math.round(zeroCount / 3.0f);
-		return new java.text.DecimalFormat("#,##0.#######").format(size/Math.pow(1000, digitGroups)) + " " + units[digitGroups];
+		DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(getLocale());
+		return new java.text.DecimalFormat("#,##0.#######", symbols).format(size/Math.pow(1000, digitGroups)) + " " + units[digitGroups];
 	}
 }
 
