@@ -19,25 +19,25 @@
 </portlet:renderURL>
 
 <portlet:actionURL var="deleteUrl">
-	<portlet:param name="action" value="DeleteEvent!working"/>
+	<portlet:param name="action" value='<%= "DeleteEvent" + pageContext.getAttribute("deleteActionTask").toString() %>'/>
 	<portlet:param name="eventId" value='<%= pageContext.getAttribute("deleteEventId").toString() %>'/>
 </portlet:actionURL>
 
-<c:if test="${not requestScope.hasInitedDeleteForm}">
-	<c:set var="hasInitedDeleteForm" value="true" scope="request"/>
-	<script type="text/javascript">
-		function submitDelete()
-		{
-			document.deleteForm.submit();
-		}
-	</script>
+<c:set var="deleteFunctionName" value="submitDelete_${deleteEventId}"/>
+<c:set var="deleteFormName" value="deleteForm_${deleteEventId}"/>
 
-	<form name="deleteForm" action="<c:out value="${confirmUrl}"/>" method="post">
-		<input type="hidden" name="confirmTitle" value="<ww:property value="this.htmlEncodeValue(this.getLabel('labels.internal.general.list.delete.confirm.header'))"/>"/>
-		<input type="hidden" name="confirmMessage" value="<ww:property value="this.htmlEncodeValue(this.getParameterizedLabel('labels.internal.general.list.delete.confirm', #eventVersion.name))"/>"/>
-		<input type="hidden" name="okUrl" value="<c:out value="${deleteUrl}"/>"/>
-		<input type="hidden" name="cancelUrl" value="<c:out value="${cancelUrl}"/>"/>
-	</form>
-</c:if>
+<script type="text/javascript">
+	function <c:out value="${deleteFunctionName}()"/>
+	{
+		document.<c:out value="${deleteFormName}"/>.submit();
+	}
+</script>
 
-<a href="javascript:submitDelete();" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.delete.title', #eventVersion.name)"/>" class="delete"></a>
+<form name="<c:out value="${deleteFormName}"/>" action="<c:out value="${confirmUrl}"/>" method="post">
+	<input type="hidden" name="confirmTitle" value="<ww:property value="this.htmlEncodeValue(this.getLabel('labels.internal.general.list.delete.confirm.header'))"/>"/>
+	<input type="hidden" name="confirmMessage" value="<ww:property value="this.htmlEncodeValue(this.getParameterizedLabel('labels.internal.general.list.delete.confirm', #eventVersion.name))"/>"/>
+	<input type="hidden" name="okUrl" value="<c:out value="${deleteUrl}"/>"/>
+	<input type="hidden" name="cancelUrl" value="<c:out value="${cancelUrl}"/>"/>
+</form>
+
+<a href="javascript:<c:out value="${deleteFunctionName}"/>();" title="<ww:property value="this.getVisualFormatter().escapeExtendedHTML(this.getParameterizedLabel('labels.internal.general.list.delete.title', #eventVersion.name))"/>" class="delete"></a>

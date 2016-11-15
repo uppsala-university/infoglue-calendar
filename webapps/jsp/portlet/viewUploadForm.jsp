@@ -30,9 +30,9 @@
 			</ww:if>
 
 			<ww:if test="assetKeyMapping.size() != 0">
-				<input type="submit" value="<ww:property value="this.getLabel('labels.internal.event.updateButton')"/>" class="button">
+				<input type="submit" value="<ww:property value="this.getLabel('labels.internal.event.updateButton')"/>" class="button save">
 			</ww:if>
-			<input type="button" onclick="history.back();" value="<ww:property value="this.getLabel('labels.internal.applicationCancel')"/>" class="button save">
+			<input type="button" onclick="history.back();" value="<ww:property value="this.getLabel('labels.internal.applicationCancel')"/>" class="button">
 		</form>
 	</div>
 </div>
