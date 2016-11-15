@@ -565,5 +565,16 @@ public class ViewEventAction extends CalendarAbstractAction
 	{
 		this.skipLanguageTabs = skipLanguageTabs;
 	}
+	
+	public String getResourceDisplayName(String assetKey)
+	{
+		String labelKey = "labels.event.uploadForm.assetKey.displayName." + assetKey;
+		String assetDisplayName = getLabel(labelKey);
+		if (assetDisplayName == null)
+		{
+			assetDisplayName = assetKey;
+		}
+		return assetDisplayName;
+	}
 
 }

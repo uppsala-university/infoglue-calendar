@@ -9,7 +9,7 @@
 
 <div class="mainCol">	
 	<div class="portlet_margin">
-		<form class="uploadForm" enctype="multipart/form-data" name="inputForm" method="POST" action="<c:out value="${createResourceUploadActionUrl}"/>&eventId=<ww:property value="event.id"/>">
+		<form class="uploadForm" enctype="multipart/form-data" name="inputForm" method="POST" action="<c:out value="${createResourceUploadActionUrl}"/>&eventId=<ww:property value="event.id"/>&languageCode=<ww:property value="this.getLanguageCode()"/>">
 			<input type="hidden" name="eventId" value="<ww:property value="event.id"/>"/>
 
 			<ww:if test="assetKeyMapping.size() == 0">
@@ -32,7 +32,7 @@
 			<ww:if test="assetKeyMapping.size() != 0">
 				<input type="submit" value="<ww:property value="this.getLabel('labels.internal.event.updateButton')"/>" class="button">
 			</ww:if>
-			<input type="button" onclick="history.back();" value="<ww:property value="this.getLabel('labels.internal.applicationCancel')"/>" class="button">
+			<input type="button" onclick="history.back();" value="<ww:property value="this.getLabel('labels.internal.applicationCancel')"/>" class="button save">
 		</form>
 	</div>
 </div>
