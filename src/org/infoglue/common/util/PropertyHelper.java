@@ -25,6 +25,9 @@ package org.infoglue.common.util;
 
 import java.util.Properties;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.*;
 import java.util.ArrayList;
 
@@ -41,6 +44,7 @@ import java.util.ArrayList;
 
 public class PropertyHelper
 {
+	private static Log log = LogFactory.getLog(PropertyHelper.class);
 	private static Properties cachedProperties = null;
 	private static File propertyFile = null;
 		
@@ -191,16 +195,25 @@ public class PropertyHelper
 	public static String getRelatedListPropertValue(String lookupListKey, String relatedListKey, String lookupValue)
 	{
 		ArrayList<String> assetKeys = PropertyHelper.getListProperty(lookupListKey);
+		if (log.isDebugEnabled()) {
+			log.debug("Looking for value " + lookupValue + " in property list");
+			log.debug("Property value list " + assetKeys);
+		}
 		for (int index = 0; index < assetKeys.size(); ++index)
 		{
 			String currentValue = assetKeys.get(index);
 			if (currentValue.equals(lookupValue))
 			{
-				ArrayList<String> assetKeyFileTypes = PropertyHelper.getListProperty(relatedListKey);
-				int fileTypesMaxIndex = assetKeyFileTypes.size() - 1;
-				if (fileTypesMaxIndex >= 0 && fileTypesMaxIndex <= index)
+				ArrayList<String> relatedAssetKeys = PropertyHelper.getListProperty(relatedListKey);
+				if (log.isDebugEnabled()) {
+					log.debug("Related property value list" + relatedAssetKeys);
+				}
+				if (index < relatedAssetKeys.size())
 				{
-					return assetKeyFileTypes.get(index);
+					if (log.isDebugEnabled()) {
+						log.debug("Found related property value at index" + index + ". Value: " + relatedAssetKeys.get(index));
+					}
+					return relatedAssetKeys.get(index);
 				}
 			}
 		}
