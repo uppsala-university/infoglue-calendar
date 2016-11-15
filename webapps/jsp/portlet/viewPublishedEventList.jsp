@@ -81,12 +81,7 @@
             <portlet:param name="action" value="ViewEvent"/>
             <portlet:param name="eventId" value='<%= pageContext.getAttribute("eventId").toString() %>'/>
         </portlet:renderURL>
-            
-        <portlet:actionURL var="deleteUrl">
-            <portlet:param name="action" value="DeleteEvent!published"/>
-            <calendar:evalParam name="eventId" value="${eventId}"/>
-        </portlet:actionURL>
-        
+
         <div class="row clearfix">
 			<a href="<c:out value="${eventUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.title', #eventVersion.name)"/>">
 	            <div class="columnMedium">
@@ -116,6 +111,7 @@
 			</a>
             <div class="columnEnd">
 				<c:set var="cancelViewAction" scope="request">ViewPublishedEventList</c:set>
+				<c:set var="deleteActionTask" value="!published"/>
 				<%@ include file="includes/deleteEventAction.jsp" %>
                 <a href="<c:out value="${eventUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', #eventVersion.name)"/>" class="edit"></a>
             </div>

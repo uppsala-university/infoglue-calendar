@@ -77,7 +77,8 @@
 			</a>
 
             <div class="columnEnd">
-				<c:set var="cancelViewAction" scope="request">MyWorkingEventlist</c:set>
+				<c:set var="cancelViewAction" scope="request">ViewMyWorkingEventList</c:set>
+				<c:set var="deleteActionTask" value="!working"/>
 				<%@ include file="includes/deleteEventAction.jsp" %>
                 <a href="<c:out value="${eventUrl}"/>" title="<ww:property value="this.getParameterizedLabel('labels.internal.general.list.edit.title', #eventVersion.name)"/>" class="edit"></a>
             </div>
