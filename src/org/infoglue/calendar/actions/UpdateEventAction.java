@@ -326,6 +326,10 @@ public class UpdateEventAction extends CalendarUploadAbstractAction
 		{
 			String labelKey = "labels.event.uploadForm.assetKey.displayName." + assetKey;
 			String assetDisplayName = getLabel(labelKey);
+			if (log.isDebugEnabled())
+			{
+				log.debug("Getting label for '" + labelKey + "' was '" + assetDisplayName + "'");
+			}
 			if (assetDisplayName == null)
 			{
 				assetDisplayName = assetKey;
