@@ -267,111 +267,147 @@
 				</ww:else>
 			
 			</ww:if>
-			<p>
-				<calendar:textValue label="labels.internal.event.name" value="eventVersion.name" labelCssClass="label"/>
-			</p>
-			<%--
-			<p>
-				<calendar:textValue label="labels.internal.event.title" value="eventVersion.title" labelCssClass="label"/>
-			</p>
-			--%>
+			
+			<%-- Event title --%>
+			<ww:if test="eventVersion.name != '' && eventVersion.name != null">
+				<p>
+					<calendar:textValue label="labels.internal.event.name" value="eventVersion.name" labelCssClass="label"/>
+				</p>
+			</ww:if>
+			
+			<%-- Internal or open --%>  
+			<ww:if test="this.isActiveEventField('isInternal') && event.isInternal != ''  && event.isInternal != null">
+				<p>
+					<calendar:textValue label="labels.internal.event.isInternal" value="event.isInternal" valueMap="internalEventMap" labelCssClass="label"/>
+				</p>
+			</ww:if>			
+
+			<%-- Lecturer --%>  
+			<ww:if test="this.isActiveEventField('lecturer') && eventVersion.lecturer != '' && eventVersion.lecturer != null">
+				<p>
+					<calendar:textValue label="labels.internal.event.lecturer" value="eventVersion.lecturer" labelCssClass="label"/>
+				</p>
+			</ww:if>
+
+			<%-- Short description --%> 
+			<ww:if test="eventVersion.decoratedShortDescription != '' && eventVersion.decoratedShortDescription != null">
+				<div class="is-margin-bottom is-max-width">
+					<calendar:textValue label="labels.internal.event.shortDescription" value="eventVersion.decoratedShortDescription" labelCssClass="label"/>
+				</div>
+			</ww:if>
+
+			<%-- Description --%>  
+			<ww:if test="eventVersion.decoratedLongDescription != '' && eventVersion.decoratedLongDescription != null">
+				<div class="is-margin-bottom is-max-width">
+					<calendar:textValue label="labels.internal.event.longDescription" value="eventVersion.decoratedLongDescription" cssClass="wysiwygDescription" labelCssClass="label"/>
+				</div>	
+			</ww:if>			
+
+			<%-- Time --%>
 			<p>
 				<span class="label"><ww:property value="this.getLabel('labels.internal.event.startDate')"/></span><br />
 				<ww:property value="this.formatDate(event.startDateTime.time, 'yyyy-MM-dd')"/> 
 				<ww:if test="this.formatDate(event.startDateTime.time, 'HH:mm') != '12:34'">
-				<ww:property value="this.getLabel('labels.public.event.klockLabel')"/>. <ww:property value="this.formatDate(event.startDateTime.time, 'HH:mm')"/>
-				</ww:if>
-			</p>
-
-			<p>
-				<span class="label"><ww:property value="this.getLabel('labels.internal.event.endDate')"/></span><br />
-				<ww:property value="this.formatDate(event.endDateTime.time, 'yyyy-MM-dd')"/> 
-				<ww:if test="this.formatDate(event.endDateTime.time, 'HH:mm') != '13:34'">
-				<ww:property value="this.getLabel('labels.public.event.klockLabel')"/>. <ww:property value="this.formatDate(event.endDateTime.time, 'HH:mm')"/>
+					<ww:property value="this.getLabel('labels.public.event.klockLabel')"/>. <ww:property value="this.formatDate(event.startDateTime.time, 'HH:mm')"/>
 				</ww:if>
 			</p>
 			
-			<div class="is-margin-bottom is-max-width">
-				<calendar:textValue label="labels.internal.event.shortDescription" value="eventVersion.decoratedShortDescription" labelCssClass="label"/>
-			</div>
-			<div class="is-margin-bottom is-max-width">
-				<calendar:textValue label="labels.internal.event.longDescription" value="eventVersion.decoratedLongDescription" cssClass="wysiwygDescription" labelCssClass="label"/>
-			</div>
-			<ww:if test="this.isActiveEventField('isInternal')">
-			<p>
-				<calendar:textValue label="labels.internal.event.isInternal" value="event.isInternal" valueMap="internalEventMap" labelCssClass="label"/>
-			</p>
-			</ww:if>
-			<ww:if test="this.isActiveEventField('isOrganizedByGU')">
-			<p>
-				<calendar:textValue label="labels.internal.event.isOrganizedByGU" value="event.isOrganizedByGU" labelCssClass="label"/>
-			</p>
-			</ww:if>
-			<ww:if test="this.isActiveEventField('organizerName')">
-			<p>
-				<calendar:textValue label="labels.internal.event.organizerName" value="eventVersion.organizerName" labelCssClass="label"/>
-			</p>
-			</ww:if>
-			<ww:if test="this.isActiveEventField('lecturer')">
-			<p>
-				<calendar:textValue label="labels.internal.event.lecturer" value="eventVersion.lecturer" labelCssClass="label"/>
-			</p>
-			</ww:if>
-			<ww:if test="this.isActiveEventField('alternativeLocation')">
-			<p>
-				<calendar:textValue label="labels.internal.event.alternativeLocation" value="eventVersion.alternativeLocation" labelCssClass="label"/>
-			</p>
-			</ww:if>
-			<ww:if test="this.isActiveEventField('customLocation')">
-			<p>
-				<calendar:textValue label="labels.internal.event.customLocation" value="eventVersion.customLocation" labelCssClass="label"/>
-			</p>
-			</ww:if>
-			<ww:if test="this.isActiveEventField('eventUrl')">
-			<p>
-				<calendar:textValue label="labels.internal.event.eventUrl" value="eventVersion.eventUrl" labelCssClass="label"/>
-			</p>
-			</ww:if>
-			<ww:if test="this.isActiveEventField('contactName')">
-			<p>
-				<calendar:textValue label="labels.internal.event.contactName" value="event.contactName" labelCssClass="label"/>
-			</p>
-			</ww:if>
-			<ww:if test="this.isActiveEventField('contactEmail')">
-			<p>
-				<calendar:textValue label="labels.internal.event.contactEmail" value="event.contactEmail" labelCssClass="label"/>
-			</p>
-			</ww:if>
-			<ww:if test="this.isActiveEventField('contactPhone')">
-			<p>
-				<calendar:textValue label="labels.internal.event.contactPhone" value="event.contactPhone" labelCssClass="label"/>
-			</p>
-			</ww:if>
-			<ww:if test="this.isActiveEventField('price')">
-			<p>
-				<calendar:textValue label="labels.internal.event.price" value="event.price" labelCssClass="label"/>
-			</p>
-			</ww:if>
-			<p>
-				<calendar:textValue label="labels.internal.event.maximumParticipants" value="event.maximumParticipants" labelCssClass="label"/>
-			</p>
+			<ww:if test="event.endDateTime.time != '' && event.endDateTime.time != null">
+				<p>
+					<span class="label"><ww:property value="this.getLabel('labels.internal.event.endDate')"/></span><br />
+					<ww:property value="this.formatDate(event.endDateTime.time, 'yyyy-MM-dd')"/> 
+					<ww:if test="this.formatDate(event.endDateTime.time, 'HH:mm') != '13:34'">
+						<ww:property value="this.getLabel('labels.public.event.klockLabel')"/>. <ww:property value="this.formatDate(event.endDateTime.time, 'HH:mm')"/>
+					</ww:if>
+				</p>
+			</ww:if>	
 
-			<p>
-				<span class="label"><ww:property value="this.getLabel('labels.internal.event.lastRegistrationDate')"/></span><br />
-				<ww:if test="event.lastRegistrationDateTime == null">
-					<ww:property value="this.getLabel('labels.internal.event.noLastRegistrationDateTime')"/>
-				</ww:if>
-				<ww:else>
-					<ww:property value="this.formatDate(event.lastRegistrationDateTime.time, 'yyyy-MM-dd')"/> <ww:property value="this.getLabel('labels.public.event.klockLabel')"/>. <ww:property value="this.formatDate(event.lastRegistrationDateTime.time, 'HH:mm')"/>
-				</ww:else>
-			</p>
+			<%-- Location --%> 
+			<ww:if test="event.locations != '' && event.locations != null">
+				<p>
+					<calendar:textValue label="labels.internal.event.location" value="event.locations" labelCssClass="label"/>
+				</p>
+			</ww:if>
+
+			<%-- Alternative location --%>  
+			<ww:if test="this.isActiveEventField('alternativeLocation') && eventVersion.alternativeLocation != '' && eventVersion.alternativeLocation != null">
+				<p>
+					<calendar:textValue label="labels.internal.event.alternativeLocation" value="eventVersion.alternativeLocation" labelCssClass="label"/>
+				</p>
+			</ww:if>
+
+			<%-- Custom location --%>  
+			<ww:if test="this.isActiveEventField('customLocation') && eventVersion.customLocation != '' && eventVersion.customLocation != null">
+				<p>
+					<calendar:textValue label="labels.internal.event.customLocation" value="eventVersion.customLocation" labelCssClass="label"/>
+				</p>
+			</ww:if>
+
+			<%-- Organizer name --%>
+			<ww:if test="this.isActiveEventField('organizerName') && eventVersion.organizerName != '' && eventVersion.organizerName != null">
+				<p>
+					<calendar:textValue label="labels.internal.event.organizerName" value="eventVersion.organizerName" labelCssClass="label"/>
+				</p>
+			</ww:if>
+
+			<%-- Homepage --%>    
+			<ww:if test="this.isActiveEventField('eventUrl') && eventVersion.eventUrl != '' && eventVersion.eventUrl != null">
+				<p>
+					<calendar:textValue label="labels.internal.event.eventUrl" value="eventVersion.eventUrl" labelCssClass="label"/>
+				</p>
+			</ww:if>
+			
+			<%-- Contact name --%>
+			<ww:if test="this.isActiveEventField('contactName') && event.contactName != '' && event.contactName != null">
+				<p>
+					<calendar:textValue label="labels.internal.event.contactName" value="event.contactName" labelCssClass="label"/>
+				</p>
+			</ww:if>
+
+			<%-- Contact email --%>  
+			<ww:if test="this.isActiveEventField('contactEmail') && event.contactEmail != '' && event.contactEmail != null">
+				<p>
+					<calendar:textValue label="labels.internal.event.contactEmail" value="event.contactEmail" labelCssClass="label"/>
+				</p>
+			</ww:if>
+			
+			<%-- Contact phone --%>  
+			<ww:if test="this.isActiveEventField('contactPhone') && event.contactPhone != '' && event.contactPhone != null">
+				<p>
+					<calendar:textValue label="labels.internal.event.contactPhone" value="event.contactPhone" labelCssClass="label"/>
+				</p>
+			</ww:if>
+			
+			<%-- Participation fee --%>  
+			<ww:if test="this.isActiveEventField('price') && event.price != '' && event.price != null">
+				<p>
+					<calendar:textValue label="labels.internal.event.price" value="event.price" labelCssClass="label"/>
+				</p>
+			</ww:if>
+			
+			<%-- Maximum number of participants --%>  
+			<ww:if test="event.maximumParticipants != '' && event.maximumParticipants != null">			
+				<p>
+					<calendar:textValue label="labels.internal.event.maximumParticipants" value="event.maximumParticipants" labelCssClass="label"/>
+				</p>
+			</ww:if>
+			
+			<%-- Participation deadline --%>
+			<ww:if test="event.lastRegistrationDateTime != '' && event.lastRegistrationDateTime != null">	
+				<p>
+					<span class="label"><ww:property value="this.getLabel('labels.internal.event.lastRegistrationDate')"/></span><br />
+					<ww:if test="event.lastRegistrationDateTime == null">
+						<ww:property value="this.getLabel('labels.internal.event.noLastRegistrationDateTime')"/>
+					</ww:if>
+					<ww:else>
+						<ww:property value="this.formatDate(event.lastRegistrationDateTime.time, 'yyyy-MM-dd')"/> <ww:property value="this.getLabel('labels.public.event.klockLabel')"/>. <ww:property value="this.formatDate(event.lastRegistrationDateTime.time, 'HH:mm')"/>
+					</ww:else>
+				</p>
+			</ww:if>
 
 			<!-- END NEW -->
 
-			<p>
-				<calendar:textValue label="labels.internal.event.location" value="event.locations" labelCssClass="label"/>
-			</p>
-
+			<%-- Topic fields --%>
 			<ww:set name="count" value="0"/>
 			<ww:iterator value="attributes" status="rowstatus">
 				<ww:set name="attribute" value="top" scope="page"/>
@@ -384,6 +420,7 @@
 				<ww:set name="count" value="#count + 1"/>
 			</ww:iterator>
 
+			<%-- Categories --%>
 			<ww:iterator value="event.owningCalendar.eventType.categoryAttributes" status="rowstatus">
 				<p>
 					<ww:set name="categoryAttribute" value="top" scope="page"/>
@@ -395,34 +432,33 @@
 					<calendar:textValue label="top.name" value="#selectedCategories" labelCssClass="label"/>
 				</p>
 			</ww:iterator>
-				
-			<p>  		
-				<calendar:textValue label="labels.internal.event.participants" value="event.participants" labelCssClass="label"/>
-			</p>
 			
-			<p>
-				<span class="label"><ww:property value="this.getLabel('labels.internal.event.attachedFiles')"/></span><br>
-				<ww:iterator value="event.resources">
-				
-					<ww:set name="resourceId" value="top.id" scope="page"/>
-					<calendar:resourceUrl id="url" resourceId="${resourceId}"/>
+			<%-- Attached files --%>
+			<ww:if test="event.resources != null">	
+				<p>
+					<span class="label"><ww:property value="this.getLabel('labels.internal.event.attachedFiles')"/></span><br>
+					<ww:iterator value="event.resources">
 					
-					<portlet:actionURL var="deleteResourceUrl">
-						<portlet:param name="action" value="DeleteResource"/>
-						<portlet:param name="deleteResourceId" value='<%= pageContext.getAttribute("resourceId").toString() %>'/>
-					</portlet:actionURL>
-								
-					<span class=""><a href="<c:out value="${url}"/>"><ww:property value='fileName'/> (<ww:property value='this.getResourceDisplayName(top.assetKey)'/>)</a></span>&nbsp;
-					<ww:if test="this.getIsEventCreator(event) || this.getIsEventOwner(event)">
-						<a href="<c:out value="${deleteResourceUrl}"/>"><img src="<%=request.getContextPath()%>/images/delete.gif" border="0"></a>
+						<ww:set name="resourceId" value="top.id" scope="page"/>
+						<calendar:resourceUrl id="url" resourceId="${resourceId}"/>
+						
+						<portlet:actionURL var="deleteResourceUrl">
+							<portlet:param name="action" value="DeleteResource"/>
+							<portlet:param name="deleteResourceId" value='<%= pageContext.getAttribute("resourceId").toString() %>'/>
+						</portlet:actionURL>
+									
+						<span class=""><a href="<c:out value="${url}"/>"><ww:property value='fileName'/> (<ww:property value='this.getResourceDisplayName(top.assetKey)'/>)</a></span>&nbsp;
+						<ww:if test="this.getIsEventCreator(event) || this.getIsEventOwner(event)">
+							<a href="<c:out value="${deleteResourceUrl}"/>"><img src="<%=request.getContextPath()%>/images/delete.gif" border="0"></a>
+						</ww:if>
+						<br/>
+					</ww:iterator>
+					
+					<ww:if test="event.resources == null || event.resources.size() == 0">
+						<span class="calendarValue"><ww:property value="this.getLabel('labels.internal.event.noAttachments')"/></span><br/>
 					</ww:if>
-					<br/>
-				</ww:iterator>
-				
-				<ww:if test="event.resources == null || event.resources.size() == 0">
-					<span class="calendarValue"><ww:property value="this.getLabel('labels.internal.event.noAttachments')"/></span><br/>
-				</ww:if>
-			</p>
+				</p>
+			</ww:if>
 
 			<ww:if test="event.versions.size() < availableLanguages.size()">
 			<p>
