@@ -2018,7 +2018,7 @@ public class EventController extends BasicController
 			Set<Resource> currentResources = event.getResources();
 			for (Resource resource : currentResources)
 			{
-				if (assetKeys.contains(resource.getAssetKey()))
+				if (assetKeys.contains(resource.getAssetKey()) && !isAssetKeyMultiple(resource.getAssetKey()))
 				{
 					log.debug("Removing assetKey since it's already assigned for the given Event");
 					assetKeys.remove(resource.getAssetKey());
@@ -2026,6 +2026,26 @@ public class EventController extends BasicController
 			}
 		}
 		return assetKeys;
+	}
+
+	private boolean isAssetKeyMultiple(String assetKey)
+	{
+		ArrayList<String> assetKeys = PropertyHelper.getListProperty("assetKey");
+		ArrayList<String> assetKeyIsMultiple = PropertyHelper.getListProperty("assetKeyIsMultiple");
+
+		if (log.isDebugEnabled())
+		{
+			log.debug("Will test if assetKey <" + assetKey + "> is multiple mode. AssetKeys: " + assetKeys + ". Multiple mode: " + assetKeyIsMultiple);
+		}
+
+		for (int i = 0; i < assetKeys.size(); ++i)
+		{
+			if (assetKeys.get(i).equals(assetKey))
+			{
+				return Boolean.parseBoolean(assetKeyIsMultiple.get(i));
+			}
+		}
+		return false;
 	}
 
     private String getRoleSQL(List roles)
