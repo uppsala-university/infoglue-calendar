@@ -86,6 +86,12 @@ public class InfoGlueGroupBean  implements java.io.Serializable {
         this.name = name;
     }
 
+	@Override
+	public String toString()
+	{
+		return name;
+	}
+
     private java.lang.Object __equalsCalc = null;
     public synchronized boolean equals(java.lang.Object obj) {
         if (!(obj instanceof InfoGlueGroupBean)) return false;

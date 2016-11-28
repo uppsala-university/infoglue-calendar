@@ -26,7 +26,6 @@ package org.infoglue.common.security.beans;
 import java.io.Serializable;
 import java.security.Principal;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,8 +45,8 @@ public class InfoGluePrincipalBean implements Principal, Serializable
 	private String firstName;
 	private String lastName;
 	private String email;
-	private List roles;
-	private List groups;
+	private List<InfoGlueRoleBean> roles;
+	private List<InfoGlueGroupBean> groups;
 	private Map metaInformation;
 	private boolean isAdministrator;
 
@@ -81,12 +80,12 @@ public class InfoGluePrincipalBean implements Principal, Serializable
 		return email;
 	}
 
-	public List getRoles()
+	public List<InfoGlueRoleBean> getRoles()
 	{
 		return Collections.unmodifiableList(roles);
 	}
 	
-    public List getGroups()
+    public List<InfoGlueGroupBean> getGroups()
     {
         return Collections.unmodifiableList(groups);
     }
@@ -150,7 +149,7 @@ public class InfoGluePrincipalBean implements Principal, Serializable
 		this.firstName = firstName;
 	}
 
-	public void setGroups(List groups)
+	public void setGroups(List<InfoGlueGroupBean> groups)
 	{
 		this.groups = groups;
 	}
@@ -175,9 +174,37 @@ public class InfoGluePrincipalBean implements Principal, Serializable
 		this.name = name;
 	}
 
-	public void setRoles(List roles)
+	public void setRoles(List<InfoGlueRoleBean> roles)
 	{
 		this.roles = roles;
+	}
+
+	public static String dumpUserData(InfoGluePrincipalBean principal)
+	{
+		StringBuilder sb = new StringBuilder();
+		String fieldDivider = ", ";
+
+		if (principal == null)
+		{
+			sb.append("null");
+		}
+		else
+		{
+			// Basic data
+			sb.append("Name: ").append(principal.name).append(fieldDivider);
+			sb.append("Email: ").append(principal.email);
+
+			// Groups
+			sb.append("\n\tRoles: ").append(principal.roles);
+
+			// Groups
+			sb.append("\n\tGroups: ").append(principal.groups);
+		}
+
+		sb.insert(0, "{\n");
+		sb.append("\n}");
+
+		return sb.toString();
 	}
 
 }
