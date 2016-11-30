@@ -1893,7 +1893,6 @@ public class EventController extends BasicController
 				email = tempString.toString();
 
 				String systemEmailSender = PropertyHelper.getProperty("systemEmailSender");
-				System.out.println("Rasmus systemEmailSender:" + systemEmailSender);
 				if(systemEmailSender == null || systemEmailSender.equalsIgnoreCase(""))
 					systemEmailSender = "infoglueCalendar@" + PropertyHelper.getProperty("mail.smtp.host");
 
