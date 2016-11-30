@@ -1862,6 +1862,7 @@ public class EventController extends BasicController
 					if (!infogluePrincipal.getEmail().contains("@"))
 					{
 						log.info("User <" + infogluePrincipal + "> does not have a valid email adress. Skipping..");
+						continue;
 					}
 					addresses += infogluePrincipal.getEmail() + ";";
 				}
