@@ -2059,13 +2059,21 @@ public class EventController extends BasicController
 			log.debug("Will test if assetKey <" + assetKey + "> is multiple mode. AssetKeys: " + assetKeys + ". Multiple mode: " + assetKeyIsMultiple);
 		}
 
-		for (int i = 0; i < assetKeys.size(); ++i)
+		try
 		{
-			if (assetKeys.get(i).equals(assetKey))
+			for (int i = 0; i < assetKeys.size(); ++i)
 			{
-				return Boolean.parseBoolean(assetKeyIsMultiple.get(i));
+				if (assetKeys.get(i).equals(assetKey))
+				{
+					return Boolean.parseBoolean(assetKeyIsMultiple.get(i));
+				}
 			}
 		}
+		catch (IndexOutOfBoundsException ex)
+		{
+			log.warn("Multiple asset binding was not defined for assetKey " + assetKey + ". Message: " + ex.getMessage());
+		}
+
 		return false;
 	}
 
