@@ -82,4 +82,9 @@ public class Group implements BaseEntity
 		return this.getName();
 	}
 
+	@Override
+	public String toString() {
+		return name;
+	}
+
 }

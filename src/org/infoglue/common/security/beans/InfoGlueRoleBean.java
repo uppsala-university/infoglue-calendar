@@ -61,7 +61,7 @@ public class InfoGlueRoleBean implements Serializable
 	
 	public String toString()
 	{
-		return "InfoGlueRole: " + name;
+		return name;
 	}
 
 	public boolean equals(Object obj)

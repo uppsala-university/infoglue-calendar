@@ -23,13 +23,16 @@
 
 package org.infoglue.calendar.controllers;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -45,6 +48,7 @@ import org.infoglue.calendar.entities.Participant;
 import org.infoglue.calendar.entities.Role;
 import org.infoglue.common.exceptions.Bug;
 import org.infoglue.common.exceptions.SystemException;
+import org.infoglue.common.security.beans.InfoGlueGroupBean;
 import org.infoglue.common.security.beans.InfoGluePrincipalBean;
 import org.infoglue.common.util.CacheController;
 import org.infoglue.common.util.WebServiceHelper;
@@ -413,5 +417,20 @@ public class AccessRightController extends BasicController
 		CalendarAbstractAction action = new CalendarAbstractAction();
 		
 		return action.getSetting("remoteUserServiceURL");
+	}
+
+	public boolean groupListContainsAny(Collection<InfoGlueGroupBean> beans, Collection<Group> groups)
+	{
+		Collection<String> col1 = new LinkedList<String>();
+		Collection<String> col2 = new LinkedList<String>();
+		for (InfoGlueGroupBean bean : beans)
+		{
+			col1.add(bean.getName());
+		}
+		for (Group group : groups)
+		{
+			col2.add(group.getName());
+		}
+		return CollectionUtils.containsAny(col1, col2);
 	}
 }

@@ -28,12 +28,10 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.infoglue.calendar.entities.Calendar;
 import org.infoglue.calendar.entities.Category;
-import org.infoglue.calendar.entities.Entry;
 import org.infoglue.calendar.entities.Event;
 import org.infoglue.calendar.entities.EventCategory;
 import org.infoglue.calendar.entities.EventTypeCategoryAttribute;
@@ -47,11 +45,9 @@ import org.infoglue.calendar.entities.Role;
 import org.infoglue.calendar.entities.Subscriber;
 import org.infoglue.calendar.util.EventComparator;
 import org.infoglue.common.security.beans.InfoGluePrincipalBean;
-import org.infoglue.common.security.beans.InfoGlueRoleBean;
 import org.infoglue.common.util.PropertyHelper;
 import org.infoglue.common.util.RemoteCacheUpdater;
 import org.infoglue.common.util.VelocityTemplateProcessor;
-import org.infoglue.common.util.WebServiceHelper;
 import org.infoglue.common.util.io.FileHelper;
 import org.infoglue.common.util.mail.MailServiceFactory;
 
@@ -59,7 +55,6 @@ import org.infoglue.common.util.mail.MailServiceFactory;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -70,27 +65,17 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.LogicalExpression;
-import org.hibernate.criterion.NotExpression;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projection;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.SimpleExpression;
 import org.hibernate.criterion.Subqueries;
 
 public class EventController extends BasicController
@@ -1798,93 +1783,129 @@ public class EventController extends BasicController
         
 		new RemoteCacheUpdater().updateRemoteCaches(calendarId);
     }
-    
+
+	private void filterSetOnOwningGroups(Set<InfoGluePrincipalBean> principals, Calendar calendar)
+	{
+		Iterator<InfoGluePrincipalBean> it = principals.iterator();
+		InfoGluePrincipalBean principal;
+		while (it.hasNext())
+		{
+			principal = it.next();
+			// Populates the principal with roles and groups
+			principal = AccessRightController.getController().getPrincipal(principal.getName());
+			if (log.isDebugEnabled())
+			{
+				log.debug("Will compare <" + InfoGluePrincipalBean.dumpUserData(principal) + "> to <" + calendar.getOwningGroups() + ">");
+			}
+
+			if (!AccessRightController.getController().groupListContainsAny(principal.getGroups(), calendar.getOwningGroups()))
+			{
+				log.debug("Principal <" + principal + "> was not member of any owning groups");
+				it.remove();
+			}
+		}
+	}
+
+	private Set<InfoGluePrincipalBean> getPublishersToNotify(Calendar calendar)
+	{
+		Set<InfoGluePrincipalBean> principals = new HashSet<InfoGluePrincipalBean>();
+		Collection owningRoles = calendar.getOwningRoles();
+		log.info("owningRoles:" + owningRoles.size());
+
+		Iterator owningRolesIterator = owningRoles.iterator();
+		while(owningRolesIterator.hasNext())
+		{
+			Role role = (Role)owningRolesIterator.next();
+			log.info("Owning role:" + role.getName());
+
+			principals.addAll(AccessRightController.getController().getPrincipalsWithRole(role.getName()));
+			if (log.isInfoEnabled())
+			{
+				log.debug("principals so far:" + principals.size());
+			}
+		}
+
+		if (log.isInfoEnabled())
+		{
+			log.info("Principals with ownning calendar role:" + principals.size());
+		}
+
+		filterSetOnOwningGroups(principals, calendar);
+
+		return principals;
+	}
+
     /**
      * This method emails the owner of an event the new information and an address to visit.
      * @throws Exception
      */
-    
-    public void notifyPublisher(Event event, EventVersion eventVersion, String publishEventUrl, InfoGluePrincipalBean infoGluePrincipal) throws Exception
-    {
-	    String email = "";
-	    
+
+	public void notifyPublisher(Event event, EventVersion eventVersion, String publishEventUrl, InfoGluePrincipalBean infoGluePrincipal) throws Exception
+	{
+		String email = "";
+
 	    try
 	    {
-	        List allPrincipals = new ArrayList();
-	        Collection owningRoles = event.getOwningCalendar().getOwningRoles();
-	        log.info("owningRoles:" + owningRoles.size());
-	        Iterator owningRolesIterator = owningRoles.iterator();
-	        while(owningRolesIterator.hasNext())
+	        Set<InfoGluePrincipalBean> allPrincipals = getPublishersToNotify(event.getOwningCalendar());
+
+	        if (allPrincipals.size() == 0)
 	        {
-	            Role role = (Role)owningRolesIterator.next();
-	            log.info("Owning role:" + role.getName());
-	            
-	            List principals = new ArrayList();
-	            principals.addAll(AccessRightController.getController().getPrincipalsWithRole(role.getName()));
-	            //List principals = RoleControllerProxy.getController().getInfoGluePrincipals(role.getName());
-	            log.info("principals:" + principals.size());
-	            
-	            Iterator userIterator = principals.iterator();
-	            while(userIterator.hasNext())
-	            {
-	            	
-	                InfoGluePrincipalBean principal = (InfoGluePrincipalBean)userIterator.next();
-	                boolean hasGroup = hasUserGroup(principal, event);
-	                log.info("hasGroup:" + principal);
-	                if(hasGroup)
-	                    allPrincipals.add(principal);
-	            }
+				log.info("No publishers found for calendar: " + event.getOwningCalendar().getName());
 	        }
-
-	        String addresses = "";
-	        Iterator allPrincipalsIterator = allPrincipals.iterator();
-	        while(allPrincipalsIterator.hasNext())
+	        else
 	        {
-		        InfoGluePrincipalBean infogluePrincipal = (InfoGluePrincipalBean)allPrincipalsIterator.next();
-		        addresses += infogluePrincipal.getEmail() + ";";
-		        log.info("Rasmus adress:" + infogluePrincipal.getEmail() + " for user:" + infogluePrincipal.getDisplayName());
-	        }
+				String addresses = "";
+				Iterator allPrincipalsIterator = allPrincipals.iterator();
+				while(allPrincipalsIterator.hasNext())
+				{
+					InfoGluePrincipalBean infogluePrincipal = (InfoGluePrincipalBean)allPrincipalsIterator.next();
+					if (!infogluePrincipal.getEmail().contains("@"))
+					{
+						log.info("User <" + infogluePrincipal + "> does not have a valid email adress. Skipping..");
+					}
+					addresses += infogluePrincipal.getEmail() + ";";
+				}
 
-            String template;
-	        
-	        String contentType = PropertyHelper.getProperty("mail.contentType");
-	        if(contentType == null || contentType.length() == 0)
-	            contentType = "text/html";
-	        
-	        if(contentType.equalsIgnoreCase("text/plain"))
-	            template = FileHelper.getFileAsString(new File(PropertyHelper.getProperty("contextRootPath") + "templates/newEventNotification_plain.vm"));
-		    else
-	            template = FileHelper.getFileAsString(new File(PropertyHelper.getProperty("contextRootPath") + "templates/newEventNotification_html.vm"));
-		    
-	        publishEventUrl = publishEventUrl.replaceAll("j_username", "fold1");
-	        publishEventUrl = publishEventUrl.replaceAll("j_password", "fold2");
-	        
-		    Map parameters = new HashMap();
-		    
-		    parameters.put("principal", infoGluePrincipal);
-		    parameters.put("event", event);
-		    parameters.put("eventVersion", eventVersion);
-		    parameters.put("publishEventUrl", publishEventUrl.replaceAll("\\{eventId\\}", event.getId().toString()));
-		    
-			StringWriter tempString = new StringWriter();
-			PrintWriter pw = new PrintWriter(tempString);
-			new VelocityTemplateProcessor().renderTemplate(parameters, pw, template);
-			email = tempString.toString();
-			  
-			String systemEmailSender = PropertyHelper.getProperty("systemEmailSender");
-			System.out.println("Rasmus systemEmailSender:" + systemEmailSender);
-			if(systemEmailSender == null || systemEmailSender.equalsIgnoreCase(""))
-				systemEmailSender = "infoglueCalendar@" + PropertyHelper.getProperty("mail.smtp.host");
+				String template;
 
-			log.info("Sending mail to:" + systemEmailSender + " and " + addresses);
-			MailServiceFactory.getService().send(systemEmailSender, addresses, null, "InfoGlue Calendar - new event waiting", email, contentType, "UTF-8", null);
-	    }
+				String contentType = PropertyHelper.getProperty("mail.contentType");
+				if(contentType == null || contentType.length() == 0)
+					contentType = "text/html";
+
+				if(contentType.equalsIgnoreCase("text/plain"))
+					template = FileHelper.getFileAsString(new File(PropertyHelper.getProperty("contextRootPath") + "templates/newEventNotification_plain.vm"));
+				else
+					template = FileHelper.getFileAsString(new File(PropertyHelper.getProperty("contextRootPath") + "templates/newEventNotification_html.vm"));
+
+				publishEventUrl = publishEventUrl.replaceAll("j_username", "fold1");
+				publishEventUrl = publishEventUrl.replaceAll("j_password", "fold2");
+
+				Map parameters = new HashMap();
+
+				parameters.put("principal", infoGluePrincipal);
+				parameters.put("event", event);
+				parameters.put("eventVersion", eventVersion);
+				parameters.put("publishEventUrl", publishEventUrl.replaceAll("\\{eventId\\}", event.getId().toString()));
+
+				StringWriter tempString = new StringWriter();
+				PrintWriter pw = new PrintWriter(tempString);
+				new VelocityTemplateProcessor().renderTemplate(parameters, pw, template);
+				email = tempString.toString();
+
+				String systemEmailSender = PropertyHelper.getProperty("systemEmailSender");
+				if(systemEmailSender == null || systemEmailSender.equalsIgnoreCase(""))
+					systemEmailSender = "infoglueCalendar@" + PropertyHelper.getProperty("mail.smtp.host");
+
+				log.info("Sending mail to:" + systemEmailSender + " and " + addresses);
+				MailServiceFactory.getService().send(systemEmailSender, addresses, null, "InfoGlue Calendar - new event waiting", email, contentType, "UTF-8", null);
+			}
+		}
 		catch(Exception e)
 		{
 			log.error("The notification was not sent. Reason:" + e.getMessage(), e);
 		}
 		
-    }
+	}
 
     
     /**
@@ -2038,13 +2059,21 @@ public class EventController extends BasicController
 			log.debug("Will test if assetKey <" + assetKey + "> is multiple mode. AssetKeys: " + assetKeys + ". Multiple mode: " + assetKeyIsMultiple);
 		}
 
-		for (int i = 0; i < assetKeys.size(); ++i)
+		try
 		{
-			if (assetKeys.get(i).equals(assetKey))
+			for (int i = 0; i < assetKeys.size(); ++i)
 			{
-				return Boolean.parseBoolean(assetKeyIsMultiple.get(i));
+				if (assetKeys.get(i).equals(assetKey))
+				{
+					return Boolean.parseBoolean(assetKeyIsMultiple.get(i));
+				}
 			}
 		}
+		catch (IndexOutOfBoundsException ex)
+		{
+			log.warn("Multiple asset binding was not defined for assetKey " + assetKey + ". Message: " + ex.getMessage());
+		}
+
 		return false;
 	}
 
