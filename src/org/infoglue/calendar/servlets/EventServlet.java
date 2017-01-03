@@ -40,6 +40,7 @@ public class EventServlet extends HttpServlet
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{
 		response.setContentType("text/xml");
+		response.setCharacterEncoding("UTF-8");
 		StringBuffer sb = new StringBuffer();
 		
 		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
