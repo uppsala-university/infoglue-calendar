@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -16,9 +15,11 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.infoglue.calendar.controllers.EventController;
+import org.infoglue.calendar.controllers.ResourceController;
 import org.infoglue.calendar.entities.Event;
+import org.infoglue.calendar.entities.EventVersion;
+import org.infoglue.calendar.entities.Resource;
 import org.infoglue.common.util.HibernateUtil;
-import org.infoglue.common.util.RemoteCacheUpdater;
 import org.infoglue.common.util.VisualFormatter;
 
 /**
@@ -29,7 +30,7 @@ public class EventServlet extends HttpServlet
 {
 	private static final long serialVersionUID = 1L;
        
-    private final static Logger logger = Logger.getLogger(EventsServlet.class.getName());
+    private final static Logger logger = Logger.getLogger(EventServlet.class.getName());
 
 	private VisualFormatter vf = new VisualFormatter();
 	
@@ -38,7 +39,7 @@ public class EventServlet extends HttpServlet
 		response.setContentType("text/xml");
 		StringBuffer sb = new StringBuffer();
 
-		String eventIdStr 			= request.getParameter("eventId");
+		String eventIdStr = request.getParameter("eventId");
 
 		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 
@@ -51,7 +52,41 @@ public class EventServlet extends HttpServlet
 			
 			Long eventId = new Long(eventIdStr);
 			Event event = EventController.getController().getEvent(eventId, session);
-			sb.append("<event id=\"" + event.getId() + "\" startDate=\"" + vf.formatDate(event.getStartDateTime().getTime(), "yyyy-MM-dd") + "\" endDate=\"" + vf.formatDate(event.getEndDateTime().getTime(), "yyyy-MM-dd") + "\"/>");
+
+			Set<EventVersion> versions = event.getVersions();
+			StringBuffer versionsSb = new StringBuffer();
+			versionsSb.append("<versions>");
+			for (EventVersion version : versions) {
+				versionsSb.append(String.format("<version id=\"%s\" languageCode=\"%s\" name=\"\" shortDescription=\"%s\" longDescription=\"%s\" customLocation=\"%s\" eventUrl=\"\"/>",
+						          version.getId(),
+						          version.getLanguage().getIsoCode(),
+						          version.getName(),
+						          version.getShortDescription(),
+						          version.getLongDescription(),
+						          version.getCustomLocation(),
+						          version.getEventUrl()
+						));
+			}
+			versionsSb.append("</versions>");
+			
+			Set<Resource> resources = event.getResources();
+			StringBuffer resourcesSb = new StringBuffer();
+			resourcesSb.append("<resources>");
+			for (Resource resource : resources) {
+				String url = ResourceController.getController().getResourceUrl(resource.getId(), session);
+				resourcesSb.append(String.format("<resource key=\"%s\" url=\"%s\"/>",
+						          resource.getAssetKey(),
+						          url));
+			}
+			resourcesSb.append("</resources>");
+			
+			sb.append(String.format("<event id=\"%s\" startDate=\"%s\" endDate=\"%s\">%s%s</event>",
+					                event.getId(),
+					                vf.formatDate(event.getStartDateTime().getTime(), "yyyy-MM-dd"), 
+					                vf.formatDate(event.getEndDateTime().getTime(), "yyyy-MM-dd"),
+					                versionsSb,
+					                resourcesSb
+					));
 
 			tx.commit();
 		} catch (NumberFormatException ne) {
