@@ -55,22 +55,22 @@ public class EventServlet extends HttpServlet
 			Event event = EventController.getController().getEvent(eventId, session);
 			
 			sb.append(String.format("<event id=\"%s\" startDate=\"%s\" endDate=\"%s\">" +
-			                        "<name><![CDATA[%s]]</name>" +
-			                        "<customLocation><![CDATA[%s]]</customLocation>" +
-			                        "<alternativeLocation><![CDATA[%s]]</alternativeLocation>" +
-			                        "<eventUrl><![CDATA[%s]]</event>" + 
+			                        "<name><![CDATA[%s]]></name>" +
+			                        "<customLocation><![CDATA[%s]]></customLocation>" +
+			                        "<alternativeLocation><![CDATA[%s]]></alternativeLocation>" +
+			                        "<eventUrl><![CDATA[%s]]></event>" + 
 			                        "<description><![CDATA[%s]]></description>" +
 			                        "<shortDescription><![CDATA[%s]]></shortDescription>" +
 			                        "<longDescription><![CDATA[%s]]></longDescription>" +
-			                        "<attributes><![CDATA[%s]]</attributes>" + 
-			                        "<lecturer><![CDATA[%s]]</lecturer>" + 
-			                        "<organizerName><![CDATA[%s]]</organizerName>" + 
-			                        "<contactEmail><![CDATA[%s]]</contactEmail>" + 
-			                        "<contactName><![CDATA[%s]]</contactName>" + 
-			                        "<contactPhone><![CDATA[%s]]</contactPhone>" + 
-			                        "<internal><![CDATA[%s]]</internal>" + 
-			                        "<owningCalendar><![CDATA[%s]]</owningCalendar>" + 
-			                        "<price><![CDATA[%s]]</price>" + 
+			                        "<attributes><![CDATA[%s]]></attributes>" + 
+			                        "<lecturer><![CDATA[%s]]></lecturer>" + 
+			                        "<organizerName><![CDATA[%s]]></organizerName>" + 
+			                        "<contactEmail><![CDATA[%s]]></contactEmail>" + 
+			                        "<contactName><![CDATA[%s]]></contactName>" + 
+			                        "<contactPhone><![CDATA[%s]]></contactPhone>" + 
+			                        "<internal><![CDATA[%s]]></internal>" + 
+			                        "<owningCalendar><![CDATA[%s]]></owningCalendar>" + 
+			                        "<price><![CDATA[%s]]></price>" + 
 					                "%s" +
 					                "%s" +
 					                "%s" +
@@ -190,17 +190,17 @@ public class EventServlet extends HttpServlet
 		sb.append("<versions>");
 		for (EventVersion version : versions) {
 			sb.append(String.format("<version id=\"%s\" languageCode=\"%s\">" +
-					                "<title><![CDATA[%s]]</title>" +
-					                "<name><![CDATA[%s]]</name>" +
-					                "<customLocation><![CDATA[%s]]</customLocation>" +
-					                "<alternativeLocation><![CDATA[%s]]</alternativeLocation>" +
-					                "<eventUrl><![CDATA[%s]]</event>" + 
+					                "<title><![CDATA[%s]]></title>" +
+					                "<name><![CDATA[%s]]></name>" +
+					                "<customLocation><![CDATA[%s]]></customLocation>" +
+					                "<alternativeLocation><![CDATA[%s]]></alternativeLocation>" +
+					                "<eventUrl><![CDATA[%s]]></event>" + 
 					                "<description><![CDATA[%s]]></description>" +
 					                "<shortDescription><![CDATA[%s]]></shortDescription>" +
 					                "<longDescription><![CDATA[%s]]></longDescription>" +
-					                "<attributes><![CDATA[%s]]</attributes>" + 
-					                "<lecturer><![CDATA[%s]]</lecturer>" + 
-					                "<organizerName><![CDATA[%s]]</organizerName>" + 
+					                "<attributes><![CDATA[%s]]></attributes>" + 
+					                "<lecturer><![CDATA[%s]]></lecturer>" + 
+					                "<organizerName><![CDATA[%s]]></organizerName>" + 
 					                "</version>",
 					                version.getId(),
 					                version.getLanguage().getIsoCode(),
