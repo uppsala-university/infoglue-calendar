@@ -135,7 +135,7 @@ public class EventsServlet extends HttpServlet
             sb.append("</events>");
             
     		response.setContentType("text/xml");
-
+    		response.setCharacterEncoding("UTF-8");
         }
         catch(Exception e)
         {

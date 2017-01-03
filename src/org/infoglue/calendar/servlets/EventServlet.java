@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.axis.utils.XMLUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -56,52 +57,52 @@ public class EventServlet extends HttpServlet
 			Event event = EventController.getController().getEvent(eventId, session);
 			
 			sb.append(String.format("<event id=\"%s\" startDate=\"%s\" endDate=\"%s\">" +
-			                        "<name><![CDATA[%s]]></name>" +
-			                        "<customLocation><![CDATA[%s]]></customLocation>" +
-			                        "<alternativeLocation><![CDATA[%s]]></alternativeLocation>" +
-			                        "<eventUrl><![CDATA[%s]]></eventUrl>" + 
-			                        "<description><![CDATA[%s]]></description>" +
-			                        "<shortDescription><![CDATA[%s]]></shortDescription>" +
-			                        "<longDescription><![CDATA[%s]]></longDescription>" +
-			                        "<attributes><![CDATA[%s]]></attributes>" + 
-			                        "<lecturer><![CDATA[%s]]></lecturer>" + 
-			                        "<organizerName><![CDATA[%s]]></organizerName>" + 
-			                        "<contactEmail><![CDATA[%s]]></contactEmail>" + 
-			                        "<contactName><![CDATA[%s]]></contactName>" + 
-			                        "<contactPhone><![CDATA[%s]]></contactPhone>" + 
-			                        "<internal><![CDATA[%s]]></internal>" + 
-			                        "<owningCalendar><![CDATA[%s]]></owningCalendar>" + 
-			                        "<price><![CDATA[%s]]></price>" + 
-					                "%s" +
-					                "%s" +
-					                "%s" +
-					                "%s" +
-					                "%s" +
-					                "</event>",
-					                event.getId(),
-					                vf.formatDate(event.getStartDateTime().getTime(), "yyyy-MM-dd"), 
-					                vf.formatDate(event.getEndDateTime().getTime(), "yyyy-MM-dd"),
-					                event.getName(),
-					                event.getCustomLocation(),
-					                event.getAlternativeLocation(),
-					                event.getEventUrl(),
-					                event.getDescription(),
-					                event.getShortDescription(),
-					                event.getLongDescription(),
-					                event.getAttributes(),
-					                event.getLecturer(),
-					                event.getOrganizerName(),
-					                event.getContactEmail(),
-					                event.getContactName(),
-					                event.getContactPhone(),
-					                event.getIsInternal(),
-					                event.getOwningCalendar().getId(),
-					                event.getPrice(),
-					                getVersionsXml(event),
-					                getResourcesXml(event, session),
-					                getLocationsXml(event), 
-					                getEventCategoriesXml(event), 
-					                getCalendarsXml(event)
+                                    "<name><![CDATA[%s]]></name>" +
+                                    "<customLocation><![CDATA[%s]]></customLocation>" +
+                                    "<alternativeLocation><![CDATA[%s]]></alternativeLocation>" +
+                                    "<eventUrl><![CDATA[%s]]></eventUrl>" + 
+                                    "<description><![CDATA[%s]]></description>" +
+                                    "<shortDescription><![CDATA[%s]]></shortDescription>" +
+                                    "<longDescription><![CDATA[%s]]></longDescription>" +
+                                    "<attributes><![CDATA[%s]]></attributes>" + 
+                                    "<lecturer><![CDATA[%s]]></lecturer>" + 
+                                    "<organizerName><![CDATA[%s]]></organizerName>" + 
+                                    "<contactEmail><![CDATA[%s]]></contactEmail>" + 
+                                    "<contactName><![CDATA[%s]]></contactName>" + 
+                                    "<contactPhone><![CDATA[%s]]></contactPhone>" + 
+                                    "<internal><![CDATA[%s]]></internal>" + 
+                                    "<owningCalendar><![CDATA[%s]]></owningCalendar>" + 
+                                    "<price><![CDATA[%s]]></price>" + 
+                                    "%s" +
+                                    "%s" +
+                                    "%s" +
+                                    "%s" +
+                                    "%s" +
+                                    "</event>",
+                                    event.getId(),
+                                    vf.formatDate(event.getStartDateTime().getTime(), "yyyy-MM-dd"), 
+                                    vf.formatDate(event.getEndDateTime().getTime(), "yyyy-MM-dd"),
+                                    emptyIfNull(event.getName()),
+                                    emptyIfNull(event.getCustomLocation()),
+                                    emptyIfNull(event.getAlternativeLocation()),
+                                    emptyIfNull(event.getEventUrl()),
+                                    emptyIfNull(event.getDescription()),
+                                    emptyIfNull(event.getShortDescription()),
+                                    emptyIfNull(event.getLongDescription()),
+                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getAttributes())),
+                                    emptyIfNull(event.getLecturer()),
+                                    emptyIfNull(event.getOrganizerName()),
+                                    emptyIfNull(event.getContactEmail()),
+                                    emptyIfNull(event.getContactName()),
+                                    emptyIfNull(event.getContactPhone()),
+                                    event.getIsInternal(),
+                                    event.getOwningCalendar().getId(),
+                                    emptyIfNull(event.getPrice()),
+                                    getVersionsXml(event),
+                                    getResourcesXml(event, session),
+                                    getLocationsXml(event), 
+                                    getEventCategoriesXml(event), 
+                                    getCalendarsXml(event)
 					));
 
 			tx.commit();
@@ -128,14 +129,18 @@ public class EventServlet extends HttpServlet
 		pw.close();
 	}
 
+	private String emptyIfNull(String str) {
+		return str == null ? "" : str;
+	}
+
 	private String getEventCategoriesXml(Event event) {
 		Set<EventCategory> categories = event.getEventCategories();
 		StringBuffer sb = new StringBuffer();
 		sb.append("<categories>");
 		for (EventCategory category : categories) {
-			sb.append(String.format("<category id=\"%s\" location=\"%s\"/>",
+			sb.append(String.format("<category id=\"%s\" name=\"%s\"/>",
 					                category.getId(),
-					                category.getName()
+					                emptyIfNull(category.getName())
 					));
 		}
 		sb.append("</categories>");
@@ -149,7 +154,7 @@ public class EventServlet extends HttpServlet
 		for (Calendar calendar : calendars) {
 			sb.append(String.format("<calendar id=\"%s\" name=\"%s\"/>",
 					                calendar.getId(),
-					                calendar.getName()
+					                emptyIfNull(calendar.getName())
 					));
 		}
 		sb.append("</calendars>");
@@ -163,7 +168,7 @@ public class EventServlet extends HttpServlet
 		for (Location location : locations) {
 			sb.append(String.format("<location id=\"%s\" name=\"%s\"/>",
 					                location.getId(),
-					                location.getName()
+					                emptyIfNull(location.getName())
 					));
 		}
 		sb.append("</locations>");
@@ -178,8 +183,8 @@ public class EventServlet extends HttpServlet
 		for (Resource resource : resources) {
 			String url = ResourceController.getController().getResourceUrl(resource.getId(), session);
 			sb.append(String.format("<resource key=\"%s\" url=\"%s\"/>",
-					                resource.getAssetKey(),
-					                url));
+					                emptyIfNull(resource.getAssetKey()),
+					                emptyIfNull(url)));
 		}
 		sb.append("</resources>");
 		return sb.toString();
@@ -197,25 +202,25 @@ public class EventServlet extends HttpServlet
 					                "<alternativeLocation><![CDATA[%s]]></alternativeLocation>" +
 					                "<eventUrl><![CDATA[%s]]></eventUrl>" + 
 					                "<description><![CDATA[%s]]></description>" +
-					                "<shortDescription><![CDATA[%s]]></shortDescription>f" +
+					                "<shortDescription><![CDATA[%s]]></shortDescription>" +
 					                "<longDescription><![CDATA[%s]]></longDescription>" +
 					                "<attributes><![CDATA[%s]]></attributes>" + 
 					                "<lecturer><![CDATA[%s]]></lecturer>" + 
 					                "<organizerName><![CDATA[%s]]></organizerName>" + 
 					                "</version>",
 					                version.getId(),
-					                version.getLanguage().getIsoCode(),
-					                version.getTitle(),
-					                version.getName(),
-					                version.getCustomLocation(),
-					                version.getAlternativeLocation(),
-					                version.getEventUrl(),
-					                version.getDescription(),
-					                version.getShortDescription(),
-					                version.getLongDescription(),
-					                version.getAttributes(),
-					                version.getLecturer(),
-					                version.getOrganizerName()
+					                emptyIfNull(version.getLanguage().getIsoCode()),
+					                emptyIfNull(version.getTitle()),
+					                emptyIfNull(version.getName()),
+					                emptyIfNull(version.getCustomLocation()),
+					                emptyIfNull(version.getAlternativeLocation()),
+					                emptyIfNull(version.getEventUrl()),
+					                emptyIfNull(version.getDescription()),
+					                emptyIfNull(version.getShortDescription()),
+					                emptyIfNull(version.getLongDescription()),
+					                XMLUtils.xmlEncodeString(emptyIfNull(version.getAttributes())),
+					                emptyIfNull(version.getLecturer()),
+					                emptyIfNull(version.getOrganizerName())
 					));
 		}
 		sb.append("</versions>");
