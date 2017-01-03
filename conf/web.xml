@@ -51,20 +51,26 @@
     <servlet>
         <servlet-name>CalendarRESTServlet</servlet-name>
         <display-name>Calendar rest services servlet</display-name>
-        <description>To get internal information over REST</description>
+        <description>List calendars in XML</description>
         <servlet-class>org.infoglue.calendar.servlets.CalendarServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>CategoryRESTServlet</servlet-name>
         <display-name>Category rest services servlet</display-name>
-        <description>To get internal information over REST</description>
+        <description>List categories in XML</description>
         <servlet-class>org.infoglue.calendar.servlets.CategoryServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>EventsRESTServlet</servlet-name>
         <display-name>Event rest services servlet</display-name>
-        <description>To get internal information over REST</description>
+        <description>List events in XML</description>
         <servlet-class>org.infoglue.calendar.servlets.EventsServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EventRESTServlet</servlet-name>
+        <display-name>Event information servlet</display-name>
+        <description>View event in XML</description>
+        <servlet-class>org.infoglue.calendar.servlets.EventServlet</servlet-class>
     </servlet>
 
     <!-- ****************************************** -->
@@ -96,6 +102,11 @@
     <servlet-mapping>
         <servlet-name>EventsRESTServlet</servlet-name>
         <url-pattern>/EventsRESTServlet/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>EventRESTServlet</servlet-name>
+        <url-pattern>/EventRESTServlet/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
