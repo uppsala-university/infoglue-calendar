@@ -58,7 +58,7 @@ public class EventServlet extends HttpServlet
 			                        "<name><![CDATA[%s]]></name>" +
 			                        "<customLocation><![CDATA[%s]]></customLocation>" +
 			                        "<alternativeLocation><![CDATA[%s]]></alternativeLocation>" +
-			                        "<eventUrl><![CDATA[%s]]></event>" + 
+			                        "<eventUrl><![CDATA[%s]]></eventUrl>" + 
 			                        "<description><![CDATA[%s]]></description>" +
 			                        "<shortDescription><![CDATA[%s]]></shortDescription>" +
 			                        "<longDescription><![CDATA[%s]]></longDescription>" +
@@ -194,9 +194,9 @@ public class EventServlet extends HttpServlet
 					                "<name><![CDATA[%s]]></name>" +
 					                "<customLocation><![CDATA[%s]]></customLocation>" +
 					                "<alternativeLocation><![CDATA[%s]]></alternativeLocation>" +
-					                "<eventUrl><![CDATA[%s]]></event>" + 
+					                "<eventUrl><![CDATA[%s]]></eventUrl>" + 
 					                "<description><![CDATA[%s]]></description>" +
-					                "<shortDescription><![CDATA[%s]]></shortDescription>" +
+					                "<shortDescription><![CDATA[%s]]></shortDescription>f" +
 					                "<longDescription><![CDATA[%s]]></longDescription>" +
 					                "<attributes><![CDATA[%s]]></attributes>" + 
 					                "<lecturer><![CDATA[%s]]></lecturer>" + 
