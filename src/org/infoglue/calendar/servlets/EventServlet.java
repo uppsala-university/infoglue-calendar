@@ -16,8 +16,11 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.infoglue.calendar.controllers.EventController;
 import org.infoglue.calendar.controllers.ResourceController;
+import org.infoglue.calendar.entities.Calendar;
 import org.infoglue.calendar.entities.Event;
+import org.infoglue.calendar.entities.EventCategory;
 import org.infoglue.calendar.entities.EventVersion;
+import org.infoglue.calendar.entities.Location;
 import org.infoglue.calendar.entities.Resource;
 import org.infoglue.common.util.HibernateUtil;
 import org.infoglue.common.util.VisualFormatter;
@@ -38,9 +41,7 @@ public class EventServlet extends HttpServlet
 	{
 		response.setContentType("text/xml");
 		StringBuffer sb = new StringBuffer();
-
-		String eventIdStr = request.getParameter("eventId");
-
+		
 		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 
 		Session session = HibernateUtil.currentSession();
@@ -50,45 +51,56 @@ public class EventServlet extends HttpServlet
 		{
 			tx = session.beginTransaction();
 			
-			Long eventId = new Long(eventIdStr);
+			Long eventId = new Long(request.getParameter("eventId"));
 			Event event = EventController.getController().getEvent(eventId, session);
-
-			Set<EventVersion> versions = event.getVersions();
-			StringBuffer versionsSb = new StringBuffer();
-			versionsSb.append("<versions>");
-			for (EventVersion version : versions) {
-				versionsSb.append(String.format("<version id=\"%s\" languageCode=\"%s\" name=\"\" customLocation=\"%s\" eventUrl=\"\">" + 
-						                        "<shortDescription><![CDATA[%s]]></shortDescription>" +
-						                        "<longDescription><![CDATA[%s]]></longDescription>" +
-						                        "</version>",
-						          version.getId(),
-						          version.getLanguage().getIsoCode(),
-						          version.getName(),
-						          version.getCustomLocation(),
-						          version.getEventUrl(),
-						          version.getShortDescription(),
-						          version.getLongDescription()
-						));
-			}
-			versionsSb.append("</versions>");
 			
-			Set<Resource> resources = event.getResources();
-			StringBuffer resourcesSb = new StringBuffer();
-			resourcesSb.append("<resources>");
-			for (Resource resource : resources) {
-				String url = ResourceController.getController().getResourceUrl(resource.getId(), session);
-				resourcesSb.append(String.format("<resource key=\"%s\" url=\"%s\"/>",
-						          resource.getAssetKey(),
-						          url));
-			}
-			resourcesSb.append("</resources>");
-			
-			sb.append(String.format("<event id=\"%s\" startDate=\"%s\" endDate=\"%s\">%s%s</event>",
+			sb.append(String.format("<event id=\"%s\" startDate=\"%s\" endDate=\"%s\">" +
+			                        "<name><![CDATA[%s]]</name>" +
+			                        "<customLocation><![CDATA[%s]]</customLocation>" +
+			                        "<alternativeLocation><![CDATA[%s]]</alternativeLocation>" +
+			                        "<eventUrl><![CDATA[%s]]</event>" + 
+			                        "<description><![CDATA[%s]]></description>" +
+			                        "<shortDescription><![CDATA[%s]]></shortDescription>" +
+			                        "<longDescription><![CDATA[%s]]></longDescription>" +
+			                        "<attributes><![CDATA[%s]]</attributes>" + 
+			                        "<lecturer><![CDATA[%s]]</lecturer>" + 
+			                        "<organizerName><![CDATA[%s]]</organizerName>" + 
+			                        "<contactEmail><![CDATA[%s]]</contactEmail>" + 
+			                        "<contactName><![CDATA[%s]]</contactName>" + 
+			                        "<contactPhone><![CDATA[%s]]</contactPhone>" + 
+			                        "<internal><![CDATA[%s]]</internal>" + 
+			                        "<owningCalendar><![CDATA[%s]]</owningCalendar>" + 
+			                        "<price><![CDATA[%s]]</price>" + 
+					                "%s" +
+					                "%s" +
+					                "%s" +
+					                "%s" +
+					                "%s" +
+					                "</event>",
 					                event.getId(),
 					                vf.formatDate(event.getStartDateTime().getTime(), "yyyy-MM-dd"), 
 					                vf.formatDate(event.getEndDateTime().getTime(), "yyyy-MM-dd"),
-					                versionsSb,
-					                resourcesSb
+					                event.getName(),
+					                event.getCustomLocation(),
+					                event.getAlternativeLocation(),
+					                event.getEventUrl(),
+					                event.getDescription(),
+					                event.getShortDescription(),
+					                event.getLongDescription(),
+					                event.getAttributes(),
+					                event.getLecturer(),
+					                event.getOrganizerName(),
+					                event.getContactEmail(),
+					                event.getContactName(),
+					                event.getContactPhone(),
+					                event.getIsInternal(),
+					                event.getOwningCalendar().getId(),
+					                event.getPrice(),
+					                getVersionsXml(event),
+					                getResourcesXml(event, session),
+					                getLocationsXml(event), 
+					                getEventCategoriesXml(event), 
+					                getCalendarsXml(event)
 					));
 
 			tx.commit();
@@ -113,6 +125,100 @@ public class EventServlet extends HttpServlet
 		pw.println(sb.toString());
 		pw.flush();
 		pw.close();
+	}
+
+	private String getEventCategoriesXml(Event event) {
+		Set<EventCategory> categories = event.getEventCategories();
+		StringBuffer sb = new StringBuffer();
+		sb.append("<categories>");
+		for (EventCategory category : categories) {
+			sb.append(String.format("<category id=\"%s\" location=\"%s\"/>",
+					                category.getId(),
+					                category.getName()
+					));
+		}
+		sb.append("</categories>");
+		return sb.toString();
+	}
+
+	public String getCalendarsXml(Event event) {
+		Set<Calendar> calendars = event.getCalendars();
+		StringBuffer sb = new StringBuffer();
+		sb.append("<calendars>");
+		for (Calendar calendar : calendars) {
+			sb.append(String.format("<calendar id=\"%s\" name=\"%s\"/>",
+					                calendar.getId(),
+					                calendar.getName()
+					));
+		}
+		sb.append("</calendars>");
+		return sb.toString();
+	}
+
+	public String getLocationsXml(Event event) {
+		Set<Location> locations = event.getLocations();
+		StringBuffer sb = new StringBuffer();
+		sb.append("<locations>");
+		for (Location location : locations) {
+			sb.append(String.format("<location id=\"%s\" name=\"%s\"/>",
+					                location.getId(),
+					                location.getName()
+					));
+		}
+		sb.append("</locations>");
+		return sb.toString();
+	}
+
+	public String getResourcesXml(Event event, Session session)
+			throws Exception {
+		Set<Resource> resources = event.getResources();
+		StringBuffer sb = new StringBuffer();
+		sb.append("<resources>");
+		for (Resource resource : resources) {
+			String url = ResourceController.getController().getResourceUrl(resource.getId(), session);
+			sb.append(String.format("<resource key=\"%s\" url=\"%s\"/>",
+					                resource.getAssetKey(),
+					                url));
+		}
+		sb.append("</resources>");
+		return sb.toString();
+	}
+
+	public String getVersionsXml(Event event) {
+		Set<EventVersion> versions = event.getVersions();
+		StringBuffer sb = new StringBuffer();
+		sb.append("<versions>");
+		for (EventVersion version : versions) {
+			sb.append(String.format("<version id=\"%s\" languageCode=\"%s\">" +
+					                "<title><![CDATA[%s]]</title>" +
+					                "<name><![CDATA[%s]]</name>" +
+					                "<customLocation><![CDATA[%s]]</customLocation>" +
+					                "<alternativeLocation><![CDATA[%s]]</alternativeLocation>" +
+					                "<eventUrl><![CDATA[%s]]</event>" + 
+					                "<description><![CDATA[%s]]></description>" +
+					                "<shortDescription><![CDATA[%s]]></shortDescription>" +
+					                "<longDescription><![CDATA[%s]]></longDescription>" +
+					                "<attributes><![CDATA[%s]]</attributes>" + 
+					                "<lecturer><![CDATA[%s]]</lecturer>" + 
+					                "<organizerName><![CDATA[%s]]</organizerName>" + 
+					                "</version>",
+					                version.getId(),
+					                version.getLanguage().getIsoCode(),
+					                version.getTitle(),
+					                version.getName(),
+					                version.getCustomLocation(),
+					                version.getAlternativeLocation(),
+					                version.getEventUrl(),
+					                version.getDescription(),
+					                version.getShortDescription(),
+					                version.getLongDescription(),
+					                version.getAttributes(),
+					                version.getLecturer(),
+					                version.getOrganizerName()
+					));
+		}
+		sb.append("</versions>");
+		return sb.toString();
 	}
 
     /**
