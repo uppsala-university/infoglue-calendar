@@ -57,14 +57,17 @@ public class EventServlet extends HttpServlet
 			StringBuffer versionsSb = new StringBuffer();
 			versionsSb.append("<versions>");
 			for (EventVersion version : versions) {
-				versionsSb.append(String.format("<version id=\"%s\" languageCode=\"%s\" name=\"\" shortDescription=\"%s\" longDescription=\"%s\" customLocation=\"%s\" eventUrl=\"\"/>",
+				versionsSb.append(String.format("<version id=\"%s\" languageCode=\"%s\" name=\"\" customLocation=\"%s\" eventUrl=\"\">" + 
+						                        "<shortDescription><![CDATA[%s]]></shortDescription>" +
+						                        "<longDescription><![CDATA[%s]]></longDescription>" +
+						                        "</version>",
 						          version.getId(),
 						          version.getLanguage().getIsoCode(),
 						          version.getName(),
-						          version.getShortDescription(),
-						          version.getLongDescription(),
 						          version.getCustomLocation(),
-						          version.getEventUrl()
+						          version.getEventUrl(),
+						          version.getShortDescription(),
+						          version.getLongDescription()
 						));
 			}
 			versionsSb.append("</versions>");
