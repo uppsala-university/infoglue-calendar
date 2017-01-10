@@ -80,8 +80,8 @@ public class EventServlet extends HttpServlet
                                     "%s" +
                                     "</event>",
                                     event.getId(),
-                                    vf.formatDate(event.getStartDateTime().getTime(), "yyyy-MM-dd"), 
-                                    vf.formatDate(event.getEndDateTime().getTime(), "yyyy-MM-dd"),
+                                    vf.formatDate(event.getStartDateTime().getTime(), "yyyy-MM-dd HH:mm"), 
+                                    vf.formatDate(event.getEndDateTime().getTime(), "yyyy-MM-dd HH:mm"),
                                     emptyIfNull(event.getName()),
                                     emptyIfNull(event.getCustomLocation()),
                                     emptyIfNull(event.getAlternativeLocation()),
