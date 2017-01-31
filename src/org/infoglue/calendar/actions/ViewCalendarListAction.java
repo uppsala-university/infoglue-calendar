@@ -23,13 +23,17 @@
 
 package org.infoglue.calendar.actions;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.portlet.PortletURL;
 
 import org.infoglue.calendar.controllers.CalendarController;
+import org.infoglue.calendar.controllers.EventController;
 import org.infoglue.calendar.databeans.AdministrationUCCBean;
+import org.infoglue.calendar.entities.Calendar;
+import org.infoglue.calendar.entities.Event;
 import org.infoglue.common.util.DBSessionWrapper;
 
 import com.opensymphony.xwork.Action;
@@ -96,8 +100,28 @@ public class ViewCalendarListAction extends CalendarAbstractAction
     
     public String chooseDeleteLink() throws Exception 
     {
-        this.calendars = CalendarController.getController().getCalendarList(this.getInfoGlueRemoteUserRoles(), this.getInfoGlueRemoteUserGroups(), this.getSession());
-
+    	Event e = EventController.getController().getEvent(this.eventId, this.getSession());
+    	this.calendars = new HashSet<Calendar>();
+		
+		if (e != null && e.getOwningCalendar() != null)
+		{
+			Long owningCalendarId = e.getOwningCalendar().getId();
+			if (owningCalendarId != null)
+			{
+				for (Calendar calendar : (Set<Calendar>) e.getCalendars())
+				{
+					if (calendar != null)
+					{
+						Long id = calendar.getId();
+						if (id != null && !id.equals(owningCalendarId))
+						{
+							this.calendars.add(calendar);
+						}
+					}
+				}
+			}
+		}
+    	
         return "successChooseForDeleteLink";
     } 
 
