@@ -1200,52 +1200,53 @@ public class EventController extends BasicController
     {
         List result = new ArrayList();
         
-        if(includeLinked == true)
+        if(includeLinked)
         {
             String rolesSQL = getRoleSQL(roles);
             log.info("groups:" + groups.size());
 	        String groupsSQL = getGroupsSQL(groups);
 	        log.info("groupsSQL:" + groupsSQL);
 	        String sql = "select c from Calendar c, Role cr, Group g where cr.calendar = c AND g.calendar = c " + (rolesSQL != null ? " AND cr.name IN " + rolesSQL : "") + (groupsSQL != null ? " AND g.name IN " + groupsSQL : "") + " order by c.id";
-	        //String sql = "select distinct c from Calendar c, Role cr, Group g where cr.calendar = c AND g.calendar = c " + (rolesSQL != null ? " AND cr.name IN " + rolesSQL : "") + (groupsSQL != null ? " AND g.name IN " + groupsSQL : "") + " order by c.id";
 	        log.info("sql:" + sql);
 	        Query q = session.createQuery(sql);
 	        setRoleNames(0, q, roles);
 	        setGroupNames(roles.size(), q, groups);
 	        List calendars = q.list();
 
-	        Object[] calendarIdArray = new Object[calendars.size()];
+	        /*
+	        Long[] calendarIdArray = new Long[calendars.size()];
 
 	        int i = 0;
 	        Iterator calendarsIterator = calendars.iterator();
-	        while(calendarsIterator.hasNext())
+        	while(calendarsIterator.hasNext())
 	        {
 	            Calendar calendar = (Calendar)calendarsIterator.next();
 	            log.info("calendar: " + calendar.getName());
 	            calendarIdArray[i] = calendar.getId();
 	            i++;                
 	        }
-	        
+        	
             if(calendarIdArray.length > 0)
+	        */
+	        if (calendars.size() > 0)
             {
-	            Criteria criteria = session.createCriteria(Event.class);
-	            criteria.add(Restrictions.eq("stateId", stateId));
-	            criteria.add(Expression.gt("endDateTime", startDate));
-	            criteria.addOrder(Order.asc("startDateTime"));
-	            
-	            /*
-	            criteria.add(Expression.gt("endDateTime", endDate));
-	            criteria.add(Expression.lt("startDateTime", startDate));
-	            */
-	            criteria.createCriteria("owningCalendar")
-	            .add(Restrictions.not(Restrictions.in("id", calendarIdArray)));
-	
-	            criteria.createCriteria("calendars")
-	            .add(Restrictions.in("id", calendarIdArray));
-
-	            result = criteria.list();
-            }
-            	        
+            	String linkedSql =
+            			"select " +
+            			"  event from Event event, Calendar c " +
+            			"where " +
+    	        		"  c in elements(event.calendars) AND " +
+    	        		// Make sure we are allowed to access the event
+    	        		"  c in (:calendars) AND " +
+    	        		// Do not include events that have exactly one calendar AND that calendar being the owningCalendar
+    	        		" NOT (size(event.calendars) = 1 AND event.owningCalendar in elements(event.calendars)) AND " +
+    	        		"  event.endDateTime >= :endDateTime " +
+    	        		"order by " +
+    	        		"  event.startDateTime";
+    	        Query linkedQuery = session.createQuery(linkedSql);
+    	        linkedQuery.setParameterList("calendars", calendars);
+    	        linkedQuery.setCalendar("endDateTime", startDate);
+    	        result = linkedQuery.list();
+            }	        
         }
         else
         {
@@ -1254,18 +1255,12 @@ public class EventController extends BasicController
 	        String groupsSQL = getGroupsSQL(groups);
 	        log.info("groupsSQL:" + groupsSQL);
 	        String sql = "select event from Event event, Calendar c, Role cr, Group g where event.owningCalendar = c AND cr.calendar = c AND g.calendar = c AND event.stateId = ? AND event.endDateTime >= ? " + (rolesSQL != null ? " AND cr.name IN " + rolesSQL : "") + (groupsSQL != null ? " AND g.name IN " + groupsSQL : "") + " order by event.startDateTime";
-	        //String sql = "select distinct event from Event event, Calendar c, Role cr, Group g where event.owningCalendar = c AND cr.calendar = c AND g.calendar = c AND event.stateId = ? AND event.endDateTime >= ? " + (rolesSQL != null ? " AND cr.name IN " + rolesSQL : "") + (groupsSQL != null ? " AND g.name IN " + groupsSQL : "") + " order by event.startDateTime";
 	        log.info("sql:" + sql);
 	        Query q = session.createQuery(sql);
 	        q.setInteger(0, stateId.intValue());
 	        q.setCalendar(1, startDate);
 	        log.info("startDate:" + startDate.getTime());
 	        setRoleNames(2, q, roles);
-	        /*
-	        q.setCalendar(1, startDate);
-	        q.setCalendar(2, endDate);
-	        setRoleNames(3, q, roles);
-	        */
 	        setGroupNames(roles.size() + 2, q, groups);
 	        
 	        result = q.list();
@@ -1283,14 +1278,10 @@ public class EventController extends BasicController
             criteria.add(Restrictions.eq("creator", userName));
             criteria.add(Expression.gt("endDateTime", startDate));
             criteria.addOrder(Order.asc("startDateTime"));
-
-            /*
-            criteria.add(Expression.gt("endDateTime", endDate));
-            criteria.add(Expression.lt("startDateTime", startDate));
-            */
             
             set.addAll(criteria.list());	
         }
+        
         List sortedList = new ArrayList();
         sortedList.addAll(set);
         
@@ -1412,7 +1403,7 @@ public class EventController extends BasicController
         java.util.Calendar endDate = java.util.Calendar.getInstance();
         endDate.add(java.util.Calendar.YEAR, 5);
         
-        Set result = getEventList(now, endDate, userName, roles, groups, Event.STATE_PUBLISHED, true, true, session);
+        Set result = getEventList(now, endDate, userName, roles, groups, Event.STATE_PUBLISHED, true, false, session);
         
         if(categoryId != null)
         {

@@ -29,6 +29,8 @@ import java.util.Set;
 
 import javax.portlet.PortletURL;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.infoglue.calendar.controllers.CalendarController;
 import org.infoglue.calendar.controllers.EventController;
 import org.infoglue.calendar.databeans.AdministrationUCCBean;
@@ -47,6 +49,8 @@ import com.opensymphony.xwork.ActionContext;
 
 public class ViewCalendarListAction extends CalendarAbstractAction
 {
+	private static Log logger = LogFactory.getLog(ViewCalendarListAction.class);
+
     private Set calendars;
     private Long eventId;
     
@@ -93,7 +97,6 @@ public class ViewCalendarListAction extends CalendarAbstractAction
 
         return "successChooseForLink";
     } 
-
     /**
      * This is the entry point for the main listing.
      */
@@ -101,11 +104,13 @@ public class ViewCalendarListAction extends CalendarAbstractAction
     public String chooseDeleteLink() throws Exception 
     {
     	Event e = EventController.getController().getEvent(this.eventId, this.getSession());
-    	this.calendars = new HashSet<Calendar>();
+    	logger.debug("Delete link from event " + e);
+    	Set<Calendar> linkedCalendars = new HashSet<Calendar>();
 		
 		if (e != null && e.getOwningCalendar() != null)
 		{
 			Long owningCalendarId = e.getOwningCalendar().getId();
+	    	logger.debug("Owning calendar is " + owningCalendarId);
 			if (owningCalendarId != null)
 			{
 				for (Calendar calendar : (Set<Calendar>) e.getCalendars())
@@ -113,15 +118,19 @@ public class ViewCalendarListAction extends CalendarAbstractAction
 					if (calendar != null)
 					{
 						Long id = calendar.getId();
+				    	logger.debug("Checking calendar " + id);
 						if (id != null && !id.equals(owningCalendarId))
 						{
-							this.calendars.add(calendar);
+					    	logger.debug("Calendar " + id + " was not the owning calendar, adding it to linked calendars list for event " + e.getId());
+					    	linkedCalendars.add(calendar);
 						}
 					}
 				}
 			}
 		}
-    	
+		logger.debug("Linked calendars size: " + linkedCalendars.size());
+		
+		this.calendars = linkedCalendars;
         return "successChooseForDeleteLink";
     } 
 
