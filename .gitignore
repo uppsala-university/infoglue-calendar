@@ -1,2 +1,6 @@
 *.properties
 *.project
+dist
+docs/api
+war
+webapps/WEB-INF/classes
