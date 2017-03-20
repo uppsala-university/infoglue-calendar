@@ -99,7 +99,7 @@ public class EventServlet extends HttpServlet
                                     event.getOwningCalendar().getId(),
                                     emptyIfNull(event.getPrice()),
                                     getVersionsXml(event),
-                                    getResourcesXml(event, session),
+                                    getResourcesXml(event, session, request),
                                     getLocationsXml(event), 
                                     getEventCategoriesXml(event), 
                                     getCalendarsXml(event)
@@ -175,13 +175,13 @@ public class EventServlet extends HttpServlet
 		return sb.toString();
 	}
 
-	public String getResourcesXml(Event event, Session session)
+	public String getResourcesXml(Event event, Session session, HttpServletRequest request)
 			throws Exception {
 		Set<Resource> resources = event.getResources();
 		StringBuffer sb = new StringBuffer();
 		sb.append("<resources>");
 		for (Resource resource : resources) {
-			String url = ResourceController.getController().getResourceUrl(resource.getId(), session);
+			String url = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + ResourceController.getController().getResourceUrl(resource.getId(), session);
 			sb.append(String.format("<resource key=\"%s\" url=\"%s\"/>",
 					                emptyIfNull(resource.getAssetKey()),
 					                emptyIfNull(url)));
