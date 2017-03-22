@@ -181,7 +181,7 @@ public class EventServlet extends HttpServlet
 		StringBuffer sb = new StringBuffer();
 		sb.append("<resources>");
 		for (Resource resource : resources) {
-			String url = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + ResourceController.getController().getResourceUrl(resource.getId(), session);
+			String url = "//" + request.getServerName() + ResourceController.getController().getResourceUrl(resource.getId(), session);
 			sb.append(String.format("<resource key=\"%s\" url=\"%s\"/>",
 					                emptyIfNull(resource.getAssetKey()),
 					                emptyIfNull(url)));
