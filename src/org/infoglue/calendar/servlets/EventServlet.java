@@ -166,10 +166,11 @@ public class EventServlet extends HttpServlet
 		StringBuffer sb = new StringBuffer();
 		sb.append("<locations>");
 		for (Location location : locations) {
-			sb.append(String.format("<location id=\"%s\" name=\"%s\"/>",
-					                location.getId(),
-					                emptyIfNull(location.getName())
-					));
+			sb.append(String.format("<location id=\"%s\" description=\"%s\" name=\"%s\"", location.getId(), location.getDescription(), location.getName()));
+			for (String langCode : new String[] { "en", "sv" }) {
+				sb.append(String.format("name_%s=\"%s\"", langCode, emptyIfNull(location.getLocalizedName(langCode, "sv"))));
+			}
+			sb.append("/>");
 		}
 		sb.append("</locations>");
 		return sb.toString();
