@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -16,11 +17,13 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.infoglue.calendar.controllers.EventController;
+import org.infoglue.calendar.controllers.LanguageController;
 import org.infoglue.calendar.controllers.ResourceController;
 import org.infoglue.calendar.entities.Calendar;
 import org.infoglue.calendar.entities.Event;
 import org.infoglue.calendar.entities.EventCategory;
 import org.infoglue.calendar.entities.EventVersion;
+import org.infoglue.calendar.entities.Language;
 import org.infoglue.calendar.entities.Location;
 import org.infoglue.calendar.entities.Resource;
 import org.infoglue.common.util.HibernateUtil;
@@ -55,7 +58,6 @@ public class EventServlet extends HttpServlet
 			
 			Long eventId = new Long(request.getParameter("eventId"));
 			Event event = EventController.getController().getEvent(eventId, session);
-			
 			sb.append(String.format("<event id=\"%s\" startDate=\"%s\" endDate=\"%s\">" +
                                     "<name><![CDATA[%s]]></name>" +
                                     "<customLocation><![CDATA[%s]]></customLocation>" +
@@ -100,7 +102,7 @@ public class EventServlet extends HttpServlet
                                     emptyIfNull(event.getPrice()),
                                     getVersionsXml(event),
                                     getResourcesXml(event, session, request),
-                                    getLocationsXml(event), 
+                                    getLocationsXml(event, session), 
                                     getEventCategoriesXml(event), 
                                     getCalendarsXml(event)
 					));
@@ -161,13 +163,27 @@ public class EventServlet extends HttpServlet
 		return sb.toString();
 	}
 
-	public String getLocationsXml(Event event) {
+	public String getLocationsXml(Event event, Session session) {
 		Set<Location> locations = event.getLocations();
 		StringBuffer sb = new StringBuffer();
 		sb.append("<locations>");
+		String[] langCodes;
+		
+		try {
+			List<Language> languages = LanguageController.getController().getLanguageList(session);
+			langCodes = new String[languages.size()];
+			int i = 0;
+			for (Language language : languages) {
+				langCodes[i++] = language.getIsoCode();
+			}
+		} catch (Exception e) {
+			langCodes = new String[] { "en", "sv" };
+			logger.warn("Could not get languages:", e);
+		}
+		
 		for (Location location : locations) {
 			sb.append(String.format("<location id=\"%s\" description=\"%s\" name=\"%s\"", location.getId(), location.getDescription(), location.getName()));
-			for (String langCode : new String[] { "en", "sv" }) {
+			for (String langCode : langCodes) {
 				sb.append(String.format(" name_%s=\"%s\"", langCode, emptyIfNull(location.getLocalizedName(langCode, "sv"))));
 			}
 			sb.append("/>");
