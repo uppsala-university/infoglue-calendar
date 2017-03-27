@@ -166,9 +166,9 @@ public class EventServlet extends HttpServlet
 	public String getLocationsXml(Event event, Session session) {
 		Set<Location> locations = event.getLocations();
 		StringBuffer sb = new StringBuffer();
-		sb.append("<locations>");
 		String[] langCodes;
 		
+		// Get list of languages
 		try {
 			List<Language> languages = LanguageController.getController().getLanguageList(session);
 			langCodes = new String[languages.size()];
@@ -181,8 +181,11 @@ public class EventServlet extends HttpServlet
 			logger.warn("Could not get languages:", e);
 		}
 		
+		// Create locations element
+		sb.append("<locations>");
 		for (Location location : locations) {
 			sb.append(String.format("<location id=\"%s\" description=\"%s\" name=\"%s\"", location.getId(), location.getDescription(), location.getName()));
+			// Add name attribute for each available language
 			for (String langCode : langCodes) {
 				sb.append(String.format(" name_%s=\"%s\"", langCode, emptyIfNull(location.getLocalizedName(langCode, "sv"))));
 			}
