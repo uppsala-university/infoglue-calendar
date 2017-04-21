@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Formatter;
 import java.util.List;
 import java.util.Set;
 
@@ -85,22 +84,22 @@ public class EventServlet extends HttpServlet
                                     event.getId(),
                                     vf.formatDate(event.getStartDateTime().getTime(), "yyyy-MM-dd HH:mm"), 
                                     vf.formatDate(event.getEndDateTime().getTime(), "yyyy-MM-dd HH:mm"),
-                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getName())),
-                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getCustomLocation())),
-                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getAlternativeLocation())),
-                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getEventUrl())),
-                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getDescription())),
-                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getShortDescription())),
-                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getLongDescription())),
-                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getAttributes())),
-                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getLecturer())),
-                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getOrganizerName())),
-                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getContactEmail())),
-                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getContactName())),
-                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getContactPhone())),
+                                    emptyIfNull(event.getName()),
+                                    emptyIfNull(event.getCustomLocation()),
+                                    emptyIfNull(event.getAlternativeLocation()),
+                                    emptyIfNull(event.getEventUrl()),
+                                    emptyIfNull(event.getDescription()),
+                                    emptyIfNull(event.getShortDescription()),
+                                    emptyIfNull(event.getLongDescription()),
+                                    emptyIfNull(event.getAttributes()),
+                                    emptyIfNull(event.getLecturer()),
+                                    emptyIfNull(event.getOrganizerName()),
+                                    emptyIfNull(event.getContactEmail()),
+                                    emptyIfNull(event.getContactName()),
+                                    emptyIfNull(event.getContactPhone()),
                                     event.getIsInternal(),
                                     event.getOwningCalendar().getId(),
-                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getPrice())),
+                                    emptyIfNull(event.getPrice()),
                                     getVersionsXml(event),
                                     getResourcesXml(event, session, request),
                                     getLocationsXml(event, session), 
@@ -231,17 +230,17 @@ public class EventServlet extends HttpServlet
 					                "</version>",
 					                version.getId(),
 					                XMLUtils.xmlEncodeString(emptyIfNull(version.getLanguage().getIsoCode())),
-					                XMLUtils.xmlEncodeString(emptyIfNull(version.getTitle())),
-					                XMLUtils.xmlEncodeString(emptyIfNull(version.getName())),
-					                XMLUtils.xmlEncodeString(emptyIfNull(version.getCustomLocation())),
-					                XMLUtils.xmlEncodeString(emptyIfNull(version.getAlternativeLocation())),
-					                XMLUtils.xmlEncodeString(emptyIfNull(version.getEventUrl())),
-					                XMLUtils.xmlEncodeString(emptyIfNull(version.getDescription())),
-					                XMLUtils.xmlEncodeString(emptyIfNull(version.getShortDescription())),
-					                XMLUtils.xmlEncodeString(emptyIfNull(version.getLongDescription())),
-					                XMLUtils.xmlEncodeString(emptyIfNull(version.getAttributes())),
-					                XMLUtils.xmlEncodeString(emptyIfNull(version.getLecturer())),
-					                XMLUtils.xmlEncodeString(emptyIfNull(version.getOrganizerName()))
+					                emptyIfNull(version.getTitle()),
+					                emptyIfNull(version.getName()),
+					                emptyIfNull(version.getCustomLocation()),
+					                emptyIfNull(version.getAlternativeLocation()),
+					                emptyIfNull(version.getEventUrl()),
+					                emptyIfNull(version.getDescription()),
+					                emptyIfNull(version.getShortDescription()),
+					                emptyIfNull(version.getLongDescription()),
+					                emptyIfNull(version.getAttributes()),
+					                emptyIfNull(version.getLecturer()),
+					                emptyIfNull(version.getOrganizerName())
 					));
 		}
 		sb.append("</versions>");
@@ -283,4 +282,5 @@ public class EventServlet extends HttpServlet
         
         return calendar;
     }
+
 }
