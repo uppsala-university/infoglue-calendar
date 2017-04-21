@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Formatter;
 import java.util.List;
 import java.util.Set;
 
@@ -84,22 +85,22 @@ public class EventServlet extends HttpServlet
                                     event.getId(),
                                     vf.formatDate(event.getStartDateTime().getTime(), "yyyy-MM-dd HH:mm"), 
                                     vf.formatDate(event.getEndDateTime().getTime(), "yyyy-MM-dd HH:mm"),
-                                    emptyIfNull(event.getName()),
-                                    emptyIfNull(event.getCustomLocation()),
-                                    emptyIfNull(event.getAlternativeLocation()),
-                                    emptyIfNull(event.getEventUrl()),
-                                    emptyIfNull(event.getDescription()),
-                                    emptyIfNull(event.getShortDescription()),
-                                    emptyIfNull(event.getLongDescription()),
+                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getName())),
+                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getCustomLocation())),
+                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getAlternativeLocation())),
+                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getEventUrl())),
+                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getDescription())),
+                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getShortDescription())),
+                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getLongDescription())),
                                     XMLUtils.xmlEncodeString(emptyIfNull(event.getAttributes())),
-                                    emptyIfNull(event.getLecturer()),
-                                    emptyIfNull(event.getOrganizerName()),
-                                    emptyIfNull(event.getContactEmail()),
-                                    emptyIfNull(event.getContactName()),
-                                    emptyIfNull(event.getContactPhone()),
+                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getLecturer())),
+                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getOrganizerName())),
+                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getContactEmail())),
+                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getContactName())),
+                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getContactPhone())),
                                     event.getIsInternal(),
                                     event.getOwningCalendar().getId(),
-                                    emptyIfNull(event.getPrice()),
+                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getPrice())),
                                     getVersionsXml(event),
                                     getResourcesXml(event, session, request),
                                     getLocationsXml(event, session), 
@@ -112,12 +113,12 @@ public class EventServlet extends HttpServlet
 			if (tx != null) {
 				tx.rollback();
 			}
-			sb.append("<error message=\"Invalid eventId (" + ne.getMessage() + ")\" type=\"" + ne.getClass().getName() + "\"/>");
+			sb.append("<error message=\"Invalid eventId (" + XMLUtils.xmlEncodeString(ne.getMessage()) + ")\" type=\"" + XMLUtils.xmlEncodeString(ne.getClass().getName()) + "\"/>");
 		} catch (Exception e) {
 			if (tx != null) {
 				tx.rollback();
 			}
-			sb.append("<error message=\"" + e.getMessage() + "\" type=\"" + e.getClass().getName() + "\"/>");
+			sb.append("<error message=\"" + XMLUtils.xmlEncodeString(e.getMessage()) + "\" type=\"" + XMLUtils.xmlEncodeString(e.getClass().getName()) + "\"/>");
 		}
 		finally 
 		{
@@ -142,7 +143,7 @@ public class EventServlet extends HttpServlet
 		for (EventCategory category : categories) {
 			sb.append(String.format("<category id=\"%s\" name=\"%s\"/>",
 					                category.getId(),
-					                emptyIfNull(category.getName())
+					                XMLUtils.xmlEncodeString(emptyIfNull(category.getName()))
 					));
 		}
 		sb.append("</categories>");
@@ -156,7 +157,7 @@ public class EventServlet extends HttpServlet
 		for (Calendar calendar : calendars) {
 			sb.append(String.format("<calendar id=\"%s\" name=\"%s\"/>",
 					                calendar.getId(),
-					                emptyIfNull(calendar.getName())
+					                XMLUtils.xmlEncodeString(emptyIfNull(calendar.getName()))
 					));
 		}
 		sb.append("</calendars>");
@@ -184,10 +185,10 @@ public class EventServlet extends HttpServlet
 		// Create locations element
 		sb.append("<locations>");
 		for (Location location : locations) {
-			sb.append(String.format("<location id=\"%s\" description=\"%s\" name=\"%s\"", location.getId(), location.getDescription(), location.getName()));
+			sb.append(String.format("<location id=\"%s\" description=\"%s\" name=\"%s\"", location.getId(), XMLUtils.xmlEncodeString(location.getDescription()), XMLUtils.xmlEncodeString(location.getName())));
 			// Add name attribute for each available language
 			for (String langCode : langCodes) {
-				sb.append(String.format(" name_%s=\"%s\"", langCode, emptyIfNull(location.getLocalizedName(langCode, "sv"))));
+				sb.append(String.format(" name_%s=\"%s\"", langCode, XMLUtils.xmlEncodeString(emptyIfNull(location.getLocalizedName(langCode, "sv")))));
 			}
 			sb.append("/>");
 		}
@@ -203,8 +204,8 @@ public class EventServlet extends HttpServlet
 		for (Resource resource : resources) {
 			String url = "//" + request.getServerName() + ResourceController.getController().getResourceUrl(resource.getId(), session);
 			sb.append(String.format("<resource key=\"%s\" url=\"%s\"/>",
-					                emptyIfNull(resource.getAssetKey()),
-					                emptyIfNull(url)));
+					XMLUtils.xmlEncodeString(emptyIfNull(resource.getAssetKey())),
+					XMLUtils.xmlEncodeString(emptyIfNull(url))));
 		}
 		sb.append("</resources>");
 		return sb.toString();
@@ -229,18 +230,18 @@ public class EventServlet extends HttpServlet
 					                "<organizerName><![CDATA[%s]]></organizerName>" + 
 					                "</version>",
 					                version.getId(),
-					                emptyIfNull(version.getLanguage().getIsoCode()),
-					                emptyIfNull(version.getTitle()),
-					                emptyIfNull(version.getName()),
-					                emptyIfNull(version.getCustomLocation()),
-					                emptyIfNull(version.getAlternativeLocation()),
-					                emptyIfNull(version.getEventUrl()),
-					                emptyIfNull(version.getDescription()),
-					                emptyIfNull(version.getShortDescription()),
-					                emptyIfNull(version.getLongDescription()),
+					                XMLUtils.xmlEncodeString(emptyIfNull(version.getLanguage().getIsoCode())),
+					                XMLUtils.xmlEncodeString(emptyIfNull(version.getTitle())),
+					                XMLUtils.xmlEncodeString(emptyIfNull(version.getName())),
+					                XMLUtils.xmlEncodeString(emptyIfNull(version.getCustomLocation())),
+					                XMLUtils.xmlEncodeString(emptyIfNull(version.getAlternativeLocation())),
+					                XMLUtils.xmlEncodeString(emptyIfNull(version.getEventUrl())),
+					                XMLUtils.xmlEncodeString(emptyIfNull(version.getDescription())),
+					                XMLUtils.xmlEncodeString(emptyIfNull(version.getShortDescription())),
+					                XMLUtils.xmlEncodeString(emptyIfNull(version.getLongDescription())),
 					                XMLUtils.xmlEncodeString(emptyIfNull(version.getAttributes())),
-					                emptyIfNull(version.getLecturer()),
-					                emptyIfNull(version.getOrganizerName())
+					                XMLUtils.xmlEncodeString(emptyIfNull(version.getLecturer())),
+					                XMLUtils.xmlEncodeString(emptyIfNull(version.getOrganizerName()))
 					));
 		}
 		sb.append("</versions>");
@@ -282,5 +283,4 @@ public class EventServlet extends HttpServlet
         
         return calendar;
     }
-
 }
