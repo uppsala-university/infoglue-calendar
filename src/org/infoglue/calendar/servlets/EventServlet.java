@@ -91,7 +91,8 @@ public class EventServlet extends HttpServlet
                                     emptyIfNull(event.getDescription()),
                                     emptyIfNull(event.getShortDescription()),
                                     emptyIfNull(event.getLongDescription()),
-                                    emptyIfNull(event.getAttributes()),
+                                    // Escape attributes since they are XML an may contain CDATA, specifically the end sequence: ]]>
+                                    XMLUtils.xmlEncodeString(emptyIfNull(event.getAttributes())),
                                     emptyIfNull(event.getLecturer()),
                                     emptyIfNull(event.getOrganizerName()),
                                     emptyIfNull(event.getContactEmail()),
