@@ -91,7 +91,7 @@ public class EventServlet extends HttpServlet
                                     emptyIfNull(event.getDescription()),
                                     emptyIfNull(event.getShortDescription()),
                                     emptyIfNull(event.getLongDescription()),
-                                    // Escape attributes since they are XML an may contain CDATA, specifically the end sequence: ]]>
+                                    // Escape attributes since they are XML and may contain CDATA, specifically the end sequence: ]]>
                                     XMLUtils.xmlEncodeString(emptyIfNull(event.getAttributes())),
                                     emptyIfNull(event.getLecturer()),
                                     emptyIfNull(event.getOrganizerName()),
@@ -230,7 +230,7 @@ public class EventServlet extends HttpServlet
 					                "<organizerName><![CDATA[%s]]></organizerName>" + 
 					                "</version>",
 					                version.getId(),
-					                XMLUtils.xmlEncodeString(emptyIfNull(version.getLanguage().getIsoCode())),
+					                emptyIfNull(version.getLanguage().getIsoCode()),
 					                emptyIfNull(version.getTitle()),
 					                emptyIfNull(version.getName()),
 					                emptyIfNull(version.getCustomLocation()),
@@ -239,7 +239,8 @@ public class EventServlet extends HttpServlet
 					                emptyIfNull(version.getDescription()),
 					                emptyIfNull(version.getShortDescription()),
 					                emptyIfNull(version.getLongDescription()),
-					                emptyIfNull(version.getAttributes()),
+					                // Escape attributes since they are XML and may contain CDATA, specifically the end sequence: ]]>
+					                XMLUtils.xmlEncodeString(emptyIfNull(version.getAttributes())),
 					                emptyIfNull(version.getLecturer()),
 					                emptyIfNull(version.getOrganizerName())
 					));
