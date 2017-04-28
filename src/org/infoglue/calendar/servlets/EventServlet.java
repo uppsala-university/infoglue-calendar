@@ -105,7 +105,7 @@ public class EventServlet extends HttpServlet
                                     event.getIsInternal(),
                                     event.getOwningCalendar().getId(),
                                     emptyIfNull(event.getPrice()),
-                                    event.getMaximumParticipants(),
+                                    zeroIfNull(event.getMaximumParticipants()),
                                     event.getParticipants().size(),
                                     hasRegistrationTime ? vf.formatDate(event.getLastRegistrationDateTime().getTime(), "yyyy-MM-dd HH:mm") : "",
                                     getVersionsXml(event),
@@ -141,6 +141,9 @@ public class EventServlet extends HttpServlet
 
 	private String emptyIfNull(String str) {
 		return str == null ? "" : str;
+	}
+	private Integer zeroIfNull(Integer num) {
+		return num == null ? 0 : num;
 	}
 
 	private String getEventCategoriesXml(Event event) {
