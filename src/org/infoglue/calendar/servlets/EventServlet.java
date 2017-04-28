@@ -58,6 +58,7 @@ public class EventServlet extends HttpServlet
 			
 			Long eventId = new Long(request.getParameter("eventId"));
 			Event event = EventController.getController().getEvent(eventId, session);
+			boolean hasRegistrationTime = event.getLastRegistrationDateTime() != null;
 			sb.append(String.format("<event id=\"%s\" startDate=\"%s\" endDate=\"%s\">" +
                                     "<name><![CDATA[%s]]></name>" +
                                     "<customLocation><![CDATA[%s]]></customLocation>" +
@@ -105,8 +106,8 @@ public class EventServlet extends HttpServlet
                                     event.getOwningCalendar().getId(),
                                     emptyIfNull(event.getPrice()),
                                     event.getMaximumParticipants(),
-                                    event.getParticipants(),
-                                    vf.formatDate(event.getLastRegistrationDateTime().getTime(), "yyyy-MM-dd HH:mm"),
+                                    event.getParticipants().size(),
+                                    hasRegistrationTime ? vf.formatDate(event.getLastRegistrationDateTime().getTime(), "yyyy-MM-dd HH:mm") : "",
                                     getVersionsXml(event),
                                     getResourcesXml(event, session, request),
                                     getLocationsXml(event, session), 
