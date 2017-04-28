@@ -69,12 +69,15 @@ public class EventServlet extends HttpServlet
                                     "<attributes><![CDATA[%s]]></attributes>" + 
                                     "<lecturer><![CDATA[%s]]></lecturer>" + 
                                     "<organizerName><![CDATA[%s]]></organizerName>" + 
-                                    "<contactEmail><![CDATA[%s]]></contactEmail>" + 
-                                    "<contactName><![CDATA[%s]]></contactName>" + 
-                                    "<contactPhone><![CDATA[%s]]></contactPhone>" + 
-                                    "<internal><![CDATA[%s]]></internal>" + 
-                                    "<owningCalendar><![CDATA[%s]]></owningCalendar>" + 
-                                    "<price><![CDATA[%s]]></price>" + 
+                                    "<contactEmail><![CDATA[%s]]></contactEmail>" +
+                                    "<contactName><![CDATA[%s]]></contactName>" +
+                                    "<contactPhone><![CDATA[%s]]></contactPhone>" +
+                                    "<internal><![CDATA[%s]]></internal>" +
+                                    "<owningCalendar><![CDATA[%s]]></owningCalendar>" +
+                                    "<price><![CDATA[%s]]></price>" +
+                                    "<maximumParticipants><![CDATA[%s]]></maximumParticipants>" +
+                                    "<participants><![CDATA[%s]]></participants>" +
+                                    "<lastRegistrationDateTime><![CDATA[%s]]></lastRegistrationDateTime>" +
                                     "%s" +
                                     "%s" +
                                     "%s" +
@@ -101,6 +104,9 @@ public class EventServlet extends HttpServlet
                                     event.getIsInternal(),
                                     event.getOwningCalendar().getId(),
                                     emptyIfNull(event.getPrice()),
+                                    event.getMaximumParticipants(),
+                                    event.getParticipants(),
+                                    vf.formatDate(event.getLastRegistrationDateTime().getTime(), "yyyy-MM-dd HH:mm"),
                                     getVersionsXml(event),
                                     getResourcesXml(event, session, request),
                                     getLocationsXml(event, session), 
