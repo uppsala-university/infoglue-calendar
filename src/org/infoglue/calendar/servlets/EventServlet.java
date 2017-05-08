@@ -106,7 +106,7 @@ public class EventServlet extends HttpServlet
                                     event.getOwningCalendar().getId(),
                                     emptyIfNull(event.getPrice()),
                                     zeroIfNull(event.getMaximumParticipants()),
-                                    event.getParticipants().size(),
+                                    event.getEntries().size(),
                                     hasRegistrationTime ? vf.formatDate(event.getLastRegistrationDateTime().getTime(), "yyyy-MM-dd HH:mm") : "",
                                     getVersionsXml(event),
                                     getResourcesXml(event, session, request),
