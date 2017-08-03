@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -42,8 +44,13 @@ public class EventsServlet extends HttpServlet
 		String freeText 			= request.getParameter("freeText");
 		String startDateTime 		= request.getParameter("startDateTime");
 		String endDateTime 			= request.getParameter("endDateTime");
+		
+		// Legacy way to filter on attributes - supports one attribute with corresponding names
 		String categoryAttribute 	= request.getParameter("categoryAttribute");
 		String categoryNames 		= request.getParameter("categoryNames");
+		// New way to filter on attributes - supports any number of attributes
+		String categoryAttributes 	= request.getParameter("categoryAttributes");
+		
 		String calendarMonth 		= request.getParameter("calendarMonth");
 		String includedLanguages 	= request.getParameter("includedLanguages");
 		
@@ -105,11 +112,34 @@ public class EventsServlet extends HttpServlet
                 endCalendar.set(java.util.Calendar.HOUR_OF_DAY, 23);
                 
                 String[] calendarIds = calendarId.split(",");
-                String[] categoryNamesArray = null;
-                if(categoryNames != null)
-                	categoryNamesArray = categoryNames.split(",");
-                            	        
-                Set events = EventController.getController().getEventList(calendarIds, categoryAttribute, categoryNamesArray, includedLanguages, startCalendar, endCalendar, freeText, session);
+                Set events = null;
+                
+                if (categoryAttributes != null) 
+                {
+                	// New way of handling attributes
+                	Map<String, String[]> categories = new HashMap<String, String[]>();
+                	for (String categoryAttributeKey : categoryAttributes.split(",")) 
+                	{
+                		String categoryAttributeNameValues = request.getParameter("categoryNames_" + categoryAttributeKey);
+
+                    	if(categoryAttributeNameValues != null)
+                    	{
+                        	categories.put(categoryAttributeKey, categoryAttributeNameValues.split(","));
+                    	}
+                	}
+                	events = EventController.getController().getEventList(calendarIds, categories, includedLanguages, startCalendar, endCalendar, freeText, session);
+                }
+                else
+                {
+                	// Legacy way of handling attributes
+                	String[] categoryNamesArray = null;
+                	if(categoryNames != null)
+                	{
+                		categoryNamesArray = categoryNames.split(",");
+                	}
+                	events = EventController.getController().getEventList(calendarIds, categoryAttribute, categoryNamesArray, includedLanguages, startCalendar, endCalendar, freeText, session);
+                }
+                
                 
                 if(siteNodeId != null && !siteNodeId.equals(""))
                 	RemoteCacheUpdater.setUsage(new Integer(siteNodeId), calendarIds);
