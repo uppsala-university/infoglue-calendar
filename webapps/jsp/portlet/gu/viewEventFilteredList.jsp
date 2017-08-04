@@ -1,3 +1,5 @@
+<%@page import="java.io.IOException"%>
+<%@page import="java.io.PrintWriter"%>
 <%@ taglib uri="webwork" prefix="ww" %>
 <%@ taglib uri="http://java.sun.com/portlet" prefix="portlet"%>
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
@@ -26,8 +28,40 @@
 	<ww:set name="timeFormat" value="'HH:mm'"/>
 </ww:else>
 
-<%
+<%!
 	VisualFormatter vf = new VisualFormatter();
+
+	void printMonthHeader(Calendar cal, JspWriter out, Locale locale) throws IOException
+	{
+		String month = vf.formatDate(cal.getTime(), locale, "MMMM");
+		String firstLetterMonth = month.substring(0,1);
+		String monthRemaining = month.substring(1);
+		month = firstLetterMonth.toUpperCase()+monthRemaining;
+		
+		out.write("<h2 class=\"is-border-bottom\">" + month + " " + cal.get(Calendar.YEAR) + "</h2>");
+
+	}
+
+	void setToBeginningOfNextMonth(Calendar cal)
+	{
+		setToBeginningOfMonth(cal, 1);
+	}
+	void setToBeginningOfMonth(Calendar cal)
+	{
+		setToBeginningOfMonth(cal, 0);
+	}
+	void setToBeginningOfMonth(Calendar cal, int deltaMonths) 
+	{
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		cal.set(Calendar.HOUR, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.add(Calendar.MONTH, deltaMonths);
+	}
+%>
+
+
+<%
 	OgnlValueStack stack = (OgnlValueStack)request.getAttribute("webwork.valueStack");
 	Locale locale = (Locale)stack.findValue("locale");
 %>
@@ -44,33 +78,48 @@
 			<c:set var="delim" value="?"/>
 		</ww:else>
 		
-		<%--
-		<ww:set name="currentPageUrl" value="#attr.currentPageUrl"/>
-		<ww:if test="#currentPageUrl.indexOf('?') > -1">
-			<c:set var="currentPageDelim" value="&"/>
-		</ww:if>
-		<ww:else>
-			<c:set var="currentPageDelim" value="?"/>
-		</ww:else>
-		--%>
-
+		<ww:set name="startCalendar" value="this.getCalendar(this.startDateTime, 'yyyy-MM-dd', true)" scope="page"></ww:set>
+		
 		<%
-			int currentMonth = -1;
 			String month, firstLetterMonth, monthRemaining;
+			// Display headings for months before the current month, default true.
+			Boolean showMonthsForOldEvents = (Boolean) request.getAttribute("showMonthsForOldEvents");
+			boolean hasPrintedFirstHeader = false;
+			
+			if (showMonthsForOldEvents == null) 
+			{
+				showMonthsForOldEvents = true;
+			}
+			
+			Calendar previousHeaderMonth = (Calendar) pageContext.getAttribute("startCalendar");
+			
+			setToBeginningOfMonth(previousHeaderMonth);
+		
+			if (showMonthsForOldEvents)
+			{
+				// Set calendar to something way back in time to get header printing started correctly
+				previousHeaderMonth.roll(Calendar.YEAR, -1000);
+			}
+			
 		%>
+		
 		<ww:iterator value="events" status="rowstatus">
 			<%
-			GregorianCalendar cal = (GregorianCalendar)stack.findValue("top.startDateTime");
-
-			if( cal.get(Calendar.MONTH)+1 != currentMonth ) {
-				month = vf.formatDate(cal.getTime(), locale, "MMMM");
-				firstLetterMonth = month.substring(0,1);
-				monthRemaining = month.substring(1);
-				month = firstLetterMonth.toUpperCase()+monthRemaining;
-				
-				out.write("<h2 class=\"is-border-bottom\">" + month + " " + cal.get(Calendar.YEAR) + "</h2>");
-				currentMonth = (cal.get(Calendar.MONTH)+1);
-			}
+				GregorianCalendar cal = (GregorianCalendar)stack.findValue("top.startDateTime");
+	
+				if (cal.after(previousHeaderMonth)) {
+					printMonthHeader(cal, out, locale);
+					previousHeaderMonth.setTime(cal.getTime());
+					setToBeginningOfNextMonth(previousHeaderMonth);
+					hasPrintedFirstHeader = true;
+				}
+				else if (!hasPrintedFirstHeader && !showMonthsForOldEvents)
+				{
+					// Print current month as header to indicate that old events spanning this period take place now
+					printMonthHeader(previousHeaderMonth, out, locale);
+					setToBeginningOfNextMonth(previousHeaderMonth);
+					hasPrintedFirstHeader = true;
+				}
 
 			%>
 			<ww:set name="event" value="top"/>
