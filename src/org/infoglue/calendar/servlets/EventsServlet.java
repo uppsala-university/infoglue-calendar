@@ -70,15 +70,19 @@ public class EventsServlet extends HttpServlet
                 java.util.Calendar calendarMonthCalendar = null;
                 
             	if(startDateTime != null && startDateTime.length() > 0)
+            	{
                     startCalendar = getCalendar(startDateTime, "yyyy-MM-dd", true); 
-                else
+            	}
+            	else
                 {
                     startCalendar = java.util.Calendar.getInstance();
                     startCalendar.set(java.util.Calendar.DAY_OF_MONTH, 1); 
                 }
                 
                 if(endDateTime != null && endDateTime.length() > 0)
+                {
                 	endCalendar = getCalendar(endDateTime, "yyyy-MM-dd", true); 
+                }
                 else
                 {
                 	endCalendar = java.util.Calendar.getInstance();
@@ -106,10 +110,21 @@ public class EventsServlet extends HttpServlet
                 	calendarMonthCalendar = java.util.Calendar.getInstance();
                 	calendarMonthCalendar.set(java.util.Calendar.DAY_OF_MONTH, 1); 
                 }
-
                 
-                startCalendar.set(java.util.Calendar.HOUR_OF_DAY, 1);
-                endCalendar.set(java.util.Calendar.HOUR_OF_DAY, 23);
+                // Set time of day of the startCalendar to the beginning of the day.
+                startCalendar.set(startCalendar.get(java.util.Calendar.YEAR),
+      		                      startCalendar.get(java.util.Calendar.MONTH),
+      		                      startCalendar.get(java.util.Calendar.DAY_OF_MONTH),
+      		                      startCalendar.getActualMinimum(java.util.Calendar.HOUR_OF_DAY),
+      		                      startCalendar.getActualMinimum(java.util.Calendar.MINUTE),
+      		                      startCalendar.getActualMinimum(java.util.Calendar.SECOND));
+                // Set time of day of the endCalendar to the end of the day.
+                endCalendar.set(endCalendar.get(java.util.Calendar.YEAR),
+                		        endCalendar.get(java.util.Calendar.MONTH),
+                		        endCalendar.get(java.util.Calendar.DAY_OF_MONTH),
+                		        endCalendar.getActualMaximum(java.util.Calendar.HOUR_OF_DAY),
+                		        endCalendar.getActualMaximum(java.util.Calendar.MINUTE),
+                		        endCalendar.getActualMaximum(java.util.Calendar.SECOND));                
                 
                 String[] calendarIds = calendarId.split(",");
                 Set events = null;

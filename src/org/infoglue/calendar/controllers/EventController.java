@@ -1505,16 +1505,10 @@ public class EventController extends BasicController
 	        
 	        if(startCalendar != null && endCalendar != null)
 	        {
-		        if(startCalendar.get(java.util.Calendar.YEAR) == endCalendar.get(java.util.Calendar.YEAR) && startCalendar.get(java.util.Calendar.DAY_OF_YEAR) == endCalendar.get(java.util.Calendar.DAY_OF_YEAR))
-		        {
-		        	startCalendar.set(java.util.Calendar.HOUR_OF_DAY, 23);
-		        	endCalendar.set(java.util.Calendar.HOUR_OF_DAY, 1);
-		        	criteria.add(Expression.and(Expression.le("startDateTime", startCalendar), Expression.ge("endDateTime", endCalendar)));
-		        }
-		        else
-		        {
-		        	criteria.add(Expression.or(Expression.and(Expression.ge("startDateTime", startCalendar), Expression.le("startDateTime", endCalendar)), Expression.and(Expression.ge("endDateTime", endCalendar),Expression.le("endDateTime", endCalendar))));
-		        }
+	        	// It would be optimal to use a half open approach here, but we don't want to change this code too much
+	        	// since there could be calling code that relies on the current behavior.
+	        	// See https://stackoverflow.com/a/20536041/185596
+	        	criteria.add(Expression.and(Expression.le("startDateTime", endCalendar), Expression.ge("endDateTime", startCalendar)));
 	        }
 	        else
 	        {
