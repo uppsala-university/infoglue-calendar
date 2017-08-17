@@ -85,7 +85,7 @@ public class ViewEventListAction extends CalendarAbstractAction
     private String categoryNames 		= "";
     private String includedLanguages 	= "";
     private Calendar calendar;    
-    private Set events;
+    private List<Event> events;
     private List aggregatedEntries 		= null;
     private String message				= "";
     
@@ -110,47 +110,24 @@ public class ViewEventListAction extends CalendarAbstractAction
     
     public String execute() throws Exception 
     {
-        String[] calendarIds = calendarId.split(",");
-        //String[] categoryNamesArray = categoryNames.split(",");
-        
-        Session session = getSession(true);
-    	        
-        Map<String, String[]> categories = handleCategories();
-        //this.events = EventController.getController().getEventList(calendarIds, categoryAttribute, categoryNamesArray, includedLanguages, null, null, null, session);
-        this.events = EventController.getController().getEventList(calendarIds, categories, includedLanguages, null, null, null, session);
-  
-        log.info("Registering usage at least:" + calendarId + " for siteNodeId:" + this.getSiteNodeId());
-        RemoteCacheUpdater.setUsage(this.getSiteNodeId(), calendarIds);
-        
-        String presentationTemplate = getPresentationTemplate();
-        log.info("presentationTemplate:" + presentationTemplate);
-        if(presentationTemplate != null && !presentationTemplate.equals(""))
-        {
-		    Map parameters = new HashMap();
-		    parameters.put("events", this.events);
-		    parameters.put("this", this);
-		    
-			StringWriter tempString = new StringWriter();
-			PrintWriter pw = new PrintWriter(tempString);
-			new VelocityTemplateProcessor().renderTemplate(parameters, pw, presentationTemplate);
-			String renderedString = tempString.toString();
-			setRenderedString(renderedString);
-        }
-        
-        return Action.SUCCESS;
+    	return execute(null);
     } 
 
     public String execute(Integer numberOfItems) throws Exception 
     {
+        return execute(numberOfItems, null);
+    } 
+
+    public String execute(Integer numberOfItems, Integer daysToCountAsLongEvent) throws Exception 
+    {
         String[] calendarIds = calendarId.split(",");
-        //String[] categoryNamesArray = categoryNames.split(",");
         
         Session session = getSession(true);
         
         Map<String, String[]> categories = handleCategories();
 
-        //this.events = EventController.getController().getEventList(calendarIds,  getCategoryAttribute(), categoryNamesArray, getIncludedLanguages(), null, null, null, numberOfItems, session);
-        this.events = EventController.getController().getEventList(calendarIds, categories, getIncludedLanguages(), null, null, null, numberOfItems, session);
+        this.events = EventController.getController().getEventList(calendarIds, categories, getIncludedLanguages(), null, null, null, numberOfItems, daysToCountAsLongEvent, session);
+          
         log.info("Registering usage at least:" + calendarId + " for siteNodeId:" + this.getSiteNodeId());
         RemoteCacheUpdater.setUsage(this.getSiteNodeId(), calendarIds);
         
@@ -439,7 +416,7 @@ public class ViewEventListAction extends CalendarAbstractAction
         Session session = getSession(true);
 
         //this.events = EventController.getController().getEventList(calendarIds, categoryAttribute, categoryNamesArray, includedLanguages, startCalendar, endCalendar, freeText, session);
-        this.events = EventController.getController().getEventList(calendarIds, categories, includedLanguages, startCalendar, endCalendar, freeText, numberOfItems, session);
+        this.events = EventController.getController().getEventList(calendarIds, categories, includedLanguages, startCalendar, endCalendar, freeText, numberOfItems, null, session);
 
         log.info("Registering usage at least:" + calendarId + " for siteNodeId:" + this.getSiteNodeId());
 
@@ -478,7 +455,7 @@ public class ViewEventListAction extends CalendarAbstractAction
     
     public String shortListGU() throws Exception
     {
-        execute(getNumberOfItems());
+        execute(getNumberOfItems(), getDaysToCountAsLongEvent());
 
         if(getRenderedString() != null && !getRenderedString().equals(""))
 			return Action.SUCCESS + "RenderedTemplate";
@@ -526,7 +503,7 @@ public class ViewEventListAction extends CalendarAbstractAction
         this.calendarId = calendarId;
     }
     
-    public Set getEvents()
+    public List<Event> getEvents()
     {
         return events;
     }
@@ -597,6 +574,15 @@ public class ViewEventListAction extends CalendarAbstractAction
             return new Integer((String)o);
         else
             return new Integer(10);
+    }
+
+    public Integer getDaysToCountAsLongEvent()
+    {
+        Object o = ServletActionContext.getRequest().getAttribute("daysToCountAsLongEvent");
+        if(o != null && o.toString().length() > 0 && !o.toString().equalsIgnoreCase("undefined"))
+            return new Integer((String)o);
+        else
+            return null;
     }
 
     public Integer getNumberOfItemsNoFallback()

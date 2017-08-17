@@ -51,7 +51,6 @@ import org.infoglue.common.util.VelocityTemplateProcessor;
 import org.infoglue.common.util.io.FileHelper;
 import org.infoglue.common.util.mail.MailServiceFactory;
 
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -63,6 +62,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -77,6 +77,8 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+
+import com.sun.syndication.feed.atom.Link;
 
 public class EventController extends BasicController
 {    
@@ -418,8 +420,7 @@ public class EventController extends BasicController
 					creator,
 					entryFormId,
 					session);
-		System.out.println("stateid2:" + stateId);
-		System.out.println("eventstateId:" + event.getStateId());
+
 		//Creates the master language version
 		Set eventVersions = new HashSet();
 		EventVersion eventVersion = new EventVersion();
@@ -1432,31 +1433,32 @@ public class EventController extends BasicController
     /**
      * @deprecated Use {@link #getEventList(String[], Map, String, java.util.Calendar, java.util.Calendar, String, Session)} instead, which has a more general category handling
      */
-    public Set getEventList(String[] calendarIds, String categoryAttribute, String[] categoryNames, String includedLanguages, java.util.Calendar startCalendar, java.util.Calendar endCalendar, String freeText, Session session) throws Exception 
+    public List<Event> getEventList(String[] calendarIds, String categoryAttribute, String[] categoryNames, String includedLanguages, java.util.Calendar startCalendar, java.util.Calendar endCalendar, String freeText, Session session) throws Exception 
     {
     	return getEventList(calendarIds, Collections.singletonMap(categoryAttribute, categoryNames), includedLanguages, startCalendar, endCalendar, freeText, session);
     }
 
     /**
-     * @deprecated Use {@link #getEventList(String[], Map, String, java.util.Calendar, java.util.Calendar, String, String, Session)} instead, which has a more general category handling
+     * @deprecated Use {@link #getEventList(String[], Map, String, java.util.Calendar, java.util.Calendar, String, String, Integer, Session)} instead, which has a more general category handling
      */
-    public Set getEventList(String[] calendarIds, String categoryAttribute, String[] categoryNames, String includedLanguages, java.util.Calendar startCalendar, java.util.Calendar endCalendar, String freeText, Integer numberOfItems, Session session) throws Exception
+    public List<Event> getEventList(String[] calendarIds, String categoryAttribute, String[] categoryNames, String includedLanguages, java.util.Calendar startCalendar, java.util.Calendar endCalendar, String freeText, Integer numberOfItems, Session session) throws Exception
     {
-    	return getEventList(calendarIds, Collections.singletonMap(categoryAttribute, categoryNames), includedLanguages, startCalendar, endCalendar, freeText, numberOfItems, session);
+    	return getEventList(calendarIds, Collections.singletonMap(categoryAttribute, categoryNames), includedLanguages, startCalendar, endCalendar, freeText, numberOfItems, null, session);
     }
 
-    public Set getEventList(String[] calendarIds, Map<String, String[]> categories, String includedLanguages, java.util.Calendar startCalendar, java.util.Calendar endCalendar, String freeText, Session session) throws Exception 
+    public List<Event> getEventList(String[] calendarIds, Map<String, String[]> categories, String includedLanguages, java.util.Calendar startCalendar, java.util.Calendar endCalendar, String freeText, Session session) throws Exception 
     {
-    	return getEventList(calendarIds, categories, includedLanguages, startCalendar, endCalendar, freeText, null, session);
+    	return getEventList(calendarIds, categories, includedLanguages, startCalendar, endCalendar, freeText, null, null, session);
     }
 
     /**
      * Gets a list of all events available for a particular calendar with the optional categories.
      * @param categories The Map should have the form: key = EventType's categoryattribute name, value = list of Category.internalNames to match against
+     * @param daysToCountAsLongEvent If specified, will make events longer than this duration to be put at the end of the returned list, preserving order.
      * @return List of Event
      * @throws Exception
      */
-    public Set getEventList(String[] calendarIds, Map<String, String[]> categories, String includedLanguages, java.util.Calendar startCalendar, java.util.Calendar endCalendar, String freeText, Integer numberOfItems, Session session) throws Exception 
+    public List<Event> getEventList(String[] calendarIds, Map<String, String[]> categories, String includedLanguages, java.util.Calendar startCalendar, java.util.Calendar endCalendar, String freeText, Integer numberOfItems, Integer daysToCountAsLongEvent, Session session) throws Exception 
     {
         List result = null;
         
@@ -1494,8 +1496,10 @@ public class EventController extends BasicController
         for(int i=0; i<calendarIds.length; i++)
             calendarIdArray[i] = new Long(calendarIds[i]);
 
-        Set set = new LinkedHashSet();
-
+        // Use a LinkedHashSet instead of any Set explicitly since we want a Set that preveserves insertion order.
+        // Use a Set instead of a List to avoid duplicate events
+        LinkedHashSet<Event> orderedEventSet = new LinkedHashSet<Event>();
+        
         if(calendarIdArray.length > 0)
         {
 	        Criteria criteria = session.createCriteria(Event.class);
@@ -1641,13 +1645,58 @@ public class EventController extends BasicController
         
 	        log.info("result:" + result.size());
 	        
-	        set.addAll(result);	
+	        orderedEventSet.addAll(result);	
         }
         
+        // Convert Set to List
+        List<Event> eventList = new LinkedList<Event>(orderedEventSet);
+
+        if (daysToCountAsLongEvent != null) 
+        {
+        	// Move all long events to the end of the list
+        	List<Event> longEvents = new LinkedList<Event>();
+        	for (Iterator<Event> iterator = eventList.iterator(); iterator.hasNext();) {
+        		Event event = iterator.next();
+        	    if (eventDuration(event) >= daysToCountAsLongEvent) {
+        	    	longEvents.add(event);
+        	        iterator.remove();
+        	    }
+        	}
+        	eventList.addAll(longEvents);
+        }
         
-        return set;
+        return eventList;
     }
     
+    public static java.util.Calendar beginningOfDay(java.util.Calendar date) 
+    {    	
+    	date = (java.util.Calendar) date.clone();
+    	date.set(java.util.Calendar.HOUR_OF_DAY, 0);
+    	date.set(java.util.Calendar.MINUTE, 0);
+    	date.set(java.util.Calendar.SECOND, 0);
+    	
+    	return date;
+    }
+    
+    /*
+     * Copied from https://stackoverflow.com/a/19463133/185596 and
+     * modified.
+     */
+    public static long daysBetween(java.util.Calendar startDate, java.util.Calendar endDate) {
+    	startDate = beginningOfDay(startDate);
+    	endDate = beginningOfDay(endDate);
+    	
+        long end = endDate.getTimeInMillis();
+        long start = startDate.getTimeInMillis();
+        return TimeUnit.MILLISECONDS.toDays(Math.abs(end - start));
+    }
+    
+    /**
+     * Returns the number of days an event lasts, not caring about at what time of day the event starts and ends.
+     */
+    public static long eventDuration(Event event) {
+    	return daysBetween(event.getStartDateTime(), event.getEndDateTime());
+    }
     
     /**
      * Gets a list of all events available for a particular calendar with the optional categories.
@@ -1667,7 +1716,6 @@ public class EventController extends BasicController
         
         result = criteria.list();
         
-        System.out.println("Antal events med denna kategori:" + result.size());
         log.info("result:" + result.size());
         
         set.addAll(result);	        

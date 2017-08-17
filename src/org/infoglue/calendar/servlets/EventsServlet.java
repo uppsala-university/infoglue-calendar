@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -127,7 +128,7 @@ public class EventsServlet extends HttpServlet
                 		        endCalendar.getActualMaximum(java.util.Calendar.SECOND));                
                 
                 String[] calendarIds = calendarId.split(",");
-                Set events = null;
+                List<Event> events = null;
                 
                 if (categoryAttributes != null) 
                 {
