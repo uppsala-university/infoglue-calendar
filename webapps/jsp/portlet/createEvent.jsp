@@ -346,7 +346,9 @@
 					<ww:property value="this.getLabel('labels.internal.event.eventConfirm')"/>
 				</p>
 			</div>            
-
+			
+			<p><strong><ww:property value="this.getLabel('labels.internal.event.reviewInformation')"/></strong></p>
+			
 			<input type="submit" value="<ww:property value="this.getLabel('labels.internal.event.createButton')"/>" class="button submit save" tabIndex="101">
 			<input type="button" onclick="history.back();" value="<ww:property value="this.getLabel('labels.internal.applicationCancel')"/>" class="button cancel" tabIndex="102">
 		</form>
