@@ -1637,12 +1637,15 @@ public class EventController extends BasicController
 	            
 	        	criteria.add(d1);
 	        }
-	        
-	        if(numberOfItems != null)
+
+	        if(numberOfItems != null && numberOfItems != -1)
+	        {
 	        	criteria.setMaxResults(numberOfItems);
+	        }
+
 	        
 	        result = criteria.list();
-        
+
 	        log.info("result:" + result.size());
 	        
 	        orderedEventSet.addAll(result);	
@@ -1650,7 +1653,7 @@ public class EventController extends BasicController
         
         // Convert Set to List
         List<Event> eventList = new LinkedList<Event>(orderedEventSet);
-
+        
         if (daysToCountAsLongEvent != null) 
         {
         	// Move all long events to the end of the list
