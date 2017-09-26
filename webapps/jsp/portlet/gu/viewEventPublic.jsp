@@ -404,12 +404,13 @@
 	   			</ww:iterator>
 		   	</keywords>
 			<short-description>
+				
 				<![CDATA[
-				<ww:if test="#eventVersion.shortDescription != null && #eventVersion.shortDescription != ''">
-					<ww:property value="#eventVersion.shortDescription" escape="true"/>
+				<ww:if test="#eventVersion.decoratedShortDescription != null && #eventVersion.decoratedShortDescription != ''">
+					<ww:property value="#eventVersion.decoratedShortDescription" escape="true"/>
 				</ww:if>
 				<ww:else>
-					<c:set var="longDescription"><ww:property value="#eventVersion.longDescription" escape="true"/></c:set>
+					<c:set var="longDescription"><ww:property value="#eventVersion.decoratedLongDescription" escape="true"/></c:set>
 					<%
 						String decoratedLongDescription = (String)pageContext.getAttribute("longDescription");
 						int descriptionLength = Math.min(250, decoratedLongDescription.length());
