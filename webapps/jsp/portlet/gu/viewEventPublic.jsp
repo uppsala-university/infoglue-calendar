@@ -396,16 +396,6 @@
 				<ww:if test="#eventVersion.decoratedShortDescription != null && #eventVersion.decoratedShortDescription != ''">
 					<ww:property value="#eventVersion.decoratedShortDescription" escape="true"/>
 				</ww:if>
-				<ww:else>
-					<c:set var="longDescription"><ww:property value="#eventVersion.decoratedLongDescription" escape="true"/></c:set>
-					<%
-						String decoratedLongDescription = (String)pageContext.getAttribute("longDescription");
-						int descriptionLength = Math.min(250, decoratedLongDescription.length());
-						decoratedLongDescription = decoratedLongDescription.substring(0, descriptionLength);
-						pageContext.setAttribute("longDescription", decoratedLongDescription);
-					%>
-					<c:out value="${longDescription}"></c:out>
-				</ww:else>
 			</short-description>
 			<name><ww:if test="event.contactName != null && event.contactName != ''"><ww:property value="event.contactName" escape="true"/></ww:if></name>
 			<email><ww:if test="event.contactEmail != null && event.contactEmail != ''"><ww:property value="event.contactEmail" escape="true"/></ww:if></email>
