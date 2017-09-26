@@ -382,17 +382,6 @@
 		   		</ww:iterator>
 	   		</subjects>
 			<keywords>
-			<%-- 
-				<ww:iterator value="event.owningCalendar.eventType.categoryAttributes">
-					<ww:if test="top.name == 'Ämnesområde' || top.name == 'Ämnesområden'">
-						<ww:set name="categoryName" value="top.name"/>
-						<ww:set name="selectedCategories" value="this.getEventCategories(top)"/>
-						<ww:iterator value="#selectedCategories" status="rowstatus">
-							<keyword><ww:property value="top.getLocalizedName(#languageCode, 'sv')"/></keyword>
-						</ww:iterator>
-					</ww:if>
-		   		</ww:iterator>
-			--%>
 		   		<ww:iterator value="event.owningCalendar.eventType.categoryAttributes">
 					<ww:if test="top.name == 'Evenemangstyp' || top.name == 'Eventtyp'">
 					<ww:set name="selectedCategories" value="this.getEventCategories(top)"/>
@@ -405,7 +394,7 @@
 		   	</keywords>
 			<short-description>
 				
-				<![CDATA[
+				&lt;![CDATA[
 				<ww:if test="#eventVersion.decoratedShortDescription != null && #eventVersion.decoratedShortDescription != ''">
 					<ww:property value="#eventVersion.decoratedShortDescription" escape="true"/>
 				</ww:if>
@@ -419,8 +408,7 @@
 					%>
 					<c:out value="${longDescription}"></c:out>
 				</ww:else>
-				
-				]]>
+				]]&gt;
 			</short-description>
 			<name><ww:if test="event.contactName != null && event.contactName != ''"><ww:property value="event.contactName" escape="true"/></ww:if></name>
 			<email><ww:if test="event.contactEmail != null && event.contactEmail != ''"><ww:property value="event.contactEmail" escape="true"/></ww:if></email>
