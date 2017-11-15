@@ -721,11 +721,15 @@ public class ViewEventListAction extends CalendarAbstractAction
 	    		
 	    		List categories = new ArrayList();
 	    		Iterator eventCategoriesIterator = event.getEventCategories().iterator();
+	    		System.out.println("eventId:" + event.getId());
 	    		while(eventCategoriesIterator.hasNext())
 	    		{
 	    			EventCategory eventCategory = (EventCategory)eventCategoriesIterator.next();
 	    			SyndCategory syndCategory = new SyndCategoryImpl();
-	    			syndCategory.setTaxonomyUri(eventCategory.getEventTypeCategoryAttribute().getInternalName());
+	    			
+	    			if (eventCategory.getEventTypeCategoryAttribute() != null) {
+	    				syndCategory.setTaxonomyUri(eventCategory.getEventTypeCategoryAttribute().getInternalName());
+	    			}
 	    			syndCategory.setName(eventCategory.getCategory().getLocalizedName(this.getLanguageCode(), "sv"));
 	    			categories.add(syndCategory);
 	    		}
