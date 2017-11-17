@@ -38,6 +38,18 @@
 		</div>
 	</ww:if>
 	--%>
+
+	<%-- Determine if this is a disputation --%>
+	<ww:set name="isDisputation" value="false"/>
+	<ww:iterator value="event.owningCalendar.eventType.categoryAttributes">
+		<ww:if test="top.name == 'Evenemangstyp' || top.name == 'Eventtyp'">
+			<ww:set name="selectedCategories" value="this.getEventCategories(top)"/>
+			<ww:iterator value="#selectedCategories">
+				<ww:set name="isDisputation" value="#isDisputation or top.getInternalName() == 'Disputation'"/>
+			</ww:iterator>
+		</ww:if>
+	</ww:iterator>
+	<c:set var="isDisputation"><ww:property value="#isDisputation"/></c:set>
 	
 	<!-- Calendar start -->
 	<div class="vevent"> 	
@@ -146,14 +158,31 @@
 
 				<ww:if test="#eventVersion.lecturer != null && #eventVersion.lecturer != ''">
 					<li>
-						<ww:property value="this.getLabel('labels.public.event.lecturerLabel')"/>: <ww:property value="#eventVersion.lecturer"/>
+						<c:choose>
+							<c:when test="${isDisputation}">
+								<ww:property value="this.getLabel('labels.public.event.doctoralStudentLabel')"/>:
+							</c:when>
+							<c:otherwise>
+								<ww:property value="this.getLabel('labels.public.event.lecturerLabel')"/>:
+							</c:otherwise>
+						</c:choose>
+						
+						<ww:property value="#eventVersion.lecturer"/>
 					</li> 
 				</ww:if>
 				
 				<ww:if test="#eventVersion.eventUrl != null && #eventVersion.eventUrl != ''">
 					<li>
 						<a class="url uid webPage" href="<ww:property value="#eventVersion.eventUrl"/>">
-							<ww:property value="this.getLabel('labels.public.event.eventUrl ')"/>
+						<c:choose>
+							<c:when test="${isDisputation}">
+								<ww:property value="this.getLabel('labels.public.event.aboutTheDisputationUrl')"/>
+							</c:when>
+							<c:otherwise>
+								<ww:property value="this.getLabel('labels.public.event.eventUrl')"/>
+							</c:otherwise>
+						</c:choose>
+						
 						</a>
 					</li>
 				</ww:if>
@@ -308,7 +337,6 @@
 								<ww:set name="selectedCategories" value="this.getEventCategories(top)"/>
 								<ww:set name="categoryAttribute" value="top.getInternalName()"/>
 								<ww:iterator value="#selectedCategories" status="rowstatus">
-									<ww:set name="internalName" value="top.getInternalName()"/>
 									<a class="url uid local" href="<ww:property value="#attr.filteredListUrl"/>?categoryAttribute=<ww:property value="#categoryAttribute"/>&categoryNames=<ww:property value="top.getInternalName()"/>&calendarFilterDisplayName=<ww:property value="top.getLocalizedName(#languageCode, 'sv')"/>">
 									<ww:property value="top.getLocalizedName(#languageCode, 'sv')"/></a><ww:if test="!#rowstatus.last">, </ww:if>
 								</ww:iterator>
