@@ -37,6 +37,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
@@ -47,9 +50,9 @@ import org.infoglue.calendar.entities.Event;
 import org.infoglue.calendar.entities.EventCategory;
 import org.infoglue.calendar.entities.EventTypeCategoryAttribute;
 import org.infoglue.calendar.entities.EventVersion;
+import org.infoglue.calendar.entities.Resource;
 import org.infoglue.calendar.util.CalendarHelper;
 import org.infoglue.common.util.RemoteCacheUpdater;
-import org.infoglue.common.util.Timer;
 import org.infoglue.common.util.VelocityTemplateProcessor;
 import org.infoglue.common.util.VisualFormatter;
 import org.infoglue.common.util.rss.RssHelper;
@@ -60,11 +63,13 @@ import com.opensymphony.xwork.Action;
 import com.opensymphony.xwork.ActionContext;
 import com.sun.syndication.feed.synd.SyndCategory;
 import com.sun.syndication.feed.synd.SyndCategoryImpl;
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndContentImpl;
+import com.sun.syndication.feed.synd.SyndEnclosure;
+import com.sun.syndication.feed.synd.SyndEnclosureImpl;
+import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndEntryImpl;
+import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.feed.synd.SyndFeedImpl;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
@@ -331,7 +336,7 @@ public class ViewEventListAction extends CalendarAbstractAction
 
     	if(numberOfItems == null)
     		numberOfItems = getNumberOfItemsNoFallback();
-    	System.out.println("numberOfItems:" + numberOfItems);
+
     	
     	log.info("freeText:" + freeText);
     	log.info("startDateTime:" + startDateTime);
@@ -625,9 +630,10 @@ public class ViewEventListAction extends CalendarAbstractAction
 	    	SyndFeed feed = new SyndFeedImpl();
 	        feed.setFeedType("atom_1.0");
     		String feedTypeString = this.getStringAttributeValue("feedType");
-    		if(feedTypeString != null && !feedTypeString.equals(""))
+    		if(feedTypeString != null && !feedTypeString.equals("")) {
     			feed.setFeedType(feedTypeString);
-    					
+    		}
+    		
 	        feed.setTitle(this.getStringAttributeValue("feedTitle"));
 	        feed.setLink(this.getStringAttributeValue("feedLink"));
 	        feed.setDescription(this.getStringAttributeValue("feedDescription"));
@@ -699,7 +705,7 @@ public class ViewEventListAction extends CalendarAbstractAction
     }
 
 
-    private List getInternalFeedEntries(String eventURL)
+    private List getInternalFeedEntries(String eventURL) throws Exception
     {
         List entries = new ArrayList();
         SyndEntry entry;
@@ -716,12 +722,12 @@ public class ViewEventListAction extends CalendarAbstractAction
 	    		entry = new SyndEntryImpl();
 	    		entry.setTitle(eventVersion.getName());
 				entry.setLink(eventURL.replaceAll("\\{eventId\\}", "" + event.getId()));
-	    		entry.setPublishedDate(event.getStartDateTime().getTime());
+		
 	    		entry.setUri(eventURL.replaceAll("\\{eventId\\}", "" + event.getId()));
 	    		
 	    		List categories = new ArrayList();
 	    		Iterator eventCategoriesIterator = event.getEventCategories().iterator();
-	    		System.out.println("eventId:" + event.getId());
+
 	    		while(eventCategoriesIterator.hasNext())
 	    		{
 	    			EventCategory eventCategory = (EventCategory)eventCategoriesIterator.next();
@@ -738,13 +744,28 @@ public class ViewEventListAction extends CalendarAbstractAction
 	    		// Add an extra category to internal entries, 
 	    		// so that we can identify them later.
 	    		//--------------------------------------------
+	    		String startDateTime = this.formatDate(event.getStartDateTime().getTime(), "yyyy-MM-dd HH:mm");
+	    		String endDateTime = this.formatDate(event.getStartDateTime().getTime(), "yyyy-MM-dd HH:mm");
 	    		
-				SyndCategory syndCategory = new SyndCategoryImpl();
-				syndCategory.setTaxonomyUri("isInfoGlueLink");
-				syndCategory.setName("true");
-				categories.add(syndCategory);
-	
-	    		entry.setCategories(categories);
+	    		String fullDateTime = startDateTime;
+	    		if (endDateTime != null && !endDateTime.equalsIgnoreCase("")) {
+	    			fullDateTime += " &mdash; " + endDateTime;
+	    		}
+	    		
+				SyndCategory isInfoglueLink = new SyndCategoryImpl();
+				
+				isInfoglueLink.setTaxonomyUri("isInfoGlueLink");
+				isInfoglueLink.setName("true");
+				
+				categories.add(isInfoglueLink);
+				
+				SyndCategory date = new SyndCategoryImpl();
+				date.setTaxonomyUri("date");
+				date.setName(fullDateTime);
+				
+				categories.add(date);
+				
+				entry.setCategories(categories);
 	    		
 	    		description = new SyndContentImpl();
 	    		description.setType("text/html");
@@ -752,13 +773,27 @@ public class ViewEventListAction extends CalendarAbstractAction
 	    		entry.setDescription(description);
 	
 	    		List contents = new ArrayList();
-	
+	    		
 	    		SyndContent metaData = new SyndContentImpl();
-	
+	    		
+	    		entry.setPublishedDate(event.getStartDateTime().getTime());
+	    		
+	    		Set resources = event.getResources();
+	    		List<SyndEnclosure> enclosureList = new ArrayList<SyndEnclosure>();
+	    		SyndEnclosure enclosure = new SyndEnclosureImpl();
+	    		for (Resource resource : (Set<Resource>)event.getResources()) {
+	    			enclosure.setType(resource.getAssetKey());
+	    			
+	    			enclosure.setUrl(getResourceUrl(resource.getId()));
+	    			enclosureList.add(enclosure);
+	    		}
+	    		
+	    		entry.setEnclosures(enclosureList);
+	    		
 	    		StringBuffer xml = new StringBuffer("<![CDATA[<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 	    		xml.append("<metadata>");
-	    		xml.append("<startDateTime>" + this.formatDate(event.getStartDateTime().getTime(), "yyyy-MM-dd HH:mm") + "</startDateTime>");
-	    		xml.append("<endDateTime>" + this.formatDate(event.getEndDateTime().getTime(), "yyyy-MM-dd HH:mm") + "</endDateTime>");
+	    		xml.append("<startDateTime>" + startDateTime + "</startDateTime>");
+	    		xml.append("<endDateTime>" + endDateTime + "</endDateTime>");
 	    		xml.append("</metadata>]]>");
 	
 	    		metaData.setType("text/xml");
@@ -880,7 +915,7 @@ public class ViewEventListAction extends CalendarAbstractAction
         }	        
         return dates;
     }
-
+	
     @Override
 	public String getResourceUrl(Event event, String assetKey) throws Exception
 	{
