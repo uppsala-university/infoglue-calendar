@@ -38,6 +38,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
@@ -204,7 +206,7 @@ public class ViewEventListAction extends CalendarAbstractAction
 		    
 			if(externalRSSUrl == null || externalRSSUrl.equalsIgnoreCase(""))
 			{
-				String defaultUrl = "http://aktuellt.slu.se/kalendarium_rss.cfm";
+				String defaultUrl = "http://kalendarium.uu.se/RSS";
 				log.error("You must send in an attribute called externalRSSUrl to this view. Defaulting feed \"" + defaultUrl + "\".");
 				externalRSSUrl = defaultUrl;
 			}
@@ -711,9 +713,12 @@ public class ViewEventListAction extends CalendarAbstractAction
 		Set<Resource> resources = event.getResources();
 		StringBuffer sb = new StringBuffer();
 		List<SyndEnclosure> enclosureList = new ArrayList();
+		HttpServletRequest request = ServletActionContext.getRequest();
+		String url = "";
+		
 		for (Resource resource : resources) 
 		{
-			String url = ResourceController.getController().getResourceUrl(resource.getId(), this.getSession());
+			url = request.getScheme() + "://" + request.getServerName() + ResourceController.getController().getResourceUrl(resource.getId(), this.getSession());
 			Blob blob = resource.getResource();
 			byte[] bytes = null;
 	
