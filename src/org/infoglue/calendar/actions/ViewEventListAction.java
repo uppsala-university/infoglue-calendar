@@ -799,7 +799,7 @@ public class ViewEventListAction extends CalendarAbstractAction
 	    		// so that we can identify them later.
 	    		//--------------------------------------------
 	    		String startDateTime = this.formatDate(event.getStartDateTime().getTime(), "yyyy-MM-dd HH:mm");
-	    		String endDateTime = this.formatDate(event.getStartDateTime().getTime(), "yyyy-MM-dd HH:mm");
+	    		String endDateTime = this.formatDate(event.getEndDateTime().getTime(), "yyyy-MM-dd HH:mm");
 	    		
 	    		//Removing 12:34 since that is the default time if no time is set.
 	    		startDateTime.replace("12:34", "");
