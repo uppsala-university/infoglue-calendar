@@ -755,7 +755,7 @@ public class ViewEventListAction extends CalendarAbstractAction
 	    		try {
 					entry.setEnclosures(getResourcesAsEnclosure(event));
 				} catch (Exception e) {
-					log.error("Could not create eclosures for event:" + event.getId());
+					log.error("Could not create eclosures for event:" + event.getId() + " Message: " + e.getMessage());
 				}
 	    		
 	    		List categories = new ArrayList();
