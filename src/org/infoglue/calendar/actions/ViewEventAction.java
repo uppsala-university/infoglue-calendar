@@ -31,7 +31,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -278,8 +277,7 @@ public class ViewEventAction extends CalendarAbstractAction
 	
 	        if(this.eventId != null)
 	        {
-	            this.event = EventController.getController().getEvent(eventId, session);
-	
+	        	this.event = EventController.getController().getEvent(eventId, session);
 	            String presentationTemplate = getPresentationTemplate();
 	            log.info("presentationTemplate:" + presentationTemplate);
 	            if(presentationTemplate != null && !presentationTemplate.equals(""))

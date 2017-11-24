@@ -59,22 +59,6 @@ public class ViewMyWorkingEventListAction extends CalendarAbstractAction
     
     public String execute() throws Exception 
     {
-    	Properties properties = PropertyHelper.getProperties();
-    	System.out.println("getclientIP:" + getClientIP());
-    	
-    	String allowedIPs = (String)(String)properties.get("directPublishIPs");
-    	if (allowedIPs != null) {
-    		String[] IPList = allowedIPs.split(",");
-    	
-    	
-	    	
-	 		boolean allowDirectPublish = false;
-	 		for (String ip : IPList) {
-	 			if (ip.equalsIgnoreCase(getClientIP())) {
-	 				allowDirectPublish = true;
-	 			}
-	 		}
-    	}
     	Session session = getSession(true);
     	
         this.events = EventController.getController().getMyWorkingEventList(this.getInfoGlueRemoteUser(), this.getInfoGlueRemoteUserRoles(), this.getInfoGlueRemoteUserGroups(), session);
