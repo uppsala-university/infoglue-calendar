@@ -95,8 +95,9 @@ public class CalendarAbstractAction extends ActionSupport
 {
 	private static Log log = LogFactory.getLog(CalendarAbstractAction.class);
 	private String renderedString = null;
-	private  String NOTATION_SV= ". ";
-	private String NOTATION_EN= ", ";
+	private  String NOTATION_SV= ".";
+	private String NOTATION_EN= ":";
+	private String CLOCK= "kl. ";
 	
 	/**
 	 * This method lets the velocity template get hold of all actions inheriting.
@@ -724,16 +725,15 @@ public class CalendarAbstractAction extends ActionSupport
 
     public String getFormattedStartEndDateTime (Event event) {
     	String langaugeNotation = NOTATION_SV;
-    	String datePattern = "MMMM dd";
-    	
+        	
     	
 		if (!getLanguageCode().equalsIgnoreCase("sv")) {
 			langaugeNotation = NOTATION_EN;
 		}
 		String startDate = this.formatDate(event.getStartDateTime().getTime(), "dd MMMM");
 		String endDate = this.formatDate(event.getEndDateTime().getTime(), "dd MMMM");
-		String startHourMinute = this.formatDate(event.getStartDateTime().getTime(), "HH:mm");
-		String endHourMinute = this.formatDate(event.getEndDateTime().getTime(), "HH:mm");
+		String startHourMinute = this.formatDate(event.getStartDateTime().getTime(), "HH'" + langaugeNotation +"'mm");
+		String endHourMinute = this.formatDate(event.getEndDateTime().getTime(), "HH'" + langaugeNotation +"'mm");
 		
 		StringBuffer dateTimeSB = new StringBuffer();
 		
@@ -744,11 +744,11 @@ public class CalendarAbstractAction extends ActionSupport
 				startHourMinute.replace(":", langaugeNotation);
 				dateTimeSB.append(", ");
 				if (getLanguageCode().equalsIgnoreCase("sv")) {
-					dateTimeSB.append("kl. ");
+					dateTimeSB.append(CLOCK);
 				}
 				dateTimeSB.append(startHourMinute);
 				if (startHourMinute != null && !endHourMinute.equalsIgnoreCase("23:59") && !endHourMinute.equalsIgnoreCase("")) {
-					endHourMinute.replace(":", langaugeNotation);
+					//endHourMinute.replace(":", langaugeNotation);
 					dateTimeSB.append(" &mdash; " + endHourMinute);
 				}
 			}
@@ -760,7 +760,7 @@ public class CalendarAbstractAction extends ActionSupport
 					startHourMinute.replace(":", langaugeNotation);
 					dateTimeSB.append(", ");
 					if (getLanguageCode().equalsIgnoreCase("sv")) {
-						dateTimeSB.append("kl. ");
+						dateTimeSB.append(CLOCK);
 					}
 					dateTimeSB.append(startHourMinute);
 					dateTimeSB.append(" &mdash; " + endDate);
@@ -768,7 +768,7 @@ public class CalendarAbstractAction extends ActionSupport
 						endHourMinute.replace(":", langaugeNotation);
 						dateTimeSB.append(", ");
 						if (getLanguageCode().equalsIgnoreCase("sv")) {
-							dateTimeSB.append("kl. ");
+							dateTimeSB.append(CLOCK);
 						}
 						dateTimeSB.append(endHourMinute);
 					}
