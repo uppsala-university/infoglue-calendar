@@ -763,16 +763,21 @@ public class CalendarAbstractAction extends ActionSupport
 						dateTimeSB.append(CLOCK);
 					}
 					dateTimeSB.append(startHourMinute);
-					dateTimeSB.append(" &mdash; " + endDate);
-					if (endHourMinute != null && !endHourMinute.equalsIgnoreCase("23" + langaugeNotation + "59") && !endHourMinute.equalsIgnoreCase("")) {
-						endHourMinute.replace(":", langaugeNotation);
-						dateTimeSB.append(", ");
-						if (getLanguageCode().equalsIgnoreCase("sv")) {
-							dateTimeSB.append(CLOCK);
-						}
-						dateTimeSB.append(endHourMinute);
-					}
 				}
+				
+				if (endDate != null && !endDate.equalsIgnoreCase("")) {
+					dateTimeSB.append(" &mdash; " + endDate);
+				}
+				
+				if (endHourMinute != null && !endHourMinute.equalsIgnoreCase("23" + langaugeNotation + "59") && !endHourMinute.equalsIgnoreCase("")) {
+					endHourMinute.replace(":", langaugeNotation);
+					dateTimeSB.append(", ");
+					if (getLanguageCode().equalsIgnoreCase("sv")) {
+						dateTimeSB.append(CLOCK);
+					}
+					dateTimeSB.append(endHourMinute);
+				}
+				
 			
 		}
 		return dateTimeSB.toString();	
