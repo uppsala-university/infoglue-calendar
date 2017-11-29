@@ -25,6 +25,7 @@ package org.infoglue.calendar.actions;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.DateFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -67,13 +68,13 @@ import org.infoglue.calendar.entities.EventVersion;
 import org.infoglue.calendar.entities.Language;
 import org.infoglue.calendar.entities.Participant;
 import org.infoglue.calendar.util.AttributeType;
-import org.infoglue.common.security.beans.InfoGluePrincipalBean;
-import org.infoglue.common.util.VisualFormatter;
 import org.infoglue.common.exceptions.ConstraintException;
+import org.infoglue.common.security.beans.InfoGluePrincipalBean;
 import org.infoglue.common.util.ActionValidatorManager;
 import org.infoglue.common.util.ConstraintExceptionBuffer;
 import org.infoglue.common.util.PropertyHelper;
 import org.infoglue.common.util.ResourceBundleHelper;
+import org.infoglue.common.util.VisualFormatter;
 
 import com.opensymphony.webwork.ServletActionContext;
 import com.opensymphony.xwork.ActionContext;
@@ -94,6 +95,8 @@ public class CalendarAbstractAction extends ActionSupport
 {
 	private static Log log = LogFactory.getLog(CalendarAbstractAction.class);
 	private String renderedString = null;
+	private  String NOTATION_SV= ". ";
+	private String NOTATION_EN= ", ";
 	
 	/**
 	 * This method lets the velocity template get hold of all actions inheriting.
@@ -214,8 +217,9 @@ public class CalendarAbstractAction extends ActionSupport
     public Locale getLocale()
     {
     	String languageCode = getLanguageCode();
-    	if(languageCode == null || languageCode.equals(""))
-    		languageCode = "en";
+    	if((languageCode == null || languageCode.equals("")) || languageCode.equalsIgnoreCase("en")) {
+    		return Locale.UK;
+    	}
     	
     	return new Locale(languageCode);
     }
@@ -718,6 +722,61 @@ public class CalendarAbstractAction extends ActionSupport
         return calendar;
     }
 
+    public String getFormattedStartEndDateTime (Event event) {
+    	String langaugeNotation = NOTATION_SV;
+    	String datePattern = "MMMM dd";
+    	
+    	
+		if (!getLanguageCode().equalsIgnoreCase("sv")) {
+			langaugeNotation = NOTATION_EN;
+		}
+		String startDate = this.formatDate(event.getStartDateTime().getTime(), "dd MMMM");
+		String endDate = this.formatDate(event.getEndDateTime().getTime(), "dd MMMM");
+		String startHourMinute = this.formatDate(event.getStartDateTime().getTime(), "HH:mm");
+		String endHourMinute = this.formatDate(event.getEndDateTime().getTime(), "HH:mm");
+		
+		StringBuffer dateTimeSB = new StringBuffer();
+		
+		dateTimeSB.append(startDate);
+
+		if (endDate.isEmpty() || (startDate.equalsIgnoreCase(endDate))) {
+			if (startHourMinute != null && !startHourMinute.equalsIgnoreCase("12:34")) {
+				startHourMinute.replace(":", langaugeNotation);
+				dateTimeSB.append(", ");
+				if (getLanguageCode().equalsIgnoreCase("sv")) {
+					dateTimeSB.append("kl. ");
+				}
+				dateTimeSB.append(startHourMinute);
+				if (startHourMinute != null && !endHourMinute.equalsIgnoreCase("23:59") && !endHourMinute.equalsIgnoreCase("")) {
+					endHourMinute.replace(":", langaugeNotation);
+					dateTimeSB.append(" &mdash; " + endHourMinute);
+				}
+			}
+				
+			
+		} else {
+			
+				if (startHourMinute != null && !startHourMinute.equalsIgnoreCase("12:34")) {
+					startHourMinute.replace(":", langaugeNotation);
+					dateTimeSB.append(", ");
+					if (getLanguageCode().equalsIgnoreCase("sv")) {
+						dateTimeSB.append("kl. ");
+					}
+					dateTimeSB.append(startHourMinute);
+					dateTimeSB.append(" &mdash; " + endDate);
+					if (endHourMinute != null && !endHourMinute.equalsIgnoreCase("23:59") && !endHourMinute.equalsIgnoreCase("")) {
+						endHourMinute.replace(":", langaugeNotation);
+						dateTimeSB.append(", ");
+						if (getLanguageCode().equalsIgnoreCase("sv")) {
+							dateTimeSB.append("kl. ");
+						}
+						dateTimeSB.append(endHourMinute);
+					}
+				}
+			
+		}
+		return dateTimeSB.toString();	
+    }
     
     public String getVCalendar(Long eventId) throws Exception
     {

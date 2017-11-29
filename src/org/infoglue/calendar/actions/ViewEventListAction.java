@@ -28,6 +28,8 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.Blob;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -109,6 +111,9 @@ public class ViewEventListAction extends CalendarAbstractAction
     private String filterDescription	= null;
     private Integer numberOfItems 		= null;
     
+    
+    private final String CLOCK_SV = "kl";
+    private final String CLOCK_EN = "at";
     VisualFormatter vf = new VisualFormatter();
     
     /**
@@ -718,7 +723,7 @@ public class ViewEventListAction extends CalendarAbstractAction
 		
 		for (Resource resource : resources) 
 		{
-			url = request.getScheme() + "://" + request.getServerName() + ResourceController.getController().getResourceUrl(resource.getId(), this.getSession());
+			url = request.getScheme() + "://" + request.getServerName() + ResourceController.getController().getResourceUrl(resource.getId(), resource.getAssetKey(), this.getSession());
 			Blob blob = resource.getResource();
 			byte[] bytes = null;
 	
@@ -798,17 +803,7 @@ public class ViewEventListAction extends CalendarAbstractAction
 	    		// Add an extra category to internal entries, 
 	    		// so that we can identify them later.
 	    		//--------------------------------------------
-	    		String startDateTime = this.formatDate(event.getStartDateTime().getTime(), "yyyy-MM-dd HH:mm");
-	    		String endDateTime = this.formatDate(event.getEndDateTime().getTime(), "yyyy-MM-dd HH:mm");
-	    		
-	    		//Removing 12:34 since that is the default time if no time is set.
-	    		startDateTime.replace("12:34", "");
-	    		endDateTime.replace("12:34", "");
-	    		
-	    		String fullDateTime = startDateTime;
-	    		if (endDateTime != null && !endDateTime.equalsIgnoreCase("")) {
-	    			fullDateTime += " &mdash; " + endDateTime;
-	    		}
+	    		String fullDateTime = this.getFormattedStartEndDateTime(event);
 	    		
 	    		SyndCategory date = new SyndCategoryImpl();
 				date.setTaxonomyUri("date");

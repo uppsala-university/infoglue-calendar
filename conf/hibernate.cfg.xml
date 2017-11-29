@@ -18,8 +18,7 @@
         <property name="dialect">@dialect@</property>
         <property name="hibernate.dbcp.initialSize">@hibernate.dbcp.initialSize@</property>
         <property name="hibernate.dbcp.maxWait">@hibernate.dbcp.maxWait@</property>
-        <property name="hibernate.dbcp.validationQuery">@hibernate.dbcp.validationQuery@</property>
- 		
+
         <!-- Mapping files -->
         <mapping resource="Calendar.hbm.xml"/>
         <mapping resource="Category.hbm.xml"/>
