@@ -4,4 +4,3 @@ dist
 docs/api
 war
 webapps/WEB-INF/classes
-src/org/infoglue/calendar/actions/ViewMyWorkingEventListAction.java
