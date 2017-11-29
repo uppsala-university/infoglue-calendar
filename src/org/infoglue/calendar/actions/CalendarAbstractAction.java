@@ -740,14 +740,14 @@ public class CalendarAbstractAction extends ActionSupport
 		dateTimeSB.append(startDate);
 
 		if (endDate.isEmpty() || (startDate.equalsIgnoreCase(endDate))) {
-			if (startHourMinute != null && !startHourMinute.equalsIgnoreCase("12:34")) {
+			if (startHourMinute != null && !startHourMinute.equalsIgnoreCase("12" + langaugeNotation + "34")) {
 				startHourMinute.replace(":", langaugeNotation);
 				dateTimeSB.append(", ");
 				if (getLanguageCode().equalsIgnoreCase("sv")) {
 					dateTimeSB.append(CLOCK);
 				}
 				dateTimeSB.append(startHourMinute);
-				if (startHourMinute != null && !endHourMinute.equalsIgnoreCase("23:59") && !endHourMinute.equalsIgnoreCase("")) {
+				if (startHourMinute != null && !endHourMinute.equalsIgnoreCase("23" + langaugeNotation + "59") && !endHourMinute.equalsIgnoreCase("")) {
 					//endHourMinute.replace(":", langaugeNotation);
 					dateTimeSB.append("&mdash;" + endHourMinute);
 				}
@@ -756,7 +756,7 @@ public class CalendarAbstractAction extends ActionSupport
 			
 		} else {
 			
-				if (startHourMinute != null && !startHourMinute.equalsIgnoreCase("12:34")) {
+				if (startHourMinute != null && !startHourMinute.equalsIgnoreCase("12" + langaugeNotation + "34")) {
 					startHourMinute.replace(":", langaugeNotation);
 					dateTimeSB.append(", ");
 					if (getLanguageCode().equalsIgnoreCase("sv")) {
@@ -764,7 +764,7 @@ public class CalendarAbstractAction extends ActionSupport
 					}
 					dateTimeSB.append(startHourMinute);
 					dateTimeSB.append(" &mdash; " + endDate);
-					if (endHourMinute != null && !endHourMinute.equalsIgnoreCase("23:59") && !endHourMinute.equalsIgnoreCase("")) {
+					if (endHourMinute != null && !endHourMinute.equalsIgnoreCase("23" + langaugeNotation + "59") && !endHourMinute.equalsIgnoreCase("")) {
 						endHourMinute.replace(":", langaugeNotation);
 						dateTimeSB.append(", ");
 						if (getLanguageCode().equalsIgnoreCase("sv")) {
