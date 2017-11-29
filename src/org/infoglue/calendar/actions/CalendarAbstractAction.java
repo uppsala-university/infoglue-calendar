@@ -749,7 +749,7 @@ public class CalendarAbstractAction extends ActionSupport
 				dateTimeSB.append(startHourMinute);
 				if (startHourMinute != null && !endHourMinute.equalsIgnoreCase("23:59") && !endHourMinute.equalsIgnoreCase("")) {
 					//endHourMinute.replace(":", langaugeNotation);
-					dateTimeSB.append(" &mdash; " + endHourMinute);
+					dateTimeSB.append("&mdash;" + endHourMinute);
 				}
 			}
 				
