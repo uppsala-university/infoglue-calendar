@@ -111,9 +111,6 @@ public class ViewEventListAction extends CalendarAbstractAction
     private String filterDescription	= null;
     private Integer numberOfItems 		= null;
     
-    
-    private final String CLOCK_SV = "kl";
-    private final String CLOCK_EN = "at";
     VisualFormatter vf = new VisualFormatter();
     
     /**
