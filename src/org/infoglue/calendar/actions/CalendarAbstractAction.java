@@ -729,35 +729,31 @@ public class CalendarAbstractAction extends ActionSupport
     }
     
     public String getFormattedStartEndDateTime (Event event, String datePattern) {
-    	String languageNotation = NOTATION_SV;
+    	String timeSeparatorNotation = NOTATION_SV;
 
 		if (!getLanguageCode().equalsIgnoreCase("sv")) {
-			languageNotation = NOTATION_EN;
+			timeSeparatorNotation = NOTATION_EN;
 		}
 		
 		String startDate = this.formatDate(event.getStartDateTime().getTime(), datePattern);
 		String endDate = this.formatDate(event.getEndDateTime().getTime(), datePattern);
-		String startHourMinute = this.formatDate(event.getStartDateTime().getTime(), "HH'" + languageNotation +"'mm");
-		String endHourMinute = this.formatDate(event.getEndDateTime().getTime(), "HH'" + languageNotation +"'mm");
+		String startHourMinute = this.formatDate(event.getStartDateTime().getTime(), "HH'" + timeSeparatorNotation +"'mm");
+		String endHourMinute = this.formatDate(event.getEndDateTime().getTime(), "HH'" + timeSeparatorNotation +"'mm");
 		
 		StringBuffer dateTimeSB = new StringBuffer();
-		
-		dateTimeSB.append("<span class='dtstart'>" + startDate);
-		
+
 		/* If the time is 12:34 it means that start date was left empty and should not be shown */
-		if (startHourMinute != null && !startHourMinute.equalsIgnoreCase("12" + languageNotation + "34")) {
+		if (startHourMinute != null && !startHourMinute.equalsIgnoreCase("12" + timeSeparatorNotation + "34")) {
 			dateTimeSB.append(", ");
 			if (getLanguageCode().equalsIgnoreCase("sv")) {
 				dateTimeSB.append(CLOCK);
 			}
 			dateTimeSB.append(startHourMinute);
 		}
-		
-		dateTimeSB.append("</span>");
-		
+
 		if (endDate.isEmpty() || (startDate.equalsIgnoreCase(endDate))) {
 			/* If the time is 23:59 it means that end date was left empty and should not be shown */
-			if (startHourMinute != null && !endHourMinute.equalsIgnoreCase("23" + languageNotation + "59") && !endHourMinute.equalsIgnoreCase("")) {
+			if (startHourMinute != null && !endHourMinute.equalsIgnoreCase("23" + timeSeparatorNotation + "59") && !endHourMinute.equalsIgnoreCase("")) {
 				
 				dateTimeSB.append("&mdash;" + endHourMinute);
 			}
@@ -765,7 +761,7 @@ public class CalendarAbstractAction extends ActionSupport
 			dateTimeSB.append(" &mdash; " + endDate);
 			
 			/* If the time is 23:59 it means that end date was left empty and should not be shown */
-			if (endHourMinute != null && !endHourMinute.equalsIgnoreCase("23" + languageNotation + "59") && !endHourMinute.equalsIgnoreCase("")) {
+			if (endHourMinute != null && !endHourMinute.equalsIgnoreCase("23" + timeSeparatorNotation + "59") && !endHourMinute.equalsIgnoreCase("")) {
 				dateTimeSB.append(", ");
 				if (getLanguageCode().equalsIgnoreCase("sv")) {
 					dateTimeSB.append(CLOCK);
