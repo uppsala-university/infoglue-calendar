@@ -952,15 +952,14 @@ public class ViewEventListAction extends CalendarAbstractAction
         return dates;
     }
 
-    @Override
-	public String getResourceUrl(Event event, String assetKey) throws Exception
+	public String getResourceUrl(Event event) throws Exception
 	{
 		if (event == null)
 		{
 			log.debug("Event was null. Cannot return resource url.");
 			return "";
 		}
-		return ResourceController.getController().getResourceUrl(event.getId(), assetKey, getSession());
+		return ResourceController.getController().getResourceUrl(event.getId(), getSession());
 	}
 
     public void setCategoryAttribute(String categoryAttribute)
