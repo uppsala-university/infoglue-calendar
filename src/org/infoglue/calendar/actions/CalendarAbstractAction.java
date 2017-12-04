@@ -757,11 +757,11 @@ public class CalendarAbstractAction extends ActionSupport
 			/* If the time is 23:59 it means that end date was left empty and should not be shown */
 			if (startHourMinute != null && !endHourMinute.equalsIgnoreCase("23" + timeSeparatorNotation + "59") && !endHourMinute.equalsIgnoreCase("")) {
 				
-				dateTimeSB.append("–" + endHourMinute);
+				dateTimeSB.append("&mdash;" + endHourMinute);
 			}
 		} else {
 		
-			dateTimeSB.append(" – <span class='dtend'>" + endDate);
+			dateTimeSB.append(" &mdash; <span class='dtend'>" + endDate);
 			
 			/* If the time is 23:59 it means that end date was left empty and should not be shown */
 			if (endHourMinute != null && !endHourMinute.equalsIgnoreCase("23" + timeSeparatorNotation + "59") && !endHourMinute.equalsIgnoreCase("")) {
