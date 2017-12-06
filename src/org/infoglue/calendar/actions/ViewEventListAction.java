@@ -680,7 +680,7 @@ public class ViewEventListAction extends CalendarAbstractAction
 	        String externalRSSUrl = this.getStringAttributeValue("externalRSSUrl");
     		if(externalRSSUrl == null || externalRSSUrl.equalsIgnoreCase(""))
     		{
-    			String defaultUrl = "http://aktuellt.slu.se/kalendarium_rss.cfm";
+    			String defaultUrl = "http://kalendarium.uu.se/RSS";
     			log.error("You must send in an attribute called externalRSSUrl to this view. Defaulting to feed \"" + defaultUrl + "\".");
     			externalRSSUrl = defaultUrl;
     		}
