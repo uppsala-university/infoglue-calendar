@@ -94,9 +94,10 @@
    		     
 		<!-- Record Start -->
 		<div class="vevent">
-			<ww:set name="startDate" value="this.formatDate(top.startDateTime.getTime(), 'yyyy-MM-dd HH:mm')"/>
-
+			<ww:set name="startDate" value="this.getFormattedStartEndDateTime(top)"/>
+			
 			<c:set var="startDateFormatted"><ww:property value="#startDate"/></c:set>
+			<h1><c:out value="${startDateFormatted}" /></h1>
 			<c:set var="startHourMinute"><ww:property value="this.formatDate(top.startDateTime.getTime(), 'HH:mm')"/></c:set>
 			<%
 				String startDateString = (String)pageContext.getAttribute("startDateFormatted");
