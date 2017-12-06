@@ -720,7 +720,7 @@ public class ViewEventListAction extends CalendarAbstractAction
 		
 		for (Resource resource : resources) 
 		{
-			url = request.getScheme() + "://" + request.getServerName() + ResourceController.getController().getResourceUrl(resource.getId(), resource.getAssetKey(), this.getSession());
+			url = request.getScheme() + "://" + request.getServerName() + ResourceController.getController().getResourceUrl(resource.getId(), this.getSession());
 			Blob blob = resource.getResource();
 			byte[] bytes = null;
 	
