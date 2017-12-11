@@ -98,7 +98,8 @@ public class ViewMessageAction extends CalendarAbstractAction
 			encodedUrl = url;
 		}
 
-		String hash = getTodaysHash(url, "oursecret");
+		String secret = getSetting("search.index.push.endpoint.secret");
+		String hash = getTodaysHash(url, secret);
 		if (hash == null) {
 			log.error("Could not generate hash for " + url);
 			return;
