@@ -84,8 +84,24 @@ public class ViewMessageAction extends CalendarAbstractAction
 	 * Pushes this event's URL to the search index.
 	 */
 	private void pushEventUrlToSearch() {
-		String apiUrl = getLabel("labels.internal.searchIndex.indexToPushUrl");
-		String eventPageUrl = getLabel("labels.internal.searchIndex.eventPageUrl");
+		String apiUrl = getSetting("search.index.push.api.url");
+		if (apiUrl == null || apiUrl.equals("")) {
+			log.error("No push api url in calendar settings. Can not push to search.");
+			return;
+		}
+		
+		String eventPageUrl = getSetting("search.index.push.event.page.url");
+		if (eventPageUrl == null || eventPageUrl.equals("")) {
+			log.error("No push event page url in calendar settings. Can not push to search.");
+			return;
+		}
+
+		String secret = getSetting("search.index.push.endpoint.secret");
+		if (secret == null || secret.equals("")) {
+			log.error("No secret in calendar settings. Can not push to search.");
+			return;
+		}
+		
 		String url = eventPageUrl + getEventId();
 		String encodedUrl;
 		
@@ -98,7 +114,6 @@ public class ViewMessageAction extends CalendarAbstractAction
 			encodedUrl = url;
 		}
 
-		String secret = getSetting("search.index.push.endpoint.secret");
 		String hash = getTodaysHash(url, secret);
 		if (hash == null) {
 			log.error("Could not generate hash for " + url);
