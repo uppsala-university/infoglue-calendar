@@ -739,7 +739,30 @@ public class ViewEventListAction extends CalendarAbstractAction
 		}
 		return enclosureList;
 	}
-		
+	private List<SyndCategory> getLocationCategories (Event event) {
+			List categories = new ArrayList();
+			Iterator<Location> locationIterator = event.getLocations().iterator();
+			
+			StringBuffer sb = new StringBuffer();
+			if (!event.getLocations().isEmpty()) 
+			{
+				while(locationIterator.hasNext()) 
+				{
+					Location loc = locationIterator.next();
+					sb.append(loc.getLocalizedName(this.getLanguageCode(), "sv"));
+					if (locationIterator.hasNext()) 
+					{
+						sb.append(", ");
+					} 
+				}
+				SyndCategory syndCategory = new SyndCategoryImpl();
+				syndCategory.setName(sb.toString());
+				syndCategory.setTaxonomyUri("locations");
+				categories.add(syndCategory);
+			}
+			
+			return categories;
+	}
     private List getInternalFeedEntries(String eventURL) throws Exception
     {
         List entries = new ArrayList();
@@ -766,25 +789,24 @@ public class ViewEventListAction extends CalendarAbstractAction
 				}
 	    		
 	    		List categories = new ArrayList();
-	    		Iterator<Location> eventIterator = event.getLocations().iterator();
 	    		
-	    		StringBuffer sb = new StringBuffer();
-	    		if (!event.getLocations().isEmpty()) 
-	    		{
-					while(eventIterator.hasNext()) 
-					{
-						Location loc = eventIterator.next();
-						sb.append(loc.getLocalizedName(this.getLanguageCode(), "sv"));
-						if (eventIterator.hasNext()) 
-						{
-							sb.append(", ");
-						} 
-					}
-					SyndCategory syndCategory = new SyndCategoryImpl();
-					syndCategory.setName(sb.toString());
-					syndCategory.setTaxonomyUri("locations");
-					categories.add(syndCategory);
-				}
+	    		categories.add(getLocationCategories(event));
+	    		
+	    		if (event.getAlternativeLocation() != null && !event.getCustomLocation().isEmpty()) {
+		    		SyndCategory altLocation = new SyndCategoryImpl();
+		    		altLocation.setName(event.getAlternativeLocation());
+		    		altLocation.setTaxonomyUri("alernativeLocation");
+		    		
+		    		categories.add(altLocation);
+	    		}
+	    		
+	    		if (event.getCustomLocation() != null && !event.getCustomLocation().isEmpty()) {
+		    		SyndCategory customLocation = new SyndCategoryImpl();
+		    		customLocation.setName(event.getCustomLocation());
+		    		customLocation.setTaxonomyUri("place");
+		    		
+		    		categories.add(customLocation);
+	    		}
 	    		
 	    		Iterator eventCategoriesIterator = event.getEventCategories().iterator();
 	    		while(eventCategoriesIterator.hasNext())
