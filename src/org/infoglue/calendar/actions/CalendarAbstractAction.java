@@ -734,6 +734,7 @@ public class CalendarAbstractAction extends ActionSupport
 			timeSeparatorNotation = NOTATION_EN;
 		}
 		
+	
 		String startDate = this.formatDate(event.getStartDateTime().getTime(), datePattern);
 		String endDate = this.formatDate(event.getEndDateTime().getTime(), datePattern);
 		String startHourMinute = this.formatDate(event.getStartDateTime().getTime(), "HH'" + timeSeparatorNotation +"'mm");
