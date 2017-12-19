@@ -790,7 +790,7 @@ public class ViewEventListAction extends CalendarAbstractAction
 	    		
 	    		List categories = new ArrayList();
 	    		
-	    		categories.add(getLocationCategories(event));
+	    		categories.addAll(getLocationCategories(event));
 	    		
 	    		if (event.getAlternativeLocation() != null && !event.getCustomLocation().isEmpty()) {
 		    		SyndCategory altLocation = new SyndCategoryImpl();
