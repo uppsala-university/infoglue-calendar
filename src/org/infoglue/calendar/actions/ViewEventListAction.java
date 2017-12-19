@@ -828,8 +828,8 @@ public class ViewEventListAction extends CalendarAbstractAction
 	
 	    		StringBuffer xml = new StringBuffer("<![CDATA[<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 	    		xml.append("<metadata>");
-	    		xml.append("<startDateTime>" + startDateTime + "</startDateTime>");
-	    		xml.append("<endDateTime>" + endDateTime + "</endDateTime>");
+	    		xml.append("<startDateTime>" + event.getStartDateTime().getTime() + "</startDateTime>");
+	    		xml.append("<endDateTime>" + event.getEndDateTime().getTime() + "</endDateTime>");
 	    		xml.append("</metadata>]]>");
 	
 	    		metaData.setType("text/xml");
