@@ -789,20 +789,20 @@ public class ViewEventListAction extends CalendarAbstractAction
 				}
 	    		
 	    		List categories = new ArrayList();
-	    		
+	    	
 	    		categories.addAll(getLocationCategories(event));
 	    		
-	    		if (event.getAlternativeLocation() != null && !event.getCustomLocation().isEmpty()) {
+	    		if (eventVersion.getAlternativeLocation() != null && !eventVersion.getCustomLocation().isEmpty()) {
 		    		SyndCategory altLocation = new SyndCategoryImpl();
-		    		altLocation.setName(event.getAlternativeLocation());
+		    		altLocation.setName(eventVersion.getAlternativeLocation());
 		    		altLocation.setTaxonomyUri("alernativeLocation");
 		    		
 		    		categories.add(altLocation);
 	    		}
 	    		
-	    		if (event.getCustomLocation() != null && !event.getCustomLocation().isEmpty()) {
+	    		if (eventVersion.getCustomLocation() != null && !eventVersion.getCustomLocation().isEmpty()) {
 		    		SyndCategory customLocation = new SyndCategoryImpl();
-		    		customLocation.setName(event.getCustomLocation());
+		    		customLocation.setName(eventVersion.getCustomLocation());
 		    		customLocation.setTaxonomyUri("place");
 		    		
 		    		categories.add(customLocation);
@@ -843,7 +843,7 @@ public class ViewEventListAction extends CalendarAbstractAction
 	    		description.setType("text/html");
 	    		description.setValue(eventVersion.getShortDescription());
 	    		entry.setDescription(description);
-	
+
 	    		List contents = new ArrayList();
 	
 	    		SyndContent metaData = new SyndContentImpl();
