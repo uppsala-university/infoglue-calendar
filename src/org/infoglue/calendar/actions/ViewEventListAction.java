@@ -686,7 +686,7 @@ public class ViewEventListAction extends CalendarAbstractAction
     		}
     		
             List entries = getExternalFeedEntries(externalRSSUrl);
-    		List internalEntries = getInternalFeedEntries(eventURL);	
+    		List internalEntries = getInternalFeedEntries(eventURL);
 
     		entries.addAll(internalEntries);
     		
@@ -792,7 +792,7 @@ public class ViewEventListAction extends CalendarAbstractAction
 	    	
 	    		categories.addAll(getLocationCategories(event));
 	    		
-	    		if (eventVersion.getAlternativeLocation() != null && !eventVersion.getCustomLocation().isEmpty()) {
+	    		if (eventVersion.getAlternativeLocation() != null && !eventVersion.getAlternativeLocation().isEmpty()) {
 		    		SyndCategory altLocation = new SyndCategoryImpl();
 		    		altLocation.setName(eventVersion.getAlternativeLocation());
 		    		altLocation.setTaxonomyUri("alernativeLocation");
