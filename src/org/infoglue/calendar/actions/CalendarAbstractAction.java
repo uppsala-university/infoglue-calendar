@@ -167,7 +167,7 @@ public class CalendarAbstractAction extends ActionSupport
     	List list = new ArrayList();
         
         list.add(new AttributeType("0", "Evenemangsdefinition"));
-        list.add(new AttributeType("1", "Anm�lningsformul�r"));
+        list.add(new AttributeType("1", "Anmälningsformulär"));
         
         return list;
     }
