@@ -184,12 +184,12 @@ public class CalendarAbstractAction extends ActionSupport
     {
         Map yesOrNo = new HashMap();
         yesOrNo.put("true", "true");
-        
         return yesOrNo;
     }
 
     public String concat(String start, String end)
     {
+    	
     	return start + end;
     }
     
