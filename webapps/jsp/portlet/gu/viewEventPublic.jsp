@@ -50,84 +50,16 @@
 		</ww:if>
 	</ww:iterator>
 	<c:set var="isDisputation"><ww:property value="#isDisputation"/></c:set>
-	
 	<!-- Calendar start -->
 	<div class="vevent"> 	
 		<h1 class="summary"><ww:property value="#eventVersion.name"/></h1>
-		
+
 		<div class="size2of3 unit">
 			<ul class="calinfo">
-				<ww:set name="startDateFormatted" value="this.formatDate(event.startDateTime.time, 'yyyy-MM-dd HH:mm')"/>
-				<c:set var="startDateFormatted"><ww:property value="#startDateFormatted"/></c:set>
-				<c:set var="startHourMinute"><ww:property value="this.formatDate(event.startDateTime.getTime(), 'HH:mm')"/></c:set>
-				
-				<ww:set name="endDateFormatted" value="this.formatDate(event.endDateTime.time, 'yyyy-MM-dd HH:mm')"/>
-				<c:set var="endDateFormatted"><ww:property value="#endDateFormatted"/></c:set>
-				<c:set var="endHourMinute"><ww:property value="this.formatDate(event.endDateTime.getTime(), 'HH:mm')"/></c:set>
-				<%
-					String startDateString = (String)pageContext.getAttribute("startDateFormatted");
-					String startHourMinute = (String)pageContext.getAttribute("startHourMinute");
-					startHourMinute = startHourMinute.trim();
-					
-					String endDateString = (String)pageContext.getAttribute("endDateFormatted");
-					String endHourMinute = (String)pageContext.getAttribute("endHourMinute");
-					endHourMinute = endHourMinute.trim();
 
-					if (!startDateString.isEmpty()){ 
-						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-						Date startDate = sdf.parse(startDateString);
-						sdf = new SimpleDateFormat("yyyyMMdd'T'HHmmss");
-						startDateString = sdf.format(startDate);
-						pageContext.setAttribute("isoStartDate", startDateString);
-					}
-					
-					if (!endDateString.isEmpty()){ 
-						SimpleDateFormat edf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-						Date endDate = edf.parse(endDateString);
-						edf = new SimpleDateFormat("yyyyMMdd'T'HHmmss");
-						endDateString = edf.format(endDate);
-						pageContext.setAttribute("isoEndDate", endDateString);
-					}			
-				%>
 				<li class="dtstartend">
 					<!-- tid -->
-					<ww:set name="startDay" value="this.formatDate(event.startDateTime.time, 'yyyy-MM-dd')"/>
-					<ww:set name="endDay" value="this.formatDate(event.endDateTime.time, 'yyyy-MM-dd')"/>
-					<ww:property value="this.getLabel('labels.public.event.dateLabel')"/>:
-					<span class ="dtstart">
-						<abbr class="value" title="<c:out value='${isoStartDate}'/>">
-							<ww:property value="this.formatDate(event.startDateTime.getTime(), #dateFormat)"/>
-						</abbr>
-						<ww:if test="this.formatDate(event.startDateTime.time, 'HH:mm') != '12:34'">
-							<ww:property value="this.getLabel('labels.public.event.klockLabel')"/>
-							<span class="value">
-								<ww:property value="this.formatDate(event.startDateTime.getTime(), #timeFormat)"/>
-							</span>
-						</ww:if>
-					</span>
-					
-					<ww:if test="#startDay !=  #endDay">
-						&mdash;
-						<span class ="dtend">
-							<abbr class="value" title="<c:out value='${isoEndDate}'/>"> 
-								<ww:property value="this.formatDate(event.endDateTime.getTime(), #dateFormat)"/>
-							</abbr>
-							<ww:if test="this.formatDate(event.endDateTime.time, 'HH:mm') != '23:59'">
-								<ww:property value="this.getLabel('labels.public.event.klockLabel')"/>
-								<span class="value">
-									<ww:property value="this.formatDate(event.endDateTime.getTime(), #timeFormat)"/>
-								</span>
-							</ww:if>
-						</span>
-					</ww:if>
-					<ww:elseif test="this.formatDate(event.endDateTime.time, 'HH:mm') != '23:59'">
-						&ndash;
-						<span class ="dtend">
-							<span class="value">
-								<ww:property value="this.formatDate(event.endDateTime.getTime(), #timeFormat)"/>
-							</span>
-						</span>
-					</ww:elseif>
+					<ww:property value="this.getLabel('labels.public.event.dateLabel')"/>: <ww:property value="this.getFormattedStartEndDateTime(event)"/>
 				</li>
 				<c:set var="location">
 					<li><!-- location -->

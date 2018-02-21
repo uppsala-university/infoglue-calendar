@@ -723,7 +723,6 @@ public class CalendarAbstractAction extends ActionSupport
     }
     
     public String getFormattedStartEndDateTime (Event event) {
-    	System.out.println(event.getId());
     	return getFormattedStartEndDateTime(event, "dd MMMM");
     }
     
@@ -739,7 +738,7 @@ public class CalendarAbstractAction extends ActionSupport
 		String endDate = this.formatDate(event.getEndDateTime().getTime(), datePattern);
 		String startHourMinute = this.formatDate(event.getStartDateTime().getTime(), "HH'" + timeSeparatorNotation +"'mm");
 		String endHourMinute = this.formatDate(event.getEndDateTime().getTime(), "HH'" + timeSeparatorNotation +"'mm");
-		System.out.println("startDate:" + startDate);
+		
 		StringBuffer dateTimeSB = new StringBuffer();
 		dateTimeSB.append("<span class='dtstart'>");
 		dateTimeSB.append(startDate);

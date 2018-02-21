@@ -178,18 +178,8 @@
 				
 				<a class="url uid summary" href="<c:out value='${eventUrl}'/>">
 					<p class="date_time date">
-						<span class="dtstart">
-							<!-- tid -->
-							<abbr class="value" title="<c:out value="${isoStartDate}"/>"><ww:property value="this.formatDate(top.startDateTime.getTime(), #shortDateFormat)"/></abbr>
-							<ww:set name="startDay" value="this.formatDate(top.startDateTime.getTime(), 'yyyy-MM-dd')"/>
-							<ww:set name="endDay" value="this.formatDate(top.endDateTime.getTime(), 'yyyy-MM-dd')"/>
-
-							<ww:if test="this.formatDate(top.startDateTime.time, 'HH:mm') != '12:34'">
-								<ww:property value="this.getLabel('labels.public.event.klockLabel')"/>
-								<span class="value"><ww:property value="this.formatDate(top.startDateTime.getTime(), #timeFormat)"/></span>
-							</ww:if>
-
-						</span>
+						<!-- tid -->
+						<ww:property value="this.getFormattedStartEndDateTime(#event)"/>
 						
 						<ww:if test="#startDay != #endDay">
 							&ndash;
@@ -242,7 +232,6 @@
 			<%-- 
 			</ww:if>
 			--%>
-
 			<!-- Record End -->
 		</ww:iterator>
 	</ul>
