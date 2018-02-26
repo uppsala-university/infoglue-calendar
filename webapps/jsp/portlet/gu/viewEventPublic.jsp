@@ -6,7 +6,6 @@
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.util.Date" %>
 
-	
 <portlet:defineObjects/>
 
 <ww:set name="event" value="event"/>
@@ -28,17 +27,6 @@
 
 <ww:if test="#attr.xmlRequest != 'true'">
 	
-	<%-- 
-	<ww:if test="#attr.showExtrasBox != 'false'">
-		<div class="articleFeatures">
-			<div class="sharing">
-				<a class="a2a_dd" href="http://www.addtoany.com/share_save">
-				<img src="<ww:property value="#attr.shareButtonImage"/>" class="shareButton" alt="Share/Bookmark"/></a>
-			</div>
-		</div>
-	</ww:if>
-	--%>
-
 	<%-- Determine if this is a disputation --%>
 	<ww:set name="isDisputation" value="false"/>
 	<ww:iterator value="event.owningCalendar.eventType.categoryAttributes">
@@ -140,11 +128,7 @@
 						<ww:property value="this.getLabel('labels.public.event.feeLabel')"/>: <ww:property value="event.price"/>
 					</li>
 				</ww:if>
-				<%--
-				<ww:else>
-					<p><span class="calFactLabel"><ww:property value="this.getLabel('labels.public.event.feeLabel')"/>:</span> <ww:property value="this.getLabel('labels.public.event.noFeeLabel')"/> </p>		
-				</ww:else>
-				--%>
+
 				<!-- kontaktinformation -->
 				<ww:if test="event.contactEmail != null && event.contactEmail != ''">
 					<li>
@@ -163,23 +147,7 @@
 						<li><ww:property value="this.getLabel('labels.public.event.contactPersonLabel')"/>: <ww:property value="event.contactName"/></li>
 					</ww:if>
 				</ww:else>
-				<%--
-				<ww:if test="event.contactEmail != null && event.contactEmail != ''">
-					<li>
-						<ww:property value="this.getLabel('labels.public.event.contactPersonLabel')"/>:
-						<a href="mailto:<ww:property value="event.contactEmail"/>"><ww:property value="event.contactEmail"/></a>
-					</li>
-				</ww:if>
-				<ww:else>
-					<li><ww:property value="this.getLabel('labels.public.event.contactPersonLabel')"/>: <a href="mailto:<ww:property value="event.contactEmail"/>"><ww:property value="event.contactEmail"/></a></li>
-					</ww:else>
-				</ww:if>
-				<ww:else>
-					<ww:if test="event.contactName != null && event.contactName != ''">
-						<li><ww:property value="this.getLabel('labels.public.event.contactPersonLabel')"/>: <ww:property value="event.contactName"/></li>
-					</ww:if>
-				</ww:else>
-				--%>
+
 				<ww:if test="event.contactPhone != null && event.contactPhone != ''">
 					<li><!-- kontakttelefon -->
 						<ww:property value="this.getLabel('labels.public.event.phoneLabel')"/>: <ww:property value="event.contactPhone"/>
@@ -228,28 +196,7 @@
 					</ww:else>
 					</li>
 				</ww:if>
-						
-				<%--		
-				<p><span class="calFactLabel">Anmälan:</span>
-				<ww:if test="event.lastRegistrationDateTime.time.time > now.time.time">
-					<ww:if test="event.maximumParticipants > event.entries.size()">
-						<ww:set name="eventId" value="eventId" scope="page"/>
-						<portlet:renderURL var="createEntryRenderURL">
-							<calendar:evalParam name="action" value="CreateEntry!inputPublicGU"/>
-							<calendar:evalParam name="eventId" value="${eventId}"/>
-						</portlet:renderURL>
-						<a href="<c:out value="${createEntryRenderURL}"/>"><ww:property value="this.getLabel('labels.public.event.signUp')"/></a></span>
-					</ww:if>
-					<ww:else>
-							<ww:property value="this.getLabel('labels.public.maximumEntriesReached.title')"/>
-					</ww:else>
-				</ww:if>
-				<ww:else>
-					<ww:property value="this.getLabel('labels.public.event.registrationExpired')"/>
-				</ww:else>
-				</p>
-			</div>
-			--%>
+
 			<ww:if test="event.owningCalendar.eventType.categoryAttributes.size() > 0">
 				<ww:iterator value="event.owningCalendar.eventType.categoryAttributes">
 					<ww:if test="top.name == 'Evenemangstyp' || top.name == 'Eventtyp'">
@@ -330,6 +277,10 @@
 		<event>
 			<title><ww:property value="#eventVersion.name" escape="true"/></title>
 			<date><ww:property value="#startDate" escape="true"/></date>
+			
+			<startDate><ww:property value="#startDate"/></startDate>
+			<endDate><ww:property value="#endDate"/></endDate>
+			
 			<subjects>
 				<ww:iterator value="event.owningCalendar.eventType.categoryAttributes">
 					<ww:if test="top.name == 'Ämnesområde' || top.name == 'Ämnesområden'">
@@ -340,7 +291,7 @@
 						</ww:iterator>
 					</ww:if>
 		   		</ww:iterator>
-	   		</subjects>
+			</subjects>
 			<keywords>
 		   		<ww:iterator value="event.owningCalendar.eventType.categoryAttributes">
 					<ww:if test="top.name == 'Evenemangstyp' || top.name == 'Eventtyp'">
