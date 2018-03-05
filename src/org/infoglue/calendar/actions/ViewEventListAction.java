@@ -430,17 +430,18 @@ public class ViewEventListAction extends CalendarAbstractAction
         String externalCalendarsValue = PropertyHelper.getProperty("externalCalendars");
         if (externalCalendarsValue != null) {
         	String[] externalCalendars = externalCalendarsValue.split(",");
+			List<String> calendarIdsList = Arrays.asList(calendarIds);
         	for (String externalCalendar : externalCalendars) {
         		String[] parts = externalCalendar.split("\\|"); // split on a literal |
         		if (parts.length > 1) {
-        			String calendarId = parts[0];
+        			String externalCalendarId = parts[0];
         			String icsUrl = parts[1];
-        			if (Arrays.binarySearch(calendarIds, calendarId) >= 0) {
+					if (calendarIdsList.contains(externalCalendarId)) {
         				try {
         					this.events.addAll(0, ICalendarController.getICalendarController().importEvents(icsUrl, getLanguage()));
         				} catch (Throwable t) {
         					t.printStackTrace();
-        					log.error("Could not import events from " + icsUrl + " for calendar " + calendarId, t);
+        					log.error("Could not import events from " + icsUrl + " for calendar " + externalCalendarId, t);
         				}
         			}
         		} else {
