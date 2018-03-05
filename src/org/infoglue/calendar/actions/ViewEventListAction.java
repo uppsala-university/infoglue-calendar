@@ -28,9 +28,8 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.Blob;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -46,6 +45,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.infoglue.calendar.controllers.EventController;
+import org.infoglue.calendar.controllers.ICalendarController;
 import org.infoglue.calendar.controllers.ResourceController;
 import org.infoglue.calendar.entities.Calendar;
 import org.infoglue.calendar.entities.Event;
@@ -53,27 +53,27 @@ import org.infoglue.calendar.entities.EventCategory;
 import org.infoglue.calendar.entities.EventTypeCategoryAttribute;
 import org.infoglue.calendar.entities.EventVersion;
 import org.infoglue.calendar.entities.Location;
+import org.infoglue.calendar.entities.Resource;
+//import org.infoglue.common.util.Timer;
 import org.infoglue.calendar.util.CalendarHelper;
+import org.infoglue.common.util.PropertyHelper;
 import org.infoglue.common.util.RemoteCacheUpdater;
-import org.infoglue.common.util.Timer;
 import org.infoglue.common.util.VelocityTemplateProcessor;
 import org.infoglue.common.util.VisualFormatter;
 import org.infoglue.common.util.rss.RssHelper;
-import org.infoglue.calendar.entities.Resource;
-//import org.infoglue.common.util.Timer;
 
 import com.opensymphony.webwork.ServletActionContext;
 import com.opensymphony.xwork.Action;
 import com.opensymphony.xwork.ActionContext;
 import com.sun.syndication.feed.synd.SyndCategory;
 import com.sun.syndication.feed.synd.SyndCategoryImpl;
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndContentImpl;
 import com.sun.syndication.feed.synd.SyndEnclosure;
 import com.sun.syndication.feed.synd.SyndEnclosureImpl;
+import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndEntryImpl;
+import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.feed.synd.SyndFeedImpl;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
@@ -426,6 +426,31 @@ public class ViewEventListAction extends CalendarAbstractAction
 
         //this.events = EventController.getController().getEventList(calendarIds, categoryAttribute, categoryNamesArray, includedLanguages, startCalendar, endCalendar, freeText, session);
         this.events = EventController.getController().getEventList(calendarIds, categories, includedLanguages, startCalendar, endCalendar, freeText, numberOfItems, null, session);
+        // Import external calendar events
+        String externalCalendarsValue = PropertyHelper.getProperty("externalCalendars");
+        if (externalCalendarsValue != null) {
+        	String[] externalCalendars = externalCalendarsValue.split(",");
+        	for (String externalCalendar : externalCalendars) {
+        		String[] parts = externalCalendar.split("\\|"); // split on a literal |
+        		if (parts.length > 1) {
+        			String calendarId = parts[0];
+        			String icsUrl = parts[1];
+        			if (Arrays.binarySearch(calendarIds, calendarId) >= 0) {
+        				try {
+        					this.events.addAll(0, ICalendarController.getICalendarController().importEvents(icsUrl, getLanguage()));
+        				} catch (Throwable t) {
+        					t.printStackTrace();
+        					log.error("Could not import events from " + icsUrl + " for calendar " + calendarId, t);
+        				}
+        			}
+        		} else {
+        			log.warn("Malformed external calendar string (should be <calendar id>|<url to ICS file>): " + externalCalendar);
+        		}
+        	}
+
+
+        	sortEvents(this.events);
+        }
 
         log.info("Registering usage at least:" + calendarId + " for siteNodeId:" + this.getSiteNodeId());
 
@@ -449,6 +474,26 @@ public class ViewEventListAction extends CalendarAbstractAction
         }
 
         return Action.SUCCESS + "FilteredGU";
+    }
+
+    /** 
+     * Sort events on startDateTime.
+     */
+    protected static void sortEvents(final List<Event> unsortedEvents) {
+    	Collections.sort(unsortedEvents, new Comparator<Event>() {
+    		@Override
+    		public int compare(Event firstEvent, Event secondEvent) {
+    			java.util.Calendar firstStartDateTime = firstEvent.getStartDateTime();
+    			java.util.Calendar secondStartDateTime = secondEvent.getStartDateTime();
+    			if (firstStartDateTime.before(secondStartDateTime)) {
+    				return -1;
+    			}
+    			if (secondStartDateTime.before(firstStartDateTime)) {
+    				return 1;
+    			}
+    			return 0;
+    		}
+    	});
     }
 
     public String listFilteredGraphicalCalendarGU() throws Exception

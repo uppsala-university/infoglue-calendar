@@ -168,7 +168,15 @@
 					
 					pageContext.setAttribute("isoStartDate", startDateString);
 				%>
-				<a class="url uid summary" href="<ww:property value='#attr.detailUrl'/><c:out value='${delim}'/>eventId=<ww:property value='top.id'/>">
+				
+				<ww:if test="top.id > 0">
+					<c:set var="eventUrl"><ww:property value='#attr.detailUrl'/><c:out value='${delim}'/>eventId=<ww:property value='top.id'/></c:set>
+				</ww:if>
+				<ww:else>
+					<c:set var="eventUrl"><ww:property value='top.eventUrl'/></c:set>
+				</ww:else>
+				
+				<a class="url uid summary" href="<c:out value='${eventUrl}'/>">
 					<p class="date_time date">
 						<span class="dtstart">
 							<!-- tid -->
@@ -202,7 +210,6 @@
 								</span>
 							</span>
 						</ww:elseif>
-
 					</p>
 					
 					<h3 class="summary">
