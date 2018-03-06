@@ -180,26 +180,6 @@
 					<p class="date_time date">
 						<!-- tid -->
 						<ww:property value="this.getFormattedStartEndDateTime(#event)"/>
-						
-						<ww:if test="#startDay != #endDay">
-							&ndash;
-							<span class="dtend">
-								<abbr class="value" title="<ww:property value='this.formatDate(top.endDateTime.getTime(), "yyyy-MM-dd HH:mm")' />"> <ww:property value="this.formatDate(top.endDateTime.getTime(), #shortDateFormat)"/></abbr>
-								<ww:if test="this.formatDate(top.endDateTime.time, 'HH:mm') != '23:59'">
-									<ww:property value="this.getLabel('labels.public.event.klockLabel')"/>
-									<span class="value"><ww:property value="this.formatDate(top.endDateTime.getTime(), #timeFormat)"/></span>
-				
-								</ww:if>
-							</span>
-						</ww:if>
-						<ww:elseif test="this.formatDate(top.endDateTime.time, 'HH:mm') != '23:59'">
-							&ndash;
-							<span class ="dtend">
-								<span class="value">
-									<ww:property value="this.formatDate(top.endDateTime.getTime(), #timeFormat)"/>
-								</span>
-							</span>
-						</ww:elseif>
 					</p>
 					
 					<h3 class="summary">
