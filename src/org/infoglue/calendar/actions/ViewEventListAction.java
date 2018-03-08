@@ -136,7 +136,10 @@ public class ViewEventListAction extends CalendarAbstractAction
         Map<String, String[]> categories = handleCategories();
 
         this.events = EventController.getController().getEventList(calendarIds, categories, getIncludedLanguages(), null, null, null, numberOfItems, daysToCountAsLongEvent, session);
-          
+        
+        // If this is a calendar with external events, add them
+        addExternalEvents();
+        
         log.info("Registering usage at least:" + calendarId + " for siteNodeId:" + this.getSiteNodeId());
         RemoteCacheUpdater.setUsage(this.getSiteNodeId(), calendarIds);
         
@@ -426,32 +429,8 @@ public class ViewEventListAction extends CalendarAbstractAction
 
         //this.events = EventController.getController().getEventList(calendarIds, categoryAttribute, categoryNamesArray, includedLanguages, startCalendar, endCalendar, freeText, session);
         this.events = EventController.getController().getEventList(calendarIds, categories, includedLanguages, startCalendar, endCalendar, freeText, numberOfItems, null, session);
-        // Import external calendar events
-        String externalCalendarsValue = PropertyHelper.getProperty("externalCalendars");
-        if (externalCalendarsValue != null) {
-        	String[] externalCalendars = externalCalendarsValue.split(",");
-			List<String> calendarIdsList = Arrays.asList(calendarIds);
-        	for (String externalCalendar : externalCalendars) {
-        		String[] parts = externalCalendar.split("\\|"); // split on a literal |
-        		if (parts.length > 1) {
-        			String externalCalendarId = parts[0];
-        			String icsUrl = parts[1];
-					if (calendarIdsList.contains(externalCalendarId)) {
-        				try {
-        					this.events.addAll(0, ICalendarController.getICalendarController().importEvents(icsUrl, getLanguage()));
-        				} catch (Throwable t) {
-        					t.printStackTrace();
-        					log.error("Could not import events from " + icsUrl + " for calendar " + externalCalendarId, t);
-        				}
-        			}
-        		} else {
-        			log.warn("Malformed external calendar string (should be <calendar id>|<url to ICS file>): " + externalCalendar);
-        		}
-        	}
 
-
-        	sortEvents(this.events);
-        }
+        addExternalEvents(calendarIds);
 
         log.info("Registering usage at least:" + calendarId + " for siteNodeId:" + this.getSiteNodeId());
 
@@ -477,7 +456,46 @@ public class ViewEventListAction extends CalendarAbstractAction
         return Action.SUCCESS + "FilteredGU";
     }
 
-    /** 
+    /**
+     * Import external calendar events from ICS urls.
+     * These are defined in conf/application.properties.
+     */
+	protected void addExternalEvents() {
+		addExternalEvents(calendarId.split(","));
+	}
+	
+	/**
+	 * Import external calendar events from ICS urls.
+	 * These are defined in conf/application.properties.
+	 */
+	protected void addExternalEvents(String[] calendarIds) {
+		String externalCalendarsValue = PropertyHelper.getProperty("externalCalendars");
+		if (externalCalendarsValue != null) {
+			String[] externalCalendars = externalCalendarsValue.split(",");
+			List<String> calendarIdsList = Arrays.asList(calendarIds);
+			for (String externalCalendar : externalCalendars) {
+				String[] parts = externalCalendar.split("\\|"); // split on a literal |
+				if (parts.length > 1) {
+					String externalCalendarId = parts[0];
+					String icsUrl = parts[1];
+					if (calendarIdsList.contains(externalCalendarId)) {
+						try {
+							this.events.addAll(0, ICalendarController.getICalendarController().importEvents(icsUrl, getLanguage()));
+						} catch (Throwable t) {
+							t.printStackTrace();
+							log.error("Could not import events from " + icsUrl + " for calendar " + externalCalendarId, t);
+						}
+					}
+				} else {
+					log.warn("Malformed external calendar string (should be <calendar id>|<url to ICS file>): " + externalCalendar);
+				}
+			}
+
+			sortEvents(this.events);
+		}
+	}
+
+	/** 
      * Sort events on startDateTime.
      */
     protected static void sortEvents(final List<Event> unsortedEvents) {
@@ -825,9 +843,16 @@ public class ViewEventListAction extends CalendarAbstractAction
 	    		
 	    		entry = new SyndEntryImpl();
 	    		entry.setTitle(eventVersion.getName());
-				entry.setLink(eventURL.replaceAll("\\{eventId\\}", "" + event.getId()));
+	    		
+	    		if (event.getId() != null && event.getId() > 0) {
+	    			entry.setLink(eventURL.replaceAll("\\{eventId\\}", "" + event.getId()));
+	    			entry.setUri(eventURL.replaceAll("\\{eventId\\}", "" + event.getId()));
+	    		} else {
+	    			entry.setLink(event.getEventUrl());
+	    			entry.setUri(event.getEventUrl());
+	    		}
+	    		
 	    		entry.setPublishedDate(event.getStartDateTime().getTime());
-	    		entry.setUri(eventURL.replaceAll("\\{eventId\\}", "" + event.getId()));
 	    		try {
 					entry.setEnclosures(getResourcesAsEnclosure(event));
 				} catch (Exception e) {
