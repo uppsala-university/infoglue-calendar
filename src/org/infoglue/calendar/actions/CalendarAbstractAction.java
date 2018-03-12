@@ -752,12 +752,12 @@ public class CalendarAbstractAction extends ActionSupport
 				dateTimeSB.append(",");
 			}
 			dateTimeSB.append(" ");
-			
+			dateTimeSB.append("<span class='time'>");
 			if (getLanguageCode().equalsIgnoreCase("sv")) {
 				dateTimeSB.append(CLOCK);
 			}
-
-			dateTimeSB.append("<span class='time'>" + startHourMinute + "</span>");
+			dateTimeSB.append(startHourMinute);
+			dateTimeSB.append("</span>");
 		}
 		dateTimeSB.append("</span>");
 		if (endDate.isEmpty() || (startDate.equalsIgnoreCase(endDate))) {
