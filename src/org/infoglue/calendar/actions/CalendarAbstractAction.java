@@ -748,7 +748,9 @@ public class CalendarAbstractAction extends ActionSupport
 		
 		/* If the time is 12:34 it means that start date was left empty and should not be shown */
 		if (startHourMinute != null && !startHourMinute.equalsIgnoreCase("12" + timeSeparatorNotation + "34")) {
-			dateTimeSB.append(", ");
+			if (!shortList) {
+				dateTimeSB.append(", ");
+			}
 			if (getLanguageCode().equalsIgnoreCase("sv")) {
 				dateTimeSB.append(CLOCK);
 			}
