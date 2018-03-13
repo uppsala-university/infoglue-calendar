@@ -746,8 +746,8 @@ public class CalendarAbstractAction extends ActionSupport
 		dateTimeSB.append("<span class='dtstart'>");
 		dateTimeSB.append(startDate);
 		
-		/* If the time is 12:34 it means that start date was left empty and should not be shown */
-		if (startHourMinute != null && !startHourMinute.equalsIgnoreCase("12" + timeSeparatorNotation + "34")) {
+		/* If the time is 12:34 it means that start date was left empty and should not be shown. For short lists, start time should never be shown if the event streches over several days */
+		if (startHourMinute != null && !startHourMinute.equalsIgnoreCase("12" + timeSeparatorNotation + "34") && (!startDate.equalsIgnoreCase(endDate) && !shortList)) {
 			if (!shortList) {
 				dateTimeSB.append(",");
 			}
