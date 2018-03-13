@@ -746,7 +746,7 @@ public class CalendarAbstractAction extends ActionSupport
 		dateTimeSB.append("<span class='dtstart'>");
 		dateTimeSB.append(startDate);
 		
-		boolean showStartTime = !shortList ? startDate.equalsIgnoreCase(endDate) : false;
+		boolean showStartTime = shortList ? !startDate.equalsIgnoreCase(endDate) : true;
 		
 		/* If the time is 12:34 it means that start date was left empty and should not be shown. For short lists, start time should never be shown if the event streches over several days */
 		if (startHourMinute != null && !startHourMinute.equalsIgnoreCase("12" + timeSeparatorNotation + "34") && showStartTime) {
@@ -761,7 +761,9 @@ public class CalendarAbstractAction extends ActionSupport
 			dateTimeSB.append(startHourMinute);
 			dateTimeSB.append("</span>");
 		}
+		
 		dateTimeSB.append("</span>");
+		
 		if (endDate.isEmpty() || (startDate.equalsIgnoreCase(endDate))) {
 			/* If the time is 23:59 it means that end date was left empty and should not be shown */
 			if (!shortList && (startHourMinute != null && !endHourMinute.equalsIgnoreCase("23" + timeSeparatorNotation + "59") && !endHourMinute.equalsIgnoreCase(""))) {
