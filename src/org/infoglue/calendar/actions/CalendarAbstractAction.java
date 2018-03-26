@@ -722,59 +722,71 @@ public class CalendarAbstractAction extends ActionSupport
         return calendar;
     }
     
-    public String getFormattedStartEndDateTime (Event event) {
-    	return getFormattedStartEndDateTime(event, "dd MMMM");
-    }
-    
-    public String getFormattedStartEndDateTime (Event event, String datePattern) {
-    	String timeSeparatorNotation = NOTATION_SV;
+	public String getFormattedStartEndDateTime (Event event) {
+		return getFormattedStartEndDateTime(event, "dd MMMM", false);
+	}
+	
+	public String getFormattedStartEndDateTime (Event event, String datePattern) {
+		return getFormattedStartEndDateTime(event, datePattern, false);
+	}
+	
+	public String getFormattedStartEndDateTime (Event event, String datePattern, boolean shortList) {
+		String timeSeparatorNotation = NOTATION_SV;
 
 		if (!getLanguageCode().equalsIgnoreCase("sv")) {
 			timeSeparatorNotation = NOTATION_EN;
 		}
 		
-	
 		String startDate = this.formatDate(event.getStartDateTime().getTime(), datePattern);
 		String endDate = this.formatDate(event.getEndDateTime().getTime(), datePattern);
 		String startHourMinute = this.formatDate(event.getStartDateTime().getTime(), "HH'" + timeSeparatorNotation +"'mm");
 		String endHourMinute = this.formatDate(event.getEndDateTime().getTime(), "HH'" + timeSeparatorNotation +"'mm");
-		
+
 		StringBuffer dateTimeSB = new StringBuffer();
 		dateTimeSB.append("<span class='dtstart'>");
 		dateTimeSB.append(startDate);
 		
-		/* If the time is 12:34 it means that start date was left empty and should not be shown */
-		if (startHourMinute != null && !startHourMinute.equalsIgnoreCase("12" + timeSeparatorNotation + "34")) {
-			dateTimeSB.append(", ");
+		boolean showStartTime = (shortList && startDate.equalsIgnoreCase(endDate)) || !shortList;
+		
+		/* If the time is 12:34 it means that start date was left empty and should not be shown. For short lists, start time should never be shown if the event streches over several days */
+		if (startHourMinute != null && !startHourMinute.equalsIgnoreCase("12" + timeSeparatorNotation + "34") && showStartTime) {
+			if (!shortList) {
+				dateTimeSB.append(",");
+			}
+			dateTimeSB.append(" ");
+			dateTimeSB.append("<span class='time'>");
 			if (getLanguageCode().equalsIgnoreCase("sv")) {
 				dateTimeSB.append(CLOCK);
 			}
 			dateTimeSB.append(startHourMinute);
+			dateTimeSB.append("</span>");
 		}
+		
 		dateTimeSB.append("</span>");
+		
 		if (endDate.isEmpty() || (startDate.equalsIgnoreCase(endDate))) {
 			/* If the time is 23:59 it means that end date was left empty and should not be shown */
-			if (startHourMinute != null && !endHourMinute.equalsIgnoreCase("23" + timeSeparatorNotation + "59") && !endHourMinute.equalsIgnoreCase("")) {
+			if (!shortList && (startHourMinute != null && !endHourMinute.equalsIgnoreCase("23" + timeSeparatorNotation + "59") && !endHourMinute.equalsIgnoreCase(""))) {
 				
 				dateTimeSB.append("&ndash;" + endHourMinute);
 			}
 		} else {
-		
+	
 			dateTimeSB.append(" &ndash; <span class='dtend'>" + endDate);
-			
+		
 			/* If the time is 23:59 it means that end date was left empty and should not be shown */
-			if (endHourMinute != null && !endHourMinute.equalsIgnoreCase("23" + timeSeparatorNotation + "59") && !endHourMinute.equalsIgnoreCase("")) {
+			if (!shortList && (endHourMinute != null && !endHourMinute.equalsIgnoreCase("23" + timeSeparatorNotation + "59") && !endHourMinute.equalsIgnoreCase(""))) {
 				dateTimeSB.append(", ");
 				if (getLanguageCode().equalsIgnoreCase("sv")) {
 					dateTimeSB.append(CLOCK);
 				}
 				dateTimeSB.append(endHourMinute);
 			}
-			
+		
 			dateTimeSB.append("</span>");
 		}
 		return dateTimeSB.toString();	
-    }
+	}
     
     public String getVCalendar(Long eventId) throws Exception
     {
