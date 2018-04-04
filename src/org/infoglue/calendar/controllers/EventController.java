@@ -790,7 +790,8 @@ public class EventController extends BasicController
 		Event event = getEvent(id, session);
 		event.setStateId(Event.STATE_PUBLISH);
 		EventVersion eventVersion = getEventVersion(event, languageCode, session);
-		
+		System.out.println("notifyPublishers:" + notifyPublishers());
+		System.out.println("useEventPublishing:" + useEventPublishing());
         if(useEventPublishing() && notifyPublishers())
         {
             try
@@ -1808,9 +1809,10 @@ public class EventController extends BasicController
 				email = tempString.toString();
 
 				String systemEmailSender = PropertyHelper.getProperty("systemEmailSender");
-				if(systemEmailSender == null || systemEmailSender.equalsIgnoreCase(""))
+				if(systemEmailSender == null || systemEmailSender.equalsIgnoreCase("")){
 					systemEmailSender = "infoglueCalendar@" + PropertyHelper.getProperty("mail.smtp.host");
-
+				}
+				System.out.println(systemEmailSender + addresses + "InfoGlue Calendar - new event waiting" + email + contentType + "UTF-8");
 				log.info("Sending mail to:" + systemEmailSender + " and " + addresses);
 				MailServiceFactory.getService().send(systemEmailSender, addresses, null, "InfoGlue Calendar - new event waiting", email, contentType, "UTF-8", null);
 			}
