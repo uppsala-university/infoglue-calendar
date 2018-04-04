@@ -64,7 +64,7 @@ public abstract class BasicController
      */
     public boolean notifyPublishers()
     {
-    	String notifyPublishers = PropertyHelper.getProperty("mail.notifyPublishers");
+    	String notifyPublishers = PropertyHelper.getProperty("notifyPublishers");
         
         return (notifyPublishers.equalsIgnoreCase("true") ? true : false);
     }
