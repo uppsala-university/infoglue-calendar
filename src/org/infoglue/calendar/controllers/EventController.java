@@ -791,7 +791,8 @@ public class EventController extends BasicController
 		event.setStateId(Event.STATE_PUBLISH);
 		EventVersion eventVersion = getEventVersion(event, languageCode, session);
 		System.out.println("notifyPublishers:" + notifyPublishers());
-		System.out.println("useEventPublishing:" + useEventPublishing());
+		String notifyPublishers = PropertyHelper.getProperty("mail.notifyPublishers");
+		System.out.println("notifyPublishersvalue:" + notifyPublishers);
         if(useEventPublishing() && notifyPublishers())
         {
             try
