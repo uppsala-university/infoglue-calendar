@@ -7,11 +7,14 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import net.fortuna.ical4j.data.CalendarBuilder;
@@ -22,19 +25,30 @@ import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.DateTime;
+import net.fortuna.ical4j.model.Property;
+import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.component.VTimeZone;
+import net.fortuna.ical4j.model.parameter.Cn;
 import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.Description;
+import net.fortuna.ical4j.model.property.DtEnd;
+import net.fortuna.ical4j.model.property.DtStart;
+import net.fortuna.ical4j.model.property.Name;
+import net.fortuna.ical4j.model.property.Organizer;
 import net.fortuna.ical4j.model.property.ProdId;
+import net.fortuna.ical4j.model.property.Summary;
 import net.fortuna.ical4j.model.property.Uid;
+import net.fortuna.ical4j.model.property.Url;
 import net.fortuna.ical4j.util.Calendars;
 import net.fortuna.ical4j.util.UidGenerator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.infoglue.calendar.entities.Event;
 import org.infoglue.calendar.entities.EventVersion;
@@ -46,6 +60,8 @@ import org.infoglue.common.util.PropertyHelper;
 
 public class ICalendarController extends BasicController
 {
+	private static Log log = LogFactory.getLog(ICalendarController.class);
+	
 	private ICalendarController(){}
 
 	public static final ICalendarController getICalendarController()
@@ -283,6 +299,7 @@ public class ICalendarController extends BasicController
 		cal.setTime(date);
 		return cal;
 	}
+	
 	public Set<Event> importEvents(String icsUrl, Language language) throws MalformedURLException, IOException, ParserException {
 		Set<Event> events = new HashSet<Event>();
 	
@@ -297,6 +314,16 @@ public class ICalendarController extends BasicController
 		}
 	
 		return events;
+	}
+	
+	public List<VEvent> exportEvents(List<Event> events) throws Exception {
+		List<VEvent> results = new LinkedList<VEvent>(); 
+		
+		for (Event event : events) {
+			results.add(convertEventToVEvent(event));
+		}
+		
+		return results;
 	}
 
 	/**
@@ -363,5 +390,99 @@ public class ICalendarController extends BasicController
 		}
 
 		return event;
+	}
+	
+	
+	
+	/**
+	 * Convert an event from  an Infoglue Calendar event to iCal event.
+	 * Not all fields are covered.
+	 */
+	protected VEvent convertEventToVEvent(Event event) {
+		VEvent vEvent = new VEvent();
+		PropertyList<Property> properties = vEvent.getProperties();
+		
+		@SuppressWarnings("unchecked")
+		Set<Location> locations = event.getLocations();
+		if (locations != null && !locations.isEmpty()) {
+			Location aLocation = locations.iterator().next();
+			net.fortuna.ical4j.model.property.Location location = new net.fortuna.ical4j.model.property.Location(aLocation.getName());
+			properties.add(location);
+		}
+
+		@SuppressWarnings("unchecked")
+		Set<EventVersion> eventVersions = event.getVersions();
+		if (eventVersions != null) {
+			for (EventVersion eventVersion : eventVersions) {
+				PropertyList<Property> versionProperties = new PropertyList<Property>();
+				net.fortuna.ical4j.model.parameter.Language icalLanguage = new net.fortuna.ical4j.model.parameter.Language(eventVersion.getLanguage().getIsoCode());
+				
+				if (eventVersion.getOrganizerName() != null) {
+					Organizer organizer = new Organizer();
+					organizer.getParameters().add(new Cn(eventVersion.getOrganizerName()));
+					versionProperties.add(organizer);
+				}
+	
+				if (eventVersion.getLongDescription() != null) {
+					versionProperties.add(new Description(eventVersion.getLongDescription()));
+				} else if (eventVersion.getShortDescription() != null) {
+					versionProperties.add(new Description(eventVersion.getShortDescription()));
+				}
+				
+				if (eventVersion.getName() != null) {
+					versionProperties.add(new Summary(eventVersion.getName()));
+				}
+				
+				for (Property property : versionProperties) {
+					// Mark this property with the language of this event version
+					property.getParameters().add(icalLanguage);
+					// Add this property to the properties of the vEvent
+					properties.add(property);
+				}
+			}
+		}
+
+		if (event.getStartDateTime() != null) {
+			properties.add(new DtStart(new net.fortuna.ical4j.model.Date(event.getStartDateTime())));
+		}
+
+		if (event.getEndDateTime() != null) {
+			properties.add(new DtEnd(new net.fortuna.ical4j.model.Date(event.getEndDateTime())));
+		}
+		
+		if (event.getContactName() != null) {
+			Organizer organizer = null;
+			try {
+			if (event.getContactEmail() != null) {
+				organizer = new Organizer("MAILTO:" + event.getContactEmail());
+			} else if (event.getContactPhone() != null) {
+				organizer = new Organizer("TEL:" + event.getContactPhone());
+			} 
+			} catch (URISyntaxException use) {
+				log.error("Could not construct Organizer uri", use);
+			}
+			
+			if (organizer == null) {
+				organizer = new Organizer();
+			}
+				
+			organizer.getParameters().add(new Cn(event.getOrganizerName()));
+			properties.add(organizer);
+		}
+
+		if (event.getEventUrl() != null) {
+			try {
+				properties.add(new Url(new URI(event.getEventUrl())));
+			} catch (URISyntaxException use) {
+				log.error("Invalid event url: " + event.getEventUrl(), use);
+			}
+		}
+		
+		
+		if (event.getName() != null) {
+			properties.add(new Name(event.getName()));
+		}
+		
+		return vEvent;
 	}
 }
