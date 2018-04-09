@@ -56,7 +56,19 @@ public abstract class BasicController
         
         return (useEventPublishing.equalsIgnoreCase("true") ? true : false);
     }
-
+    
+    /**
+     * Notify publishers nor not, due to the role structure setting this to true could cause massive spam
+     * 
+     * @return 
+     */
+    public boolean notifyPublishers()
+    {
+    	String notifyPublishers = PropertyHelper.getProperty("notifyPublishers");
+        
+        return (notifyPublishers.equalsIgnoreCase("true") ? true : false);
+    }
+    
     public boolean useGlobalEventNotification()
     {
         String useGlobalEventNotification = PropertyHelper.getProperty("useGlobalEventNotification");

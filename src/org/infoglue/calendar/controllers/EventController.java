@@ -293,10 +293,6 @@ public class EventController extends BasicController
 		eventVersion.setShortDescription(shortDescription);
 		eventVersion.setLongDescription(longDescription);
 		eventVersion.setEventUrl(eventUrl);
-		//eventVersion.setContactName(contactName);
-		//eventVersion.setContactEmail(contactEmail);
-		//eventVersion.setContactPhone(contactPhone);
-		//eventVersion.setPrice(price);
 
 		eventVersion.setEvent(event);
 		eventVersion.setLanguage(language);
@@ -432,10 +428,6 @@ public class EventController extends BasicController
 		eventVersion.setLongDescription(longDescription);
 		eventVersion.setEventUrl(eventUrl);
 		eventVersion.setAttributes(xml);
-		//eventVersion.setContactName(contactName);
-		//eventVersion.setContactEmail(contactEmail);
-		//eventVersion.setContactPhone(contactPhone);
-		//eventVersion.setPrice(price);
 
 		eventVersion.setEvent(event);
 		eventVersion.setLanguage(language);
@@ -690,10 +682,6 @@ public class EventController extends BasicController
             eventVersion.setShortDescription(shortDescription);
             eventVersion.setLongDescription(longDescription);
             eventVersion.setEventUrl(eventUrl);
-            //eventVersion.setContactName(contactName);
-            //eventVersion.setContactEmail(contactEmail);
-            //eventVersion.setContactPhone(contactPhone);
-            //eventVersion.setPrice(price);
             eventVersion.setAttributes(xml);
             
         	session.save(eventVersion);
@@ -710,26 +698,13 @@ public class EventController extends BasicController
             eventVersion.setShortDescription(shortDescription);
             eventVersion.setLongDescription(longDescription);
             eventVersion.setEventUrl(eventUrl);
-            //eventVersion.setContactName(contactName);
-            //eventVersion.setContactEmail(contactEmail);
-            //eventVersion.setContactPhone(contactPhone);
-            //eventVersion.setPrice(price);
             eventVersion.setAttributes(xml);
             
     		session.update(eventVersion);
         }
 
-//        event.setName(name);
-        //event.setDescription(description);
         event.setIsInternal(isInternal);
         event.setIsOrganizedByGU(isOrganizedByGU);
-//        event.setOrganizerName(organizerName);
-//        event.setLecturer(lecturer);
-//        event.setCustomLocation(customLocation);
-//        event.setAlternativeLocation(alternativeLocation);
-//        event.setShortDescription(shortDescription);
-//        event.setLongDescription(longDescription);
-//        event.setEventUrl(eventUrl);
         event.setContactName(contactName);
         event.setContactEmail(contactEmail);
         event.setContactPhone(contactPhone);
@@ -811,8 +786,7 @@ public class EventController extends BasicController
 		Event event = getEvent(id, session);
 		event.setStateId(Event.STATE_PUBLISH);
 		EventVersion eventVersion = getEventVersion(event, languageCode, session);
-		
-        if(useEventPublishing())
+        if(useEventPublishing() && notifyPublishers())
         {
             try
             {
@@ -1051,103 +1025,6 @@ public class EventController extends BasicController
         }
         
         result = criteria.list();
-        /*
-        if(name != null && name.length() > 0)
-        {
-            arguments.add("event.versions.name like ?");
-            values.add("%" + name + "%");
-        }
-        if(organizerName != null && organizerName.length() > 0)
-        {
-            arguments.add("event.organizerName like ?");
-            values.add("%" + organizerName + "%");
-        }
-        if(lecturer != null && lecturer.length() > 0)
-        {
-            arguments.add("event.lecturer like ?");
-            values.add("%" + lecturer + "%");
-        }
-        if(customLocation != null && customLocation.length() > 0)
-        {
-            arguments.add("event.customLocation like ?");
-            values.add("%" + customLocation + "%");
-        }
-        if(alternativeLocation != null && alternativeLocation.length() > 0)
-        {
-            arguments.add("event.alternativeLocation like ?");
-            values.add("%" + alternativeLocation + "%");
-        }
-        if(contactName != null && contactName.length() > 0)
-        {
-            arguments.add("event.contactName like ?");
-            values.add("%" + contactName + "%");
-        }
-        if(contactEmail != null && contactEmail.length() > 0)
-        {
-            arguments.add("event.contactEmail like ?");
-            values.add("%" + contactEmail + "%");
-        }
-        if(contactPhone != null && contactPhone.length() > 0)
-        {
-            arguments.add("event.contactPhone like ?");
-            values.add("%" + contactPhone + "%");
-        }
-        if(price != null && price.length() > 0)
-        {
-            arguments.add("event.price = ?");
-            values.add(price);
-        }
-        if(maximumParticipants != null)
-        {						 
-            arguments.add("event.maximumParticipants = ?");
-            values.add(maximumParticipants);
-        }
-        if(startDateTime != null)
-        {						 
-            arguments.add("event.startDateTime >= ?");
-            values.add(startDateTime);
-        }
-        if(endDateTime != null)
-        {						 
-            arguments.add("event.endDateTime <= ?");
-            values.add(endDateTime);
-        }
-
-        String argumentsSQL = "";
-        Iterator argumentsIterator = arguments.iterator();
-        while(argumentsIterator.hasNext())
-        {
-            if(argumentsSQL.length() > 0)
-                argumentsSQL += " AND ";
-            argumentsSQL += (String)argumentsIterator.next();
-        }
-        log.info("argumentsSQL:" + argumentsSQL);
-        
-        String order = "desc";
-        if(sortAscending.booleanValue())
-            order = "asc";
-        
-        Query q = session.createQuery("from Event event " + (argumentsSQL.length() > 0 ? "WHERE " + argumentsSQL : "") + " order by event.startDateTime " + order);
-   		
-        int i = 0;
-        Iterator valuesIterator = values.iterator();
-        while(valuesIterator.hasNext())
-        {
-            Object o = valuesIterator.next();
-            if(o instanceof Float)
-                q.setFloat(i, ((Float)o).floatValue());
-            else if(o instanceof Integer)
-                q.setInteger(i, ((Integer)o).intValue());
-            else if(o instanceof String)
-                q.setString(i, (String)o);
-            else if(o instanceof java.util.Calendar)
-                q.setCalendar(i, (java.util.Calendar)o);
-            
-            i++;
-        }
-        
-        result = q.list();
-        */
    
         if(categoryId != null)
         {
@@ -1925,8 +1802,9 @@ public class EventController extends BasicController
 				email = tempString.toString();
 
 				String systemEmailSender = PropertyHelper.getProperty("systemEmailSender");
-				if(systemEmailSender == null || systemEmailSender.equalsIgnoreCase(""))
+				if(systemEmailSender == null || systemEmailSender.equalsIgnoreCase("")){
 					systemEmailSender = "infoglueCalendar@" + PropertyHelper.getProperty("mail.smtp.host");
+				}
 
 				log.info("Sending mail to:" + systemEmailSender + " and " + addresses);
 				MailServiceFactory.getService().send(systemEmailSender, addresses, null, "InfoGlue Calendar - new event waiting", email, contentType, "UTF-8", null);
