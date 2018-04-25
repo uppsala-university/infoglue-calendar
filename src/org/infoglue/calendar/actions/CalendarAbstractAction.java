@@ -723,7 +723,7 @@ public class CalendarAbstractAction extends ActionSupport
     }
     
 	public String getFormattedStartEndDateTime (Event event) {
-		return getFormattedStartEndDateTime(event, "dd MMMM", false);
+		return getFormattedStartEndDateTime(event, "d MMMM", false);
 	}
 	
 	public String getFormattedStartEndDateTime (Event event, String datePattern) {
