@@ -39,7 +39,7 @@
 	</ww:iterator>
 	<c:set var="isDisputation"><ww:property value="#isDisputation"/></c:set>
 	<!-- Calendar start -->
-	<div class="vevent"> 	
+	<div class="vevent clearfix"> 	
 		<h1 class="summary"><ww:property value="#eventVersion.name"/></h1>
 			<ww:if test="this.getICalUrl() != null">
 				<a class="btn" href="<ww:property value='this.getICalUrl()'/>"/><ww:property value="this.getLabel('labels.internal.event.addToCalendar')"/></a>
