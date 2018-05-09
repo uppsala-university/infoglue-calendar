@@ -41,6 +41,9 @@
 	<!-- Calendar start -->
 	<div class="vevent"> 	
 		<h1 class="summary"><ww:property value="#eventVersion.name"/></h1>
+			<ww:if test="this.getICalUrl() != null">
+				<a class="btn" href="<ww:property value='this.getICalUrl()'/>"/><ww:property value="this.getLabel('labels.internal.event.addToCalendar')"/></a>
+			</ww:if>
 
 		<div class="size2of3 unit">
 			<ul class="calinfo">
@@ -225,12 +228,6 @@
 				</li>
 			</ww:if>
 			</ul>
-
-			<ww:if test="this.getICalUrl() != null">
-				<p class="ical" >
-					<a href="<ww:property value='this.getICalUrl()'/>"/><ww:property value="this.getLabel('labels.internal.event.addToCalendar')"/></a>
-				</p>
-			</ww:if>
 
 			<ww:if test="#eventVersion.decoratedShortDescription != null && #eventVersion.decoratedShortDescription != ''">
 				<p class="description">
