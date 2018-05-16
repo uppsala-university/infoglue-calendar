@@ -742,8 +742,8 @@ public class CalendarAbstractAction extends ActionSupport
 		String startHourMinute = this.formatDate(event.getStartDateTime().getTime(), "HH'" + timeSeparatorNotation +"'mm");
 		String endHourMinute = this.formatDate(event.getEndDateTime().getTime(), "HH'" + timeSeparatorNotation +"'mm");
 		
-		String accessibleStartDate = this.formatDate(event.getStartDateTime().getTime(), "YYYY-MM-dd HH:mm");
-		String accessibleEndDate = this.formatDate(event.getEndDateTime().getTime(), "YYYY-MM-dd HH:mm");
+		String accessibleStartDate = this.formatDate(event.getStartDateTime().getTime(), "YYYY-MM-dd");
+		String accessibleEndDate = this.formatDate(event.getEndDateTime().getTime(), "YYYY-MM-dd");
 		
 		StringBuffer dateTimeSB = new StringBuffer();
 		if (startHourMinute != null && !startHourMinute.equalsIgnoreCase("12" + timeSeparatorNotation + "34")) {
