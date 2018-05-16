@@ -798,7 +798,7 @@ public class CalendarAbstractAction extends ActionSupport
 		}
 		return dateTimeSB.toString();	
 	}	
-	}
+	
     
     public String getVCalendar(Long eventId) throws Exception
     {
