@@ -755,7 +755,7 @@ public class CalendarAbstractAction extends ActionSupport
 		
 		boolean showStartTime = (shortList && startDate.equalsIgnoreCase(endDate)) || !shortList;
 		
-		/* If the time is 12:34 it means that start date was left empty and should not be shown. For short lists, start time should never be shown if the event streches over several days */
+		/*If the time is 12:34 it means that start date was left empty and should not be shown. For short lists, start time should never be shown if the event streches over several days */
 		if (startHourMinute != null && !startHourMinute.equalsIgnoreCase("12" + timeSeparatorNotation + "34") && showStartTime) {
 			if (!shortList) {
 				dateTimeSB.append(",");
