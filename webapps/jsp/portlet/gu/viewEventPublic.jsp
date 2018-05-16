@@ -39,7 +39,7 @@
 	</ww:iterator>
 	<c:set var="isDisputation"><ww:property value="#isDisputation"/></c:set>
 	<!-- Calendar start -->
-	<div class="vevent"> 	
+	<div class="vevent clearfix"> 	
 		<h1 class="summary"><ww:property value="#eventVersion.name"/></h1>
 
 		<div class="size2of3 unit">
