@@ -746,7 +746,11 @@ public class CalendarAbstractAction extends ActionSupport
 		String accessibleEndDate = this.formatDate(event.getEndDateTime().getTime(), "YYYY-MM-dd HH:mm");
 		
 		StringBuffer dateTimeSB = new StringBuffer();
-		dateTimeSB.append("<time datetime='" + accessibleStartDate + "' class='dtstart'>");
+		if (startHourMinute != null && !startHourMinute.equalsIgnoreCase("12" + timeSeparatorNotation + "34")) {
+			accessibleStartDate += " " + startHourMinute;
+		}
+		
+		dateTimeSB.append("<time datetime=" + accessibleStartDate + " class='dtstart'>");
 		dateTimeSB.append(startDate);
 		
 		boolean showStartTime = (shortList && startDate.equalsIgnoreCase(endDate)) || !shortList;
@@ -774,8 +778,12 @@ public class CalendarAbstractAction extends ActionSupport
 				dateTimeSB.append("&ndash;" + endHourMinute);
 			}
 		} else {
-	
-			dateTimeSB.append(" &ndash; <time datetime='" + accessibleEndDate + "' class='dtend'>" + endDate);
+			
+			if (endHourMinute != null && !endHourMinute.equalsIgnoreCase("23" + timeSeparatorNotation + "59")) {
+				accessibleEndDate += " " + endHourMinute;
+			}
+			
+			dateTimeSB.append(" &ndash; <time datetime=" + accessibleEndDate + " class='dtend'>" + endDate);
 		
 			/* If the time is 23:59 it means that end date was left empty and should not be shown */
 			if (!shortList && (endHourMinute != null && !endHourMinute.equalsIgnoreCase("23" + timeSeparatorNotation + "59") && !endHourMinute.equalsIgnoreCase(""))) {
@@ -789,6 +797,7 @@ public class CalendarAbstractAction extends ActionSupport
 			dateTimeSB.append("</time>");
 		}
 		return dateTimeSB.toString();	
+	}	
 	}
     
     public String getVCalendar(Long eventId) throws Exception
