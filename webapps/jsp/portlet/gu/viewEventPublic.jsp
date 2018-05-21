@@ -225,13 +225,6 @@
 				</li>
 			</ww:if>
 			</ul>
-
-			<ww:if test="this.getICalUrl() != null">
-				<p class="ical" >
-					<a href="<ww:property value='this.getICalUrl()'/>"/><ww:property value="this.getLabel('labels.internal.event.addToCalendar')"/></a>
-				</p>
-			</ww:if>
-
 			<ww:if test="#eventVersion.decoratedShortDescription != null && #eventVersion.decoratedShortDescription != ''">
 				<p class="description">
 					<ww:property value="#eventVersion.decoratedShortDescription"/>
