@@ -41,9 +41,12 @@
 	<!-- Calendar start -->
 	<div class="vevent clearfix"> 	
 		<h1 class="summary"><ww:property value="#eventVersion.name"/></h1>
-			<ww:if test="this.getICalUrl() != null">
+		
+		<ww:if test="this.getICalUrl() != null">
+			<div>
 				<a class="btn" href="<ww:property value='this.getICalUrl()'/>"/><ww:property value="this.getLabel('labels.internal.event.addToCalendar')"/></a>
-			</ww:if>
+			</div>
+		</ww:if>
 
 		<div class="size2of3 unit">
 			<ul class="calinfo">
