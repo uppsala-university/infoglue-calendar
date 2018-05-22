@@ -741,21 +741,14 @@ public class CalendarAbstractAction extends ActionSupport
 		String endDate = this.formatDate(event.getEndDateTime().getTime(), datePattern);
 		String startHourMinute = this.formatDate(event.getStartDateTime().getTime(), "HH'" + timeSeparatorNotation +"'mm");
 		String endHourMinute = this.formatDate(event.getEndDateTime().getTime(), "HH'" + timeSeparatorNotation +"'mm");
-		
-		String accessibleStartDate = this.formatDate(event.getStartDateTime().getTime(), "YYYY-MM-dd");
-		String accessibleEndDate = this.formatDate(event.getEndDateTime().getTime(), "YYYY-MM-dd");
-		
+
 		StringBuffer dateTimeSB = new StringBuffer();
-		if (startHourMinute != null && !startHourMinute.equalsIgnoreCase("12" + timeSeparatorNotation + "34")) {
-			accessibleStartDate += " " + startHourMinute;
-		}
-		
-		dateTimeSB.append("<time datetime='" + accessibleStartDate + "' class='dtstart'>");
+		dateTimeSB.append("<span class='dtstart'>");
 		dateTimeSB.append(startDate);
 		
 		boolean showStartTime = (shortList && startDate.equalsIgnoreCase(endDate)) || !shortList;
 		
-		/*If the time is 12:34 it means that start date was left empty and should not be shown. For short lists, start time should never be shown if the event streches over several days */
+		/* If the time is 12:34 it means that start date was left empty and should not be shown. For short lists, start time should never be shown if the event streches over several days */
 		if (startHourMinute != null && !startHourMinute.equalsIgnoreCase("12" + timeSeparatorNotation + "34") && showStartTime) {
 			if (!shortList) {
 				dateTimeSB.append(",");
@@ -769,7 +762,7 @@ public class CalendarAbstractAction extends ActionSupport
 			dateTimeSB.append("</span>");
 		}
 		
-		dateTimeSB.append("</time>");
+		dateTimeSB.append("</span>");
 		
 		if (endDate.isEmpty() || (startDate.equalsIgnoreCase(endDate))) {
 			/* If the time is 23:59 it means that end date was left empty and should not be shown */
@@ -778,13 +771,8 @@ public class CalendarAbstractAction extends ActionSupport
 				dateTimeSB.append("&ndash;" + endHourMinute);
 			}
 		} else {
-			
-			
-			if (endHourMinute != null && !endHourMinute.equalsIgnoreCase("23" + timeSeparatorNotation + "59")) {
-				accessibleEndDate += " " + endHourMinute;
-			}
-			
-			dateTimeSB.append(" &ndash; <time datetime='" + accessibleEndDate + "' class='dtend'>" + endDate);
+	
+			dateTimeSB.append(" &ndash; <span class='dtend'>" + endDate);
 		
 			/* If the time is 23:59 it means that end date was left empty and should not be shown */
 			if (!shortList && (endHourMinute != null && !endHourMinute.equalsIgnoreCase("23" + timeSeparatorNotation + "59") && !endHourMinute.equalsIgnoreCase(""))) {
@@ -795,11 +783,10 @@ public class CalendarAbstractAction extends ActionSupport
 				dateTimeSB.append(endHourMinute);
 			}
 		
-			dateTimeSB.append("</time>");
+			dateTimeSB.append("</span>");
 		}
 		return dateTimeSB.toString();	
-	}	
-	
+	}
     
     public String getVCalendar(Long eventId) throws Exception
     {

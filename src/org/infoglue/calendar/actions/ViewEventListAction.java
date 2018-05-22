@@ -1,25 +1,25 @@
 /* ===============================================================================
- *
- * Part of the InfoGlue Content Management Platform (www.infoglue.org)
- *
- * ===============================================================================
- *
- *  Copyright (C)
- * 
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License version 2, as published by the
- * Free Software Foundation. See the file LICENSE.html for more information.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY, including the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc. / 59 Temple
- * Place, Suite 330 / Boston, MA 02111-1307 / USA.
- *
- * ===============================================================================
- */
+*
+* Part of the InfoGlue Content Management Platform (www.infoglue.org)
+*
+* ===============================================================================
+*
+*  Copyright (C)
+* 
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License version 2, as published by the
+* Free Software Foundation. See the file LICENSE.html for more information.
+* 
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY, including the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License along with
+* this program; if not, write to the Free Software Foundation, Inc. / 59 Temple
+* Place, Suite 330 / Boston, MA 02111-1307 / USA.
+*
+* ===============================================================================
+*/
 
 package org.infoglue.calendar.actions;
 
@@ -40,12 +40,10 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.fortuna.ical4j.data.CalendarOutputter;
-import net.fortuna.ical4j.model.component.VEvent;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
+import org.infoglue.calendar.controllers.CalendarController;
 import org.infoglue.calendar.controllers.EventController;
 import org.infoglue.calendar.controllers.ICalendarController;
 import org.infoglue.calendar.controllers.ResourceController;
@@ -87,132 +85,150 @@ import com.sun.syndication.io.XmlReader;
 
 public class ViewEventListAction extends CalendarAbstractAction
 {
+	private static final String CALENDAR_NAME_FOR_EXPORT_SV = "Kalender från Uppsala universitet";
+	private static final String CALENDAR_NAME_FOR_EXPORT_EN = "Calendar from Uppsala University";
+
 	private static Log log = LogFactory.getLog(ViewEventListAction.class);
 
-	private String calendarId 			= "";
-	private String categories 			= "";
-	private String categoryAttribute	= "";
-	private String categoryNames 		= "";
-	private String includedLanguages 	= "";
-	private Calendar calendar;    
-	private List<Event> events;
-	private List aggregatedEntries 		= null;
-	private String message				= "";
-
-	//This is for the new filtering list
-	private String startDateTime 		= null;
-	private String endDateTime 			= null;
-	private java.util.Calendar startCalendar;
-	private java.util.Calendar endCalendar;
-	private String freeText 			= null;
-	private String calendarMonth		= null;
-	private java.util.Calendar calendarMonthCalendar;
-	private String forwardMonthUrl		= null;
-	private String backwardMonthUrl		= null;
-	private String filterDescription	= null;
-	private Integer numberOfItems 		= null;
-
-	VisualFormatter vf = new VisualFormatter();
-
+    private String calendarId 			= "";
+    private String categories 			= "";
+    private String categoryAttribute	= "";
+    private String categoryNames 		= "";
+    private String includedLanguages 	= "";
+    private Calendar calendar;    
+    private List<Event> events;
+    private List aggregatedEntries 		= null;
+    private String message				= "";
+    
+    //This is for the new filtering list
+    private String startDateTime 		= null;
+    private String endDateTime 			= null;
+    private java.util.Calendar startCalendar;
+    private java.util.Calendar endCalendar;
+    private String freeText 			= null;
+    private String calendarMonth		= null;
+    private java.util.Calendar calendarMonthCalendar;
+    private String forwardMonthUrl		= null;
+    private String backwardMonthUrl		= null;
+    private String filterDescription	= null;
+    private Integer numberOfItems 		= null;
+    
+    VisualFormatter vf = new VisualFormatter();
+    
 	private String iCalendar;
 
-	/**
-	 * This is the entry point for the main listing.
-	 */
+	private String defaultDetailUrl;
 
-	public String execute() throws Exception 
-	{
-		return execute(null);
-	} 
+    /**
+     * This is the entry point for the main listing.
+     */
+    
+    public String execute() throws Exception 
+    {
+    	return execute(null);
+    } 
 
-	public String execute(Integer numberOfItems) throws Exception 
-	{
-		return execute(numberOfItems, null);
-	} 
+    public String execute(Integer numberOfItems) throws Exception 
+    {
+        return execute(numberOfItems, null);
+    } 
 
-	public String execute(Integer numberOfItems, Integer daysToCountAsLongEvent) throws Exception 
-	{
-		String[] calendarIds = calendarId.split(",");
+    public String execute(Integer numberOfItems, Integer daysToCountAsLongEvent) throws Exception 
+    {
+        String[] calendarIds = calendarId.split(",");
+        
+        Session session = getSession(true);
+        
+        Map<String, String[]> categories = handleCategories();
 
-		Session session = getSession(true);
-
-		Map<String, String[]> categories = handleCategories();
-
-		this.events = EventController.getController().getEventList(calendarIds, categories, getIncludedLanguages(), null, null, null, numberOfItems, daysToCountAsLongEvent, session);
-
-		// If this is a calendar with external events, add them
+        this.events = EventController.getController().getEventList(calendarIds, categories, getIncludedLanguages(), null, null, null, numberOfItems, daysToCountAsLongEvent, session);
+        
+        // If this is a calendar with external events, add them
 		EventController.getController().addExternalEvents(this.events, getCalendarId(), getLanguage());
-
-		if (numberOfItems != null && numberOfItems != -1 && numberOfItems <= this.events.size())
-		{
-			this.events = this.events.subList(0, numberOfItems);
-		}
-
-		log.info("Registering usage at least:" + calendarId + " for siteNodeId:" + this.getSiteNodeId());
-		RemoteCacheUpdater.setUsage(this.getSiteNodeId(), calendarIds);
-
-		String presentationTemplate = getPresentationTemplate();
-		log.info("presentationTemplate:" + presentationTemplate);
-		if(presentationTemplate != null && !presentationTemplate.equals(""))
-		{
-			Map parameters = new HashMap();
-			parameters.put("events", this.events);
-			parameters.put("this", this);
-
+        
+        log.info("Registering usage at least:" + calendarId + " for siteNodeId:" + this.getSiteNodeId());
+        RemoteCacheUpdater.setUsage(this.getSiteNodeId(), calendarIds);
+        
+        String presentationTemplate = getPresentationTemplate();
+        log.info("presentationTemplate:" + presentationTemplate);
+        if(presentationTemplate != null && !presentationTemplate.equals(""))
+        {
+		    Map parameters = new HashMap();
+		    parameters.put("events", this.events);
+		    parameters.put("this", this);
+		    
 			StringWriter tempString = new StringWriter();
 			PrintWriter pw = new PrintWriter(tempString);
 			new VelocityTemplateProcessor().renderTemplate(parameters, pw, presentationTemplate);
 			String renderedString = tempString.toString();
 			setRenderedString(renderedString);
-		}
+        }
 
-		return Action.SUCCESS;
-	} 
+        return Action.SUCCESS;
+    } 
 
-	public String listAsRSS() throws Exception
-	{
-		execute(getNumberOfItems());
+    public String listAsRSS() throws Exception
+    {
+        execute(getNumberOfItems());
+        
+        return Action.SUCCESS + "RSS";
+    }
 
-		return Action.SUCCESS + "RSS";
-	}
-
-	public String listAsAggregatedRSS() throws Exception
-	{
-		execute(getNumberOfItems());
-
-		return Action.SUCCESS + "AggregatedRSS";
-	}
-
-
-	public String listGU() throws Exception
-	{
-		execute(getNumberOfItems());
-
-		if(getRenderedString() != null && !getRenderedString().equals(""))
+    public String listAsAggregatedRSS() throws Exception
+    {
+        execute(getNumberOfItems());
+        
+        return Action.SUCCESS + "AggregatedRSS";
+    }
+    
+    
+    public String listGU() throws Exception
+    {
+        execute(getNumberOfItems());
+        
+        if(getRenderedString() != null && !getRenderedString().equals(""))
 			return Action.SUCCESS + "RenderedTemplate";
-
-		return Action.SUCCESS + "GU";
+        
+        return Action.SUCCESS + "GU";
 	}
 
 	public String listICal() throws Exception
 	{
-		execute(getNumberOfItems());
-
-		List<VEvent> vEvents = ICalendarController.getICalendarController().exportEvents(events);
-
-		net.fortuna.ical4j.model.Calendar iCal = new net.fortuna.ical4j.model.Calendar();
-
-		for (VEvent vEvent : vEvents) {
-			iCal.getComponents().add(vEvent);
-		}
-
-		CalendarOutputter outputter = new CalendarOutputter();
-		StringWriter writer = new StringWriter();
-		outputter.output(iCal, writer);
-
-		setICalendar(writer.toString());
+		execute();
+		String defaultDetailUrl = this.getStringAttributeValue("defaultDetailUrl");
+		String iCalendarName = getICalendarName(getLanguageCode());
+		
+		// Get the list of events in iCalendar format
+		String iCalString = ICalendarController.getICalendarController().getICalendarOutput(events, iCalendarName, getLanguageCode(), defaultDetailUrl);
+		setICalendar(iCalString);
 
 		return Action.SUCCESS + "ICal";
+	}
+
+	/**
+	 * Returns a name suitable for including in an iCalendar file composed by the current calendars' names.
+	 */
+	String getICalendarName(String languageCode) {
+		Session session = getSession(true);
+		String calendarName = "";
+		String[] calendarIds = calendarId.split(",");
+		
+		for (int i = 0; i < calendarIds.length; i++) {
+			try { 
+				Long id = new Long(calendarIds[i]);
+				Calendar calendar = CalendarController.getController().getCalendar(id, session);
+				calendarName += calendar.getLocalizedName(languageCode, "sv");
+				calendarName += (i < calendarIds.length - 1 ? ", " : "");
+			} catch (Exception e) {
+				log.error("Could not get calendar: " + calendarIds[i], e);
+			}
+		}
+		if (calendarName.length() == 0) {
+			// Use hard coded names as backup
+			calendarName = languageCode.equals("sv") ? CALENDAR_NAME_FOR_EXPORT_SV : CALENDAR_NAME_FOR_EXPORT_EN;
+		}
+		
+		return calendarName;
 	}
 
 	private void setICalendar(String iCalendar) {
@@ -221,57 +237,57 @@ public class ViewEventListAction extends CalendarAbstractAction
 
 	public String getICalendar() {
 		return this.iCalendar;
-	}
+    }
 
 	public String listCustom() throws Exception
-	{
-		execute(getNumberOfItems());
-
-		if(getRenderedString() != null && !getRenderedString().equals(""))
+    {
+        execute(getNumberOfItems());
+        
+        if(getRenderedString() != null && !getRenderedString().equals(""))
 			return Action.SUCCESS + "RenderedTemplate";
 
-		return Action.SUCCESS + "Custom";
-	}
+        return Action.SUCCESS + "Custom";
+    }
 
-	public String listAggregatedCustom() throws Exception
-	{
+    public String listAggregatedCustom() throws Exception
+    {
 		try
 		{
-			execute();
-
+	        execute();
+	            		
 			String externalRSSUrl = this.getStringAttributeValue("externalRSSUrl");
-
+		
 			String eventURL = this.getStringAttributeValue("detailUrl");
 			if(eventURL == null)
 				eventURL = "";
-
-
+		
+		    
 			if(externalRSSUrl == null || externalRSSUrl.equalsIgnoreCase(""))
 			{
 				String defaultUrl = "http://kalendarium.uu.se/RSS";
 				log.error("You must send in an attribute called externalRSSUrl to this view. Defaulting feed \"" + defaultUrl + "\".");
 				externalRSSUrl = defaultUrl;
 			}
-
-			List entries = getExternalFeedEntries(externalRSSUrl);
+			
+		    List entries = getExternalFeedEntries(externalRSSUrl);
 			List internalEntries = getInternalFeedEntries(eventURL);	
-
+		
 			entries.addAll(internalEntries);
-
+			
 			sortEntries(entries);
-
+		
 			log.info("entries:" + entries.size());
-
+			
 			aggregatedEntries = entries;
-
-			String presentationTemplate = getPresentationTemplate();
-			log.info("presentationTemplate:" + presentationTemplate);
-			if(presentationTemplate != null && !presentationTemplate.equals(""))
-			{
-				Map parameters = new HashMap();
-				parameters.put("aggregatedEntries", aggregatedEntries);
-				parameters.put("this", this);
-
+			
+	        String presentationTemplate = getPresentationTemplate();
+	        log.info("presentationTemplate:" + presentationTemplate);
+	        if(presentationTemplate != null && !presentationTemplate.equals(""))
+	        {
+			    Map parameters = new HashMap();
+			    parameters.put("aggregatedEntries", aggregatedEntries);
+			    parameters.put("this", this);
+			    
 				StringWriter tempString = new StringWriter();
 				PrintWriter pw = new PrintWriter(tempString);
 				new VelocityTemplateProcessor().renderTemplate(parameters, pw, presentationTemplate);
@@ -279,7 +295,7 @@ public class ViewEventListAction extends CalendarAbstractAction
 				setRenderedString(renderedString);
 
 				return Action.SUCCESS + "RenderedTemplate";
-			}
+	        }
 
 		}
 		catch(Exception e)
@@ -288,475 +304,470 @@ public class ViewEventListAction extends CalendarAbstractAction
 			return Action.ERROR + "Custom";
 		}
 
-		return Action.SUCCESS + "AggregatedCustom";
-	}
+        return Action.SUCCESS + "AggregatedCustom";
+    }
 
-	public String listSlottedGU() throws Exception
-	{
-		execute();
+    public String listSlottedGU() throws Exception
+    {
+        execute();
 
-		if(getRenderedString() != null && !getRenderedString().equals(""))
+        if(getRenderedString() != null && !getRenderedString().equals(""))
 			return Action.SUCCESS + "RenderedTemplate";
 
-		return Action.SUCCESS + "SlotGU";
+        return Action.SUCCESS + "SlotGU";
+    }
+
+    protected Map<String, String[]> handleCategories()
+	{
+    	Map<String, String[]> categories = new HashMap<String, String[]>();
+        if ((categoryNames != null && categoryNames.length() > 0) || (categoryAttribute != null && categoryAttribute.length() > 0))
+        {
+        	log.info("Request is using the old category parameter handling.");
+        	if (log.isDebugEnabled())
+        	{
+        		log.debug("Request category information: categoryAttribute: '" + categoryAttribute + "', categoryNames: '" + categoryNames + "'");
+        	}
+        	String[] categoryNamesArray = categoryNames.split(",");
+        	if (categoryAttribute != null && categoryAttribute.length() > 0)
+        	{
+        		categories.put(categoryAttribute, categoryNamesArray);
+        	}
+        	else
+        	{
+        		// Using the key/label is safe since in this case the user has not provided any key (i.e. no conflicts)
+        		categories.put("", categoryNamesArray);
+        	}
+        }
+        else
+        {
+	        Map parameters = ActionContext.getContext().getParameters();
+	        for (Object parameter : parameters.keySet())
+	        {
+	        	if (parameter instanceof String && ((String)parameter).startsWith("category_"))
+	        	{
+	        		String parameterKey = (String)parameter;
+	        		Object parameterValueObject = parameters.get(parameterKey);
+	        		if (log.isDebugEnabled())
+	            	{
+	            		log.debug("Found category in request: " + parameterKey);
+	            	}
+
+	        		// substring removes the 'category_'-part of the key
+	        		parameterKey = parameterKey.substring(9);
+	        		if (parameterValueObject != null)
+	        		{
+	        			String[] parameterValueList = (String[])parameterValueObject;
+	        			if (parameterValueList.length > 0 && parameterValueList[0] != null)
+	        			{
+	        				categories.put(parameterKey, parameterValueList[0].split(","));
+	        			}
+	        		}
+
+	        		if (!categories.containsKey(parameterKey))
+	        		{
+	        			categories.put(parameterKey, null);
+	        		}
+	        	}
+	        }
+        }
+
+        return categories;
 	}
 
-	protected Map<String, String[]> handleCategories()
-	{
-		Map<String, String[]> categories = new HashMap<String, String[]>();
-		if ((categoryNames != null && categoryNames.length() > 0) || (categoryAttribute != null && categoryAttribute.length() > 0))
-		{
-			log.info("Request is using the old category parameter handling.");
-			if (log.isDebugEnabled())
-			{
-				log.debug("Request category information: categoryAttribute: '" + categoryAttribute + "', categoryNames: '" + categoryNames + "'");
-			}
-			String[] categoryNamesArray = categoryNames.split(",");
-			if (categoryAttribute != null && categoryAttribute.length() > 0)
-			{
-				categories.put(categoryAttribute, categoryNamesArray);
-			}
-			else
-			{
-				// Using the key/label is safe since in this case the user has not provided any key (i.e. no conflicts)
-				categories.put("", categoryNamesArray);
-			}
-		}
-		else
-		{
-			Map parameters = ActionContext.getContext().getParameters();
-			for (Object parameter : parameters.keySet())
-			{
-				if (parameter instanceof String && ((String)parameter).startsWith("category_"))
-				{
-					String parameterKey = (String)parameter;
-					Object parameterValueObject = parameters.get(parameterKey);
-					if (log.isDebugEnabled())
-					{
-						log.debug("Found category in request: " + parameterKey);
-					}
+    public String listFilteredGU() throws Exception
+    {
+    	if(startDateTime == null)
+    		startDateTime = getStartDateTime();
+    	
+    	if(endDateTime == null)
+    		endDateTime = getEndDateTime();
 
-					// substring removes the 'category_'-part of the key
-					parameterKey = parameterKey.substring(9);
-					if (parameterValueObject != null)
-					{
-						String[] parameterValueList = (String[])parameterValueObject;
-						if (parameterValueList.length > 0 && parameterValueList[0] != null)
-						{
-							categories.put(parameterKey, parameterValueList[0].split(","));
-						}
-					}
+    	if(freeText == null)
+    		freeText = getFreeText();
 
-					if (!categories.containsKey(parameterKey))
-					{
-						categories.put(parameterKey, null);
-					}
-				}
-			}
-		}
+    	if(categoryAttribute == null)
+    		categoryAttribute = getCategoryAttribute();
 
-		return categories;
-	}
+    	if(categoryNames == null)
+    		categoryNames = getCategoryNames();
 
-	public String listFilteredGU() throws Exception
-	{
-		if(startDateTime == null)
-			startDateTime = getStartDateTime();
+    	if(calendarMonth == null)
+    		calendarMonth = getCalendarMonth();
 
-		if(endDateTime == null)
-			endDateTime = getEndDateTime();
+    	if(numberOfItems == null)
+    		numberOfItems = getNumberOfItemsNoFallback();
+    	
+    	
+    	log.info("freeText:" + freeText);
+    	log.info("startDateTime:" + startDateTime);
+    	log.info("endDateTime:" + endDateTime);
+    	log.info("categoryAttribute:" + categoryAttribute);
+    	log.info("categoryNames:" + categoryNames);
+    	log.info("calendarMonth:" + calendarMonth);
+    	log.info("numberOfItems:" + numberOfItems);
+    	
+    	if(startDateTime != null && startDateTime.length() > 0)
+            startCalendar = getCalendar(startDateTime, "yyyy-MM-dd", true); 
+        else
+        {
+            startCalendar = java.util.Calendar.getInstance();
+            startCalendar.set(java.util.Calendar.DAY_OF_MONTH, 1); 
+        }
 
-		if(freeText == null)
-			freeText = getFreeText();
+        if(endDateTime != null && endDateTime.length() > 0 && getDaysInTheFuture() == null) {
+        	endCalendar = getCalendar(endDateTime, "yyyy-MM-dd", true); 
 
-		if(categoryAttribute == null)
-			categoryAttribute = getCategoryAttribute();
+        }
+        else
+        {
+        	endCalendar = java.util.Calendar.getInstance();
 
-		if(categoryNames == null)
-			categoryNames = getCategoryNames();
+            if (getDaysInTheFuture() != null && getDaysInTheFuture() != -1) {
 
-		if(calendarMonth == null)
-			calendarMonth = getCalendarMonth();
+            	endCalendar.add(startCalendar.DATE, getDaysInTheFuture());
+          
+            } else {
+            	int lastDate = endCalendar.getActualMaximum(java.util.Calendar.DATE);
+            	endCalendar.set(java.util.Calendar.DAY_OF_MONTH, lastDate); 
+            }
+        }
 
-		if(numberOfItems == null)
-			numberOfItems = getNumberOfItemsNoFallback();
+        if(calendarMonth != null && calendarMonth.length() > 0)
+        {
+        	calendarMonthCalendar = getCalendar(calendarMonth, "yyyy-MM", true); 
+        	if(startDateTime == null || startDateTime.length() == 0)
+	    	{
+	    		startCalendar.setTime(calendarMonthCalendar.getTime());
+	    		startCalendar.set(java.util.Calendar.DAY_OF_MONTH, 1);
+	    	}
+	    	if(endDateTime == null || endDateTime.length() == 0)
+	    	{
+	    		endCalendar.setTime(calendarMonthCalendar.getTime());
+	    		int lastDate = endCalendar.getActualMaximum(java.util.Calendar.DATE);
+	            endCalendar.set(java.util.Calendar.DAY_OF_MONTH, lastDate); 
+	    	}
+        }
+        else
+        {
+        	calendarMonthCalendar = java.util.Calendar.getInstance();
+        	calendarMonthCalendar.set(java.util.Calendar.DAY_OF_MONTH, 1); 
+        }
 
+        if(freeText != null)
+        {
+        	filterDescription = "Matching \"" + freeText + "\"";
+        }
+        else
+        {
+	        if(startCalendar.getTimeInMillis() == endCalendar.getTimeInMillis())
+	        	filterDescription = vf.formatDate(startCalendar.getTime(), getLocale(), "d MMMM");
+	        else
+	        	filterDescription = vf.formatDate(startCalendar.getTime(), getLocale(), "d MMMM") + " - " + vf.formatDate(endCalendar.getTime(), getLocale(), "d MMMM");
+        }   
+        
+        if(categoryNames != null && categoryNames.length() > 0 && categoryNames.indexOf(",") == -1)
+        {
+        	filterDescription = filterDescription + " (" + (categoryNames.length() > 40 ? categoryNames.substring(0, 40) + "..." : categoryNames) + ")";
+        }
+        
+        startCalendar.set(java.util.Calendar.HOUR_OF_DAY, 1);
+        endCalendar.set(java.util.Calendar.HOUR_OF_DAY, 23);
+        log.info("startCalendar:" + startCalendar.getTime());
+        log.info("endCalendar:" + endCalendar.getTime());
+        
+        String[] calendarIds = calendarId.split(",");
+        Map<String, String[]> categories = handleCategories();
+        
+        Session session = getSession(true);
 
-		log.info("freeText:" + freeText);
-		log.info("startDateTime:" + startDateTime);
-		log.info("endDateTime:" + endDateTime);
-		log.info("categoryAttribute:" + categoryAttribute);
-		log.info("categoryNames:" + categoryNames);
-		log.info("calendarMonth:" + calendarMonth);
-		log.info("numberOfItems:" + numberOfItems);
-
-		if(startDateTime != null && startDateTime.length() > 0)
-			startCalendar = getCalendar(startDateTime, "yyyy-MM-dd", true); 
-		else
-		{
-			startCalendar = java.util.Calendar.getInstance();
-			startCalendar.set(java.util.Calendar.DAY_OF_MONTH, 1); 
-		}
-
-		if(endDateTime != null && endDateTime.length() > 0 && getDaysInTheFuture() == null) {
-			endCalendar = getCalendar(endDateTime, "yyyy-MM-dd", true); 
-
-		}
-		else
-		{
-			endCalendar = java.util.Calendar.getInstance();
-
-			if (getDaysInTheFuture() != null && getDaysInTheFuture() != -1) {
-
-				endCalendar.add(startCalendar.DATE, getDaysInTheFuture());
-
-			} else {
-				int lastDate = endCalendar.getActualMaximum(java.util.Calendar.DATE);
-				endCalendar.set(java.util.Calendar.DAY_OF_MONTH, lastDate); 
-			}
-		}
-
-		if(calendarMonth != null && calendarMonth.length() > 0)
-		{
-			calendarMonthCalendar = getCalendar(calendarMonth, "yyyy-MM", true); 
-			if(startDateTime == null || startDateTime.length() == 0)
-			{
-				startCalendar.setTime(calendarMonthCalendar.getTime());
-				startCalendar.set(java.util.Calendar.DAY_OF_MONTH, 1);
-			}
-			if(endDateTime == null || endDateTime.length() == 0)
-			{
-				endCalendar.setTime(calendarMonthCalendar.getTime());
-				int lastDate = endCalendar.getActualMaximum(java.util.Calendar.DATE);
-				endCalendar.set(java.util.Calendar.DAY_OF_MONTH, lastDate); 
-			}
-		}
-		else
-		{
-			calendarMonthCalendar = java.util.Calendar.getInstance();
-			calendarMonthCalendar.set(java.util.Calendar.DAY_OF_MONTH, 1); 
-		}
-
-		if(freeText != null)
-		{
-			filterDescription = "Matching \"" + freeText + "\"";
-		}
-		else
-		{
-			if(startCalendar.getTimeInMillis() == endCalendar.getTimeInMillis())
-				filterDescription = vf.formatDate(startCalendar.getTime(), getLocale(), "d MMMM");
-			else
-				filterDescription = vf.formatDate(startCalendar.getTime(), getLocale(), "d MMMM") + " - " + vf.formatDate(endCalendar.getTime(), getLocale(), "d MMMM");
-		}   
-
-		if(categoryNames != null && categoryNames.length() > 0 && categoryNames.indexOf(",") == -1)
-		{
-			filterDescription = filterDescription + " (" + (categoryNames.length() > 40 ? categoryNames.substring(0, 40) + "..." : categoryNames) + ")";
-		}
-
-		startCalendar.set(java.util.Calendar.HOUR_OF_DAY, 1);
-		endCalendar.set(java.util.Calendar.HOUR_OF_DAY, 23);
-		log.info("startCalendar:" + startCalendar.getTime());
-		log.info("endCalendar:" + endCalendar.getTime());
-
-		String[] calendarIds = calendarId.split(",");
-		Map<String, String[]> categories = handleCategories();
-
-		Session session = getSession(true);
-
-		//this.events = EventController.getController().getEventList(calendarIds, categoryAttribute, categoryNamesArray, includedLanguages, startCalendar, endCalendar, freeText, session);
-		this.events = EventController.getController().getEventList(calendarIds, categories, includedLanguages, startCalendar, endCalendar, freeText, numberOfItems, null, session);
+        //this.events = EventController.getController().getEventList(calendarIds, categoryAttribute, categoryNamesArray, includedLanguages, startCalendar, endCalendar, freeText, session);
+        this.events = EventController.getController().getEventList(calendarIds, categories, includedLanguages, startCalendar, endCalendar, freeText, numberOfItems, null, session);
 
 		EventController.getController().addExternalEvents(this.events, calendarIds, getLanguage());
 
-		if (numberOfItems != null && numberOfItems != -1 && numberOfItems <= this.events.size())
-		{
-			this.events = this.events.subList(0, numberOfItems);
-		}
+        log.info("Registering usage at least:" + calendarId + " for siteNodeId:" + this.getSiteNodeId());
 
-		log.info("Registering usage at least:" + calendarId + " for siteNodeId:" + this.getSiteNodeId());
-
-		RemoteCacheUpdater.setUsage(this.getSiteNodeId(), calendarIds);
-
-		String presentationTemplate = getPresentationTemplate();
-		log.info("presentationTemplate:" + presentationTemplate);
-		if(presentationTemplate != null && !presentationTemplate.equals(""))
-		{
-			Map parameters = new HashMap();
-			parameters.put("events", this.events);
-			parameters.put("this", this);
-
+        RemoteCacheUpdater.setUsage(this.getSiteNodeId(), calendarIds);
+        
+        String presentationTemplate = getPresentationTemplate();
+        log.info("presentationTemplate:" + presentationTemplate);
+        if(presentationTemplate != null && !presentationTemplate.equals(""))
+        {
+		    Map parameters = new HashMap();
+		    parameters.put("events", this.events);
+		    parameters.put("this", this);
+		    
 			StringWriter tempString = new StringWriter();
 			PrintWriter pw = new PrintWriter(tempString);
 			new VelocityTemplateProcessor().renderTemplate(parameters, pw, presentationTemplate);
 			String renderedString = tempString.toString();
 			setRenderedString(renderedString);
-
+			
 			return Action.SUCCESS + "RenderedTemplate";
-		}
+        }
 
-		return Action.SUCCESS + "FilteredGU";
-	}
+        return Action.SUCCESS + "FilteredGU";
+    }
 
-	public String listFilteredGraphicalCalendarGU() throws Exception
-	{
-		listFilteredGU();
+    public String listFilteredGraphicalCalendarGU() throws Exception
+    {
+    	listFilteredGU();
 
-		if(getRenderedString() != null && !getRenderedString().equals(""))
-			return Action.SUCCESS + "RenderedTemplate";
-
-		return Action.SUCCESS + "FilteredGraphicalCalendarGU";
-	}
-
-
-	public String shortListGU() throws Exception
-	{
-		execute(getNumberOfItems(), getDaysToCountAsLongEvent());
-
-		if(getRenderedString() != null && !getRenderedString().equals(""))
+        if(getRenderedString() != null && !getRenderedString().equals(""))
 			return Action.SUCCESS + "RenderedTemplate";
 
-		return Action.SUCCESS + "ShortGU";
-	}
+        return Action.SUCCESS + "FilteredGraphicalCalendarGU";
+    }
 
-	public String listSlottedCustom() throws Exception
-	{
-		execute();
+    
+    public String shortListGU() throws Exception
+    {
+        execute(getNumberOfItems(), getDaysToCountAsLongEvent());
 
-		if(getRenderedString() != null && !getRenderedString().equals(""))
+        if(getRenderedString() != null && !getRenderedString().equals(""))
 			return Action.SUCCESS + "RenderedTemplate";
 
-		return Action.SUCCESS + "SlotCustom";
-	}
+        return Action.SUCCESS + "ShortGU";
+    }
 
-	public String shortListCustom() throws Exception
-	{
-		execute(getNumberOfItems());
-
-		if(getRenderedString() != null && !getRenderedString().equals(""))
+    public String listSlottedCustom() throws Exception
+    {
+        execute();
+        
+        if(getRenderedString() != null && !getRenderedString().equals(""))
 			return Action.SUCCESS + "RenderedTemplate";
 
-		return Action.SUCCESS + "ShortCustom";
-	}
+        return Action.SUCCESS + "SlotCustom";
+    }
 
-	public String shortListAggregatedCustom() throws Exception
-	{
-		execute();
+    public String shortListCustom() throws Exception
+    {
+        execute(getNumberOfItems());
 
-		if(getRenderedString() != null && !getRenderedString().equals(""))
+        if(getRenderedString() != null && !getRenderedString().equals(""))
 			return Action.SUCCESS + "RenderedTemplate";
 
-		return Action.SUCCESS + "ShortAggregatedCustom";
-	}
+        return Action.SUCCESS + "ShortCustom";
+    }
 
-	public String getCalendarId()
-	{
-		return calendarId;
-	}
+    public String shortListAggregatedCustom() throws Exception
+    {
+        execute();
 
-	public void setCalendarId(String calendarId)
-	{
-		this.calendarId = calendarId;
-	}
+        if(getRenderedString() != null && !getRenderedString().equals(""))
+			return Action.SUCCESS + "RenderedTemplate";
 
-	public List<Event> getEvents()
-	{
-		return events;
-	}
+        return Action.SUCCESS + "ShortAggregatedCustom";
+    }
 
-	public void setCategories(String categories)
-	{
-		this.categories = categories;
-	}
+    public String getCalendarId()
+    {
+        return calendarId;
+    }
+    
+    public void setCalendarId(String calendarId)
+    {
+        this.calendarId = calendarId;
+    }
+    
+    public List<Event> getEvents()
+    {
+        return events;
+    }
 
-	public String getIncludedLanguages()
-	{
-		String includedLanguages = (String)ServletActionContext.getRequest().getAttribute("includedLanguages");
-		if(includedLanguages == null || includedLanguages.equals("")) {
-			includedLanguages = (String)ServletActionContext.getRequest().getParameter("includedLanguages");
-		}
-		if(includedLanguages == null || includedLanguages.equals("")) {
-			includedLanguages = "*";
-		}
+    public void setCategories(String categories)
+    {
+        this.categories = categories;
+    }
+    
+    public String getIncludedLanguages()
+    {
+    	String includedLanguages = (String)ServletActionContext.getRequest().getAttribute("includedLanguages");
+       	if(includedLanguages == null || includedLanguages.equals("")) {
+       		includedLanguages = (String)ServletActionContext.getRequest().getParameter("includedLanguages");
+       	}
+    	if(includedLanguages == null || includedLanguages.equals("")) {
+    		includedLanguages = "*";
+    	}
+    	
+        return includedLanguages;
+    }
+    
+    public String getEndDateTime()
+    {
+    	String endDateTime = (String)ServletActionContext.getRequest().getAttribute("endDateTime");
+       	if(endDateTime == null || endDateTime.equals("")) {
+       		endDateTime = (String)ServletActionContext.getRequest().getParameter("endDateTime");
+       	}
+    	
+        return endDateTime;
+    }
+    
+    public String getStartDateTime()
+    {
 
-		return includedLanguages;
-	}
+    	String startDateTime = (String)ServletActionContext.getRequest().getAttribute("startDateTime");
+       	if(startDateTime == null || startDateTime.equals("")) {
+       		startDateTime = (String)ServletActionContext.getRequest().getParameter("startDateTime");
+       	}
+    	
+        return startDateTime;
+    }
+    
+    public Integer getDaysInTheFuture()
+    {
+    	Integer daysInTheFutureInt = null;
+    	String daysInTheFuture = (String)ServletActionContext.getRequest().getAttribute("daysInTheFuture");
+       	if(daysInTheFuture == null || daysInTheFuture.equals("")) {
+       		daysInTheFuture = (String)ServletActionContext.getRequest().getParameter("daysInTheFuture");
+       	}
+       	if (daysInTheFuture != null && !daysInTheFuture.equals("")) {
+	       	try {
+	       		daysInTheFutureInt = Integer.parseInt(daysInTheFuture);
+	   
+	       	} catch (NumberFormatException numberFormatException) {
+	       		log.warn("The property daysInTheFuture could not be parsed since it was:" + daysInTheFuture);
+	       		return -1;
+	       	}
+       	}
+        return daysInTheFutureInt;
+    }
+    
+    
+    public Integer getNumberOfItems()
+    {
+        Object o = ServletActionContext.getRequest().getAttribute("numberOfItems");
+        if(o != null && o.toString().length() > 0 && !o.toString().equalsIgnoreCase("undefined"))
+            return new Integer((String)o);
+        else
+            return new Integer(10);
+    }
 
-	public String getEndDateTime()
-	{
-		String endDateTime = (String)ServletActionContext.getRequest().getAttribute("endDateTime");
-		if(endDateTime == null || endDateTime.equals("")) {
-			endDateTime = (String)ServletActionContext.getRequest().getParameter("endDateTime");
-		}
+    public Integer getDaysToCountAsLongEvent()
+    {
+        Object o = ServletActionContext.getRequest().getAttribute("daysToCountAsLongEvent");
+        if(o != null && o.toString().length() > 0 && !o.toString().equalsIgnoreCase("undefined"))
+            return new Integer((String)o);
+        else
+            return null;
+    }
 
-		return endDateTime;
-	}
+    public Integer getNumberOfItemsNoFallback()
+    {
+        Object o = ServletActionContext.getRequest().getAttribute("numberOfItems");
+        if(o != null && o.toString().length() > 0 && !o.toString().equalsIgnoreCase("undefined"))
+            return new Integer((String)o);
+        else
+            return null;
+    }
 
-	public String getStartDateTime()
-	{
+    public List getEventCategories(String eventString, EventTypeCategoryAttribute categoryAttribute)
+    {
+        Object object = findOnValueStack(eventString);
+        Event event = (Event)object;
+        
+        List categories = new ArrayList();
+        
+        Iterator i = event.getEventCategories().iterator();
+        while(i.hasNext())
+        {
+            EventCategory eventCategory = (EventCategory)i.next();
+            if(eventCategory.getEventTypeCategoryAttribute().getId().equals(categoryAttribute.getId()))
+                categories.add(eventCategory.getCategory());
+        }
 
-		String startDateTime = (String)ServletActionContext.getRequest().getAttribute("startDateTime");
-		if(startDateTime == null || startDateTime.equals("")) {
-			startDateTime = (String)ServletActionContext.getRequest().getParameter("startDateTime");
-		}
+        return categories;
+    }
 
-		return startDateTime;
-	}
+    public String getRSSXML()
+    {
+    	String rssXML = null;
+    	
+    	try
+    	{
+    		String eventURL = this.getStringAttributeValue("detailUrl");
+    		if(eventURL == null)
+    			eventURL = "";
+    		
+	    	SyndFeed feed = new SyndFeedImpl();
+	        feed.setFeedType("atom_1.0");
+    		String feedTypeString = this.getStringAttributeValue("feedType");
+    		if(feedTypeString != null && !feedTypeString.equals(""))
+    			feed.setFeedType(feedTypeString);
+    					
+	        feed.setTitle(this.getStringAttributeValue("feedTitle"));
+	        feed.setLink(this.getStringAttributeValue("feedLink"));
+	        feed.setDescription(this.getStringAttributeValue("feedDescription"));
+	        
+	        List entries = getInternalFeedEntries(eventURL);
+	        
+	    	feed.setEntries(entries);
+	    	RssHelper rssHelper = new RssHelper();
+	    	rssXML = rssHelper.render(feed);
+    	}
+    	catch(Throwable t)
+    	{
+    		t.printStackTrace();
+    	}
+    	
+        return rssXML;
+    }
+    
+    public String getAggregatedRSSXML()
+    {
+    	String rssXML = null;
+    	
+    	try
+    	{
+	    	SyndFeed feed = new SyndFeedImpl();
+	        feed.setFeedType("atom_1.0");
+    		String feedTypeString = this.getStringAttributeValue("feedType");
+    		if(feedTypeString != null && !feedTypeString.equals("")) {
+    			feed.setFeedType(feedTypeString);
+    		}
+	
+	        feed.setTitle(this.getStringAttributeValue("feedTitle"));
+	        feed.setLink(this.getStringAttributeValue("feedLink"));
+	        feed.setDescription(this.getStringAttributeValue("feedDescription"));
 
-	public Integer getDaysInTheFuture()
-	{
-		Integer daysInTheFutureInt = null;
-		String daysInTheFuture = (String)ServletActionContext.getRequest().getAttribute("daysInTheFuture");
-		if(daysInTheFuture == null || daysInTheFuture.equals("")) {
-			daysInTheFuture = (String)ServletActionContext.getRequest().getParameter("daysInTheFuture");
-		}
-		if (daysInTheFuture != null && !daysInTheFuture.equals("")) {
-			try {
-				daysInTheFutureInt = Integer.parseInt(daysInTheFuture);
+    		String eventURL = this.getStringAttributeValue("detailUrl");
+    		if(eventURL == null) {
+    			eventURL = "";
+    		}
 
-			} catch (NumberFormatException numberFormatException) {
-				log.warn("The property daysInTheFuture could not be parsed since it was:" + daysInTheFuture);
-				return -1;
-			}
-		}
-		return daysInTheFutureInt;
-	}
+	        String externalRSSUrl = this.getStringAttributeValue("externalRSSUrl");
+    		if(externalRSSUrl == null || externalRSSUrl.equalsIgnoreCase(""))
+    		{
+    			String defaultUrl = "http://kalendarium.uu.se/RSS";
+    			log.error("You must send in an attribute called externalRSSUrl to this view. Defaulting to feed \"" + defaultUrl + "\".");
+    			externalRSSUrl = defaultUrl;
+    		}
+    		
+            List entries = getExternalFeedEntries(externalRSSUrl);
+    		List internalEntries = getInternalFeedEntries(eventURL);
 
+    		entries.addAll(internalEntries);
+    		
+    		sortEntries(entries);
+    		
+	    	feed.setEntries(entries);
+	    	RssHelper rssHelper = new RssHelper();
+	    	rssXML = rssHelper.render(feed);
+    	}
+    	catch(Throwable t)
+    	{
+    		t.printStackTrace();
+    	}
+    	
+        return rssXML;
+    }
 
-	public Integer getNumberOfItems()
-	{
-		Object o = ServletActionContext.getRequest().getAttribute("numberOfItems");
-		if(o != null && o.toString().length() > 0 && !o.toString().equalsIgnoreCase("undefined"))
-			return new Integer((String)o);
-		else
-			return new Integer(10);
-	}
-
-	public Integer getDaysToCountAsLongEvent()
-	{
-		Object o = ServletActionContext.getRequest().getAttribute("daysToCountAsLongEvent");
-		if(o != null && o.toString().length() > 0 && !o.toString().equalsIgnoreCase("undefined"))
-			return new Integer((String)o);
-		else
-			return null;
-	}
-
-	public Integer getNumberOfItemsNoFallback()
-	{
-		Object o = ServletActionContext.getRequest().getAttribute("numberOfItems");
-		if(o != null && o.toString().length() > 0 && !o.toString().equalsIgnoreCase("undefined"))
-			return new Integer((String)o);
-		else
-			return null;
-	}
-
-	public List getEventCategories(String eventString, EventTypeCategoryAttribute categoryAttribute)
-	{
-		Object object = findOnValueStack(eventString);
-		Event event = (Event)object;
-
-		List categories = new ArrayList();
-
-		Iterator i = event.getEventCategories().iterator();
-		while(i.hasNext())
-		{
-			EventCategory eventCategory = (EventCategory)i.next();
-			if(eventCategory.getEventTypeCategoryAttribute().getId().equals(categoryAttribute.getId()))
-				categories.add(eventCategory.getCategory());
-		}
-
-		return categories;
-	}
-
-	public String getRSSXML()
-	{
-		String rssXML = null;
-
-		try
-		{
-			String eventURL = this.getStringAttributeValue("detailUrl");
-			if(eventURL == null)
-				eventURL = "";
-
-			SyndFeed feed = new SyndFeedImpl();
-			feed.setFeedType("atom_1.0");
-			String feedTypeString = this.getStringAttributeValue("feedType");
-			if(feedTypeString != null && !feedTypeString.equals(""))
-				feed.setFeedType(feedTypeString);
-
-			feed.setTitle(this.getStringAttributeValue("feedTitle"));
-			feed.setLink(this.getStringAttributeValue("feedLink"));
-			feed.setDescription(this.getStringAttributeValue("feedDescription"));
-
-			List entries = getInternalFeedEntries(eventURL);
-
-			feed.setEntries(entries);
-			RssHelper rssHelper = new RssHelper();
-			rssXML = rssHelper.render(feed);
-		}
-		catch(Throwable t)
-		{
-			t.printStackTrace();
-		}
-
-		return rssXML;
-	}
-
-	public String getAggregatedRSSXML()
-	{
-		String rssXML = null;
-
-		try
-		{
-			SyndFeed feed = new SyndFeedImpl();
-			feed.setFeedType("atom_1.0");
-			String feedTypeString = this.getStringAttributeValue("feedType");
-			if(feedTypeString != null && !feedTypeString.equals("")) {
-				feed.setFeedType(feedTypeString);
-			}
-
-			feed.setTitle(this.getStringAttributeValue("feedTitle"));
-			feed.setLink(this.getStringAttributeValue("feedLink"));
-			feed.setDescription(this.getStringAttributeValue("feedDescription"));
-
-			String eventURL = this.getStringAttributeValue("detailUrl");
-			if(eventURL == null) {
-				eventURL = "";
-			}
-
-			String externalRSSUrl = this.getStringAttributeValue("externalRSSUrl");
-			if(externalRSSUrl == null || externalRSSUrl.equalsIgnoreCase(""))
-			{
-				String defaultUrl = "http://kalendarium.uu.se/RSS";
-				log.error("You must send in an attribute called externalRSSUrl to this view. Defaulting to feed \"" + defaultUrl + "\".");
-				externalRSSUrl = defaultUrl;
-			}
-
-			List entries = getExternalFeedEntries(externalRSSUrl);
-			List internalEntries = getInternalFeedEntries(eventURL);
-
-			entries.addAll(internalEntries);
-
-			sortEntries(entries);
-
-			feed.setEntries(entries);
-			RssHelper rssHelper = new RssHelper();
-			rssXML = rssHelper.render(feed);
-		}
-		catch(Throwable t)
-		{
-			t.printStackTrace();
-		}
-
-		return rssXML;
-	}
-
-	public List getAggregatedEntries()
-	{
-		return aggregatedEntries;
-	}
-
-	/* Creates list of enclosure items to be used by the RSS feed */
+    public List getAggregatedEntries()
+    {
+        return aggregatedEntries;
+    }
+    
+    /* Creates list of enclosure items to be used by the RSS feed */
 	public List<SyndEnclosure> getResourcesAsEnclosure(Event event) throws Exception 
 	{
 		Set<Resource> resources = event.getResources();
@@ -764,13 +775,13 @@ public class ViewEventListAction extends CalendarAbstractAction
 		List<SyndEnclosure> enclosureList = new ArrayList();
 		HttpServletRequest request = ServletActionContext.getRequest();
 		String url = "";
-
+		
 		for (Resource resource : resources) 
 		{
 			url = request.getScheme() + "://" + request.getServerName() + ResourceController.getController().getResourceUrl(resource.getId(), this.getSession());
 			Blob blob = resource.getResource();
 			byte[] bytes = null;
-
+	
 			if (blob != null && url != null && !url.equalsIgnoreCase("")) 
 			{
 				bytes = blob.getBytes(1, (int) blob.length());
@@ -780,253 +791,253 @@ public class ViewEventListAction extends CalendarAbstractAction
 				enclosure.setUrl(url);
 				enclosure.setLength(bytes.length);
 				enclosureList.add(enclosure);
-
+				
 			}
-
+			
 		}
 		return enclosureList;
 	}
 	private List<SyndCategory> getLocationCategories (Event event) {
-		List categories = new ArrayList();
-		Iterator<Location> locationIterator = event.getLocations().iterator();
-
-		StringBuffer sb = new StringBuffer();
-		if (!event.getLocations().isEmpty()) 
-		{
-			while(locationIterator.hasNext()) 
+			List categories = new ArrayList();
+			Iterator<Location> locationIterator = event.getLocations().iterator();
+			
+			StringBuffer sb = new StringBuffer();
+			if (!event.getLocations().isEmpty()) 
 			{
-				Location loc = locationIterator.next();
-				sb.append(loc.getLocalizedName(this.getLanguageCode(), "sv"));
-				if (locationIterator.hasNext()) 
+				while(locationIterator.hasNext()) 
 				{
-					sb.append(", ");
-				} 
-			}
-			SyndCategory syndCategory = new SyndCategoryImpl();
-			syndCategory.setName(sb.toString());
-			syndCategory.setTaxonomyUri("locations");
-			categories.add(syndCategory);
-		}
-
-		return categories;
-	}
-	private List getInternalFeedEntries(String eventURL) throws Exception
-	{
-		List entries = new ArrayList();
-		SyndEntry entry;
-		SyndContent description;
-
-		if(events != null)
-		{
-			Iterator eventsIterator = events.iterator();
-			while(eventsIterator.hasNext())
-			{
-				Event event = (Event)eventsIterator.next();
-				EventVersion eventVersion = this.getEventVersion(event);
-
-				entry = new SyndEntryImpl();
-				entry.setTitle(eventVersion.getName());
-
-				if (event.getId() != null && event.getId() > 0) {
-					entry.setLink(eventURL.replaceAll("\\{eventId\\}", "" + event.getId()));
-					entry.setUri(eventURL.replaceAll("\\{eventId\\}", "" + event.getId()));
-				} else {
-					entry.setLink(event.getEventUrl());
-					entry.setUri(event.getEventUrl());
+					Location loc = locationIterator.next();
+					sb.append(loc.getLocalizedName(this.getLanguageCode(), "sv"));
+					if (locationIterator.hasNext()) 
+					{
+						sb.append(", ");
+					} 
 				}
-
-				entry.setPublishedDate(event.getStartDateTime().getTime());
-				try {
+				SyndCategory syndCategory = new SyndCategoryImpl();
+				syndCategory.setName(sb.toString());
+				syndCategory.setTaxonomyUri("locations");
+				categories.add(syndCategory);
+			}
+			
+			return categories;
+	}
+    private List getInternalFeedEntries(String eventURL) throws Exception
+    {
+        List entries = new ArrayList();
+        SyndEntry entry;
+        SyndContent description;
+        
+        if(events != null)
+        {
+	    	Iterator eventsIterator = events.iterator();
+	    	while(eventsIterator.hasNext())
+	    	{
+	    		Event event = (Event)eventsIterator.next();
+	    		EventVersion eventVersion = this.getEventVersion(event);
+	    		
+	    		entry = new SyndEntryImpl();
+	    		entry.setTitle(eventVersion.getName());
+	    		
+	    		if (event.getId() != null && event.getId() > 0) {
+	    			entry.setLink(eventURL.replaceAll("\\{eventId\\}", "" + event.getId()));
+	    			entry.setUri(eventURL.replaceAll("\\{eventId\\}", "" + event.getId()));
+	    		} else {
+	    			entry.setLink(event.getEventUrl());
+	    			entry.setUri(event.getEventUrl());
+	    		}
+	    		
+	    		entry.setPublishedDate(event.getStartDateTime().getTime());
+	    		try {
 					entry.setEnclosures(getResourcesAsEnclosure(event));
 				} catch (Exception e) {
 					log.error("Could not create eclosures for event:" + event.getId() + " Message: " + e.getMessage());
 				}
-
-				List categories = new ArrayList();
-
-				categories.addAll(getLocationCategories(event));
-
-				if (eventVersion.getAlternativeLocation() != null && !eventVersion.getAlternativeLocation().isEmpty()) {
-					SyndCategory altLocation = new SyndCategoryImpl();
-					altLocation.setName(eventVersion.getAlternativeLocation());
-					altLocation.setTaxonomyUri("alernativeLocation");
-
-					categories.add(altLocation);
-				}
-
-				if (eventVersion.getCustomLocation() != null && !eventVersion.getCustomLocation().isEmpty()) {
-					SyndCategory customLocation = new SyndCategoryImpl();
-					customLocation.setName(eventVersion.getCustomLocation());
-					customLocation.setTaxonomyUri("place");
-
-					categories.add(customLocation);
-				}
-
-				Iterator eventCategoriesIterator = event.getEventCategories().iterator();
-				while(eventCategoriesIterator.hasNext())
-				{
-					EventCategory eventCategory = (EventCategory)eventCategoriesIterator.next();
-					SyndCategory syndCategory = new SyndCategoryImpl();
-					syndCategory.setTaxonomyUri(eventCategory.getEventTypeCategoryAttribute().getInternalName());
-					syndCategory.setName(eventCategory.getCategory().getLocalizedName(this.getLanguageCode(), "sv"));
-					categories.add(syndCategory);
-				}
-
-				//--------------------------------------------
-				// Add an extra category to internal entries, 
-				// so that we can identify them later.
-				//--------------------------------------------
-				String fullDateTime = this.getFormattedStartEndDateTime(event);
-
-				SyndCategory date = new SyndCategoryImpl();
+	    		
+	    		List categories = new ArrayList();
+	    	
+	    		categories.addAll(getLocationCategories(event));
+	    		
+	    		if (eventVersion.getAlternativeLocation() != null && !eventVersion.getAlternativeLocation().isEmpty()) {
+		    		SyndCategory altLocation = new SyndCategoryImpl();
+		    		altLocation.setName(eventVersion.getAlternativeLocation());
+		    		altLocation.setTaxonomyUri("alernativeLocation");
+		    		
+		    		categories.add(altLocation);
+	    		}
+	    		
+	    		if (eventVersion.getCustomLocation() != null && !eventVersion.getCustomLocation().isEmpty()) {
+		    		SyndCategory customLocation = new SyndCategoryImpl();
+		    		customLocation.setName(eventVersion.getCustomLocation());
+		    		customLocation.setTaxonomyUri("place");
+		    		
+		    		categories.add(customLocation);
+	    		}
+	    		
+	    		Iterator eventCategoriesIterator = event.getEventCategories().iterator();
+	    		while(eventCategoriesIterator.hasNext())
+	    		{
+	    			EventCategory eventCategory = (EventCategory)eventCategoriesIterator.next();
+	    			SyndCategory syndCategory = new SyndCategoryImpl();
+	    			syndCategory.setTaxonomyUri(eventCategory.getEventTypeCategoryAttribute().getInternalName());
+	    			syndCategory.setName(eventCategory.getCategory().getLocalizedName(this.getLanguageCode(), "sv"));
+	    			categories.add(syndCategory);
+	    		}
+	
+	    		//--------------------------------------------
+	    		// Add an extra category to internal entries, 
+	    		// so that we can identify them later.
+	    		//--------------------------------------------
+	    		String fullDateTime = this.getFormattedStartEndDateTime(event);
+	    		
+	    		SyndCategory date = new SyndCategoryImpl();
 				date.setTaxonomyUri("date");
 				date.setName(fullDateTime);
-
+				
 				categories.add(date);
-
-				SyndCategory isInfoglueLink = new SyndCategoryImpl();
-
+				
+	    		SyndCategory isInfoglueLink = new SyndCategoryImpl();
+				
 				isInfoglueLink.setTaxonomyUri("isInfoGlueLink");
 				isInfoglueLink.setName("true");
-
+				
 				categories.add(isInfoglueLink);
 
 				entry.setCategories(categories);
+	    		
+	    		description = new SyndContentImpl();
+	    		description.setType("text/html");
+	    		description.setValue(eventVersion.getShortDescription());
+	    		entry.setDescription(description);
 
-				description = new SyndContentImpl();
-				description.setType("text/html");
-				description.setValue(eventVersion.getShortDescription());
-				entry.setDescription(description);
+	    		List contents = new ArrayList();
+	
+	    		SyndContent metaData = new SyndContentImpl();
+	
+	    		StringBuffer xml = new StringBuffer("<![CDATA[<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+	    		xml.append("<metadata>");
+	    		xml.append("<startDateTime>" + event.getStartDateTime().getTime() + "</startDateTime>");
+	    		xml.append("<endDateTime>" + event.getEndDateTime().getTime() + "</endDateTime>");
+	    		xml.append("</metadata>]]>");
+	
+	    		metaData.setType("text/xml");
+	    		metaData.setValue(xml.toString());
+	    		
+	    		contents.add(metaData);
+	
+	    		entry.setContents(contents);
+	    		
+	    		entries.add(entry);
+	    	}
+        }
+        
+    	return entries;
+    }
+    
+    public List getExternalFeedEntries(String externalRSSUrl) throws Exception
+    {    	
+    	try
+    	{
+	    	URL url = new URL(externalRSSUrl);
+	        URLConnection urlConn = url.openConnection();
+	        urlConn.setConnectTimeout(5000);
+	        urlConn.setReadTimeout(10000);
+	        
+	        SyndFeedInput input = new SyndFeedInput();
+	        SyndFeed inputFeed = input.build(new XmlReader(urlConn));
+	        
+	        List entries = inputFeed.getEntries();
+	        Iterator entriesIterator = entries.iterator();
+	        while(entriesIterator.hasNext())
+	        {
+	        	SyndEntry entry = (SyndEntry)entriesIterator.next();
+	        	Iterator contentIterator = entry.getContents().iterator();
+	        	while(contentIterator.hasNext())
+	        	{
+	        		SyndContent content = (SyndContent)contentIterator.next();
+	        		log.info("content:" + content.getValue());
+	        		if(content.getType().equalsIgnoreCase("text/xml"))
+	        			content.setValue("<![CDATA[" + content.getValue() + "]]>");
+	        	}
+	        }
 
-				List contents = new ArrayList();
+	        return entries;    	
+    	}
+    	catch (Exception e) 
+    	{
+    		throw new Exception(getParameterizedLabel("labels.internal.event.error.couldNotConnectToRSS", externalRSSUrl));
+    	}
+    }
 
-				SyndContent metaData = new SyndContentImpl();
+    private void sortEntries(List entries)
+    {
+    	Collections.sort(entries, Collections.reverseOrder(new OrderByDate()));
+    	//Collections.sort(entries, Collections.reverseOrder(new OrderByEventDate(this.getLanguageCode())));
+    }
 
-				StringBuffer xml = new StringBuffer("<![CDATA[<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-				xml.append("<metadata>");
-				xml.append("<startDateTime>" + event.getStartDateTime().getTime() + "</startDateTime>");
-				xml.append("<endDateTime>" + event.getEndDateTime().getTime() + "</endDateTime>");
-				xml.append("</metadata>]]>");
-
-				metaData.setType("text/xml");
-				metaData.setValue(xml.toString());
-
-				contents.add(metaData);
-
-				entry.setContents(contents);
-
-				entries.add(entry);
-			}
+    public Map getDaysEventHash(String eventsString)
+    {
+    	Map daysEvents = new HashMap();
+    	
+    	try
+    	{
+	        Set events = (Set)findOnValueStack(eventsString);
+	
+	    	Iterator eventsIterator = events.iterator();
+	    	while(eventsIterator.hasNext())
+	    	{
+	    		Event event = (Event)eventsIterator.next();
+	    		
+	    		java.util.Calendar startDateCalendar = event.getStartDateTime();
+	    		java.util.Calendar endDateCalendar = event.getEndDateTime();
+	    		while(startDateCalendar.get(java.util.Calendar.DAY_OF_MONTH) <= endDateCalendar.get(java.util.Calendar.DAY_OF_MONTH))
+	    		{
+	    			int dayOfMonth = startDateCalendar.get(java.util.Calendar.DAY_OF_MONTH);
+	    			List<Event> dayEvents = (List<Event>)daysEvents.get("day_" + dayOfMonth);
+	    			if(dayEvents == null)
+	    			{
+	    				dayEvents = new ArrayList<Event>();
+	    				daysEvents.put("day_" + dayOfMonth, dayEvents);
+	    			}
+	    			
+	    			dayEvents.add(event);
+	    			startDateCalendar.add(java.util.Calendar.DAY_OF_MONTH, 1);
+	    		}
+	    	}
+    	}
+    	catch (Exception e) 
+    	{
+    		e.printStackTrace();
 		}
-
-		return entries;
-	}
-
-	public List getExternalFeedEntries(String externalRSSUrl) throws Exception
-	{    	
-		try
+    	
+    	return daysEvents;
+    }
+    
+    public List getDates(String entryString)
+    {
+    	List dates = new ArrayList();
+    	
+    	try
 		{
-			URL url = new URL(externalRSSUrl);
-			URLConnection urlConn = url.openConnection();
-			urlConn.setConnectTimeout(5000);
-			urlConn.setReadTimeout(10000);
-
-			SyndFeedInput input = new SyndFeedInput();
-			SyndFeed inputFeed = input.build(new XmlReader(urlConn));
-
-			List entries = inputFeed.getEntries();
-			Iterator entriesIterator = entries.iterator();
-			while(entriesIterator.hasNext())
-			{
-				SyndEntry entry = (SyndEntry)entriesIterator.next();
-				Iterator contentIterator = entry.getContents().iterator();
-				while(contentIterator.hasNext())
-				{
-					SyndContent content = (SyndContent)contentIterator.next();
-					log.info("content:" + content.getValue());
-					if(content.getType().equalsIgnoreCase("text/xml"))
-						content.setValue("<![CDATA[" + content.getValue() + "]]>");
-				}
-			}
-
-			return entries;    	
-		}
-		catch (Exception e) 
-		{
-			throw new Exception(getParameterizedLabel("labels.internal.event.error.couldNotConnectToRSS", externalRSSUrl));
-		}
-	}
-
-	private void sortEntries(List entries)
-	{
-		Collections.sort(entries, Collections.reverseOrder(new OrderByDate()));
-		//Collections.sort(entries, Collections.reverseOrder(new OrderByEventDate(this.getLanguageCode())));
-	}
-
-	public Map getDaysEventHash(String eventsString)
-	{
-		Map daysEvents = new HashMap();
-
-		try
-		{
-			Set events = (Set)findOnValueStack(eventsString);
-
-			Iterator eventsIterator = events.iterator();
-			while(eventsIterator.hasNext())
-			{
-				Event event = (Event)eventsIterator.next();
-
-				java.util.Calendar startDateCalendar = event.getStartDateTime();
-				java.util.Calendar endDateCalendar = event.getEndDateTime();
-				while(startDateCalendar.get(java.util.Calendar.DAY_OF_MONTH) <= endDateCalendar.get(java.util.Calendar.DAY_OF_MONTH))
-				{
-					int dayOfMonth = startDateCalendar.get(java.util.Calendar.DAY_OF_MONTH);
-					List<Event> dayEvents = (List<Event>)daysEvents.get("day_" + dayOfMonth);
-					if(dayEvents == null)
-					{
-						dayEvents = new ArrayList<Event>();
-						daysEvents.put("day_" + dayOfMonth, dayEvents);
-					}
-
-					dayEvents.add(event);
-					startDateCalendar.add(java.util.Calendar.DAY_OF_MONTH, 1);
-				}
-			}
-		}
-		catch (Exception e) 
-		{
-			e.printStackTrace();
-		}
-
-		return daysEvents;
-	}
-
-	public List getDates(String entryString)
-	{
-		List dates = new ArrayList();
-
-		try
-		{
-
-			Object object = findOnValueStack(entryString);
-			SyndEntry entry = (SyndEntry)object;
-			if(object != null)
-				dates = CalendarHelper.getDates(entry, this.getLanguageCode());
-			else
-				log.info("entryString:" + entryString);
+			
+	        Object object = findOnValueStack(entryString);
+	        SyndEntry entry = (SyndEntry)object;
+	        if(object != null)
+	        	dates = CalendarHelper.getDates(entry, this.getLanguageCode());
+	        else
+	        	log.info("entryString:" + entryString);
 		} 
-		catch (Exception e)
+    	catch (Exception e)
 		{
-			e.printStackTrace();
+    		e.printStackTrace();
 		}
-
-		if(dates.size() < 2)
-		{
-			dates.add(new Date());
-			dates.add(new Date());
-		}	        
-		return dates;
-	}
+        
+        if(dates.size() < 2)
+        {
+	        dates.add(new Date());
+	    	dates.add(new Date());
+        }	        
+        return dates;
+    }
 
 	public String getResourceUrl(Event event) throws Exception
 	{
@@ -1038,45 +1049,45 @@ public class ViewEventListAction extends CalendarAbstractAction
 		return ResourceController.getController().getResourceUrl(event.getId(), getSession());
 	}
 
-	public void setCategoryAttribute(String categoryAttribute)
-	{
-		this.categoryAttribute = categoryAttribute;
-	}
+    public void setCategoryAttribute(String categoryAttribute)
+    {
+        this.categoryAttribute = categoryAttribute;
+    }
+    
+    public void setCategoryNames(String categoryNames)
+    {
+        this.categoryNames = categoryNames;
+    }
+    
+    public void setIncludedLanguages(String includedLanguages)
+    {
+    	this.includedLanguages = includedLanguages;
+    }
+    
+    public String getMessage()
+    {
+    	return this.message;
+    }
+     
+    public String getFilterDescription()
+    {
+    	return this.filterDescription;
+    }
 
-	public void setCategoryNames(String categoryNames)
-	{
-		this.categoryNames = categoryNames;
-	}
 
-	public void setIncludedLanguages(String includedLanguages)
-	{
-		this.includedLanguages = includedLanguages;
-	}
-
-	public String getMessage()
-	{
-		return this.message;
-	}
-
-	public String getFilterDescription()
-	{
-		return this.filterDescription;
-	}
-
-
-	/*
+    /*
     public List getCategoriesList()
     {
         return categoriesList;
     }
-	 */
-
-	public void setError(String message, Exception e)
-	{
-		String context = ActionContext.getContext().getName();
-		ActionContext.getContext().getValueStack().getContext().put("message", message);
-		ActionContext.getContext().getValueStack().getContext().put("error", e);
-	}
+    */
+    
+    public void setError(String message, Exception e)
+    {
+        String context = ActionContext.getContext().getName();
+        ActionContext.getContext().getValueStack().getContext().put("message", message);
+        ActionContext.getContext().getValueStack().getContext().put("error", e);
+    }
 
 }
 

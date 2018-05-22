@@ -389,6 +389,9 @@
 			<result name="successRenderedTemplate" type="portletDispatch">
 				<param name="dispatchTo">/jsp/portlet/viewRenderedTemplate.jsp</param>
 			</result>
+			<result name="successICal" type="portletDispatch">
+				<param name="dispatchTo">/jsp/portlet/custom/viewEventListAsICal.jsp</param>
+			</result>
 			<result name="error" type="portletDispatch">
 				<param name="dispatchTo">/jsp/portlet/error.jsp</param>
 			</result>
@@ -513,8 +516,8 @@
 			<result name="successRenderedTemplate" type="portletDispatch">
 				<param name="dispatchTo">/jsp/portlet/viewRenderedTemplate.jsp</param>
 			</result>
-			<result name="successIcal" type="portletDispatch">
-				<param name="dispatchTo">/jsp/portlet/gu/viewEventListAsICal.jsp</param>
+			<result name="successICal" type="portletDispatch">
+				<param name="dispatchTo">/jsp/portlet/custom/viewEventListAsICal.jsp</param>
 			</result>
 			<result name="error" type="portletDispatch">
 				<param name="dispatchTo">/jsp/portlet/error.jsp</param>
