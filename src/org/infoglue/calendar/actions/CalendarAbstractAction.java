@@ -723,18 +723,20 @@ public class CalendarAbstractAction extends ActionSupport
     }
     
 	public String getFormattedStartEndDateTime (Event event) {
-		return getFormattedStartEndDateTime(event, "d MMMM", false);
+		return getFormattedStartEndDateTime(event, "d MMMM", false, null);
 	}
 	
 	public String getFormattedStartEndDateTime (Event event, String datePattern) {
-		return getFormattedStartEndDateTime(event, datePattern, false);
+		return getFormattedStartEndDateTime(event, datePattern, false, null);
 	}
 	
-	public String getFormattedStartEndDateTime (Event event, String datePattern, boolean shortList) {
-		String timeSeparatorNotation = NOTATION_SV;
-
-		if (!getLanguageCode().equalsIgnoreCase("sv")) {
-			timeSeparatorNotation = NOTATION_EN;
+	public String getFormattedStartEndDateTime (Event event, String datePattern, boolean shortList, String timeSeparatorNotation) {
+		if (timeSeparatorNotation == null) {
+			timeSeparatorNotation = NOTATION_SV;
+	
+			if (!getLanguageCode().equalsIgnoreCase("sv")) {
+				timeSeparatorNotation = NOTATION_EN;
+			}
 		}
 		
 		String startDate = this.formatDate(event.getStartDateTime().getTime(), datePattern);
