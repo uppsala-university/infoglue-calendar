@@ -723,20 +723,19 @@ public class CalendarAbstractAction extends ActionSupport
     }
     
 	public String getFormattedStartEndDateTime (Event event) {
-		return getFormattedStartEndDateTime(event, "d MMMM", false, null);
+		return getFormattedStartEndDateTime(event, "d MMMM", false);
 	}
 	
 	public String getFormattedStartEndDateTime (Event event, String datePattern) {
-		return getFormattedStartEndDateTime(event, datePattern, false, null);
+		return getFormattedStartEndDateTime(event, datePattern, false);
 	}
 	
-	public String getFormattedStartEndDateTime (Event event, String datePattern, boolean shortList, String timeSeparatorNotation) {
-		if (timeSeparatorNotation == null) {
-			timeSeparatorNotation = NOTATION_SV;
-	
-			if (!getLanguageCode().equalsIgnoreCase("sv")) {
-				timeSeparatorNotation = NOTATION_EN;
-			}
+	public String getFormattedStartEndDateTime (Event event, String datePattern, boolean shortList) {
+
+		String timeSeparatorNotation = NOTATION_SV;
+
+		if (!getLanguageCode().equalsIgnoreCase("sv")) {
+			timeSeparatorNotation = NOTATION_EN;
 		}
 		
 		String startDate = this.formatDate(event.getStartDateTime().getTime(), datePattern);
@@ -746,10 +745,12 @@ public class CalendarAbstractAction extends ActionSupport
 		
 		String accessibleStartDate = this.formatDate(event.getStartDateTime().getTime(), "YYYY-MM-dd");
 		String accessibleEndDate = this.formatDate(event.getEndDateTime().getTime(), "YYYY-MM-dd");
+		String accessibleStartHourMinute = this.formatDate(event.getStartDateTime().getTime(), "HH'" + timeSeparatorNotation +"'mm");
+		String accessibleEndHourMinute = this.formatDate(event.getEndDateTime().getTime(), "HH'" + timeSeparatorNotation +"'mm");
 		
 		StringBuffer dateTimeSB = new StringBuffer();
-		if (startHourMinute != null && !startHourMinute.equalsIgnoreCase("12" + timeSeparatorNotation + "34")) {
-			accessibleStartDate += " " + startHourMinute;
+		if (accessibleStartHourMinute != null && !accessibleStartHourMinute.equalsIgnoreCase("12:34")) {
+			accessibleStartDate += " " + accessibleStartHourMinute;
 		}
 		
 		dateTimeSB.append("<time datetime='" + accessibleStartDate + "' class='dtstart'>");
@@ -782,8 +783,8 @@ public class CalendarAbstractAction extends ActionSupport
 		} else {
 			
 			
-			if (endHourMinute != null && !endHourMinute.equalsIgnoreCase("23" + timeSeparatorNotation + "59")) {
-				accessibleEndDate += " " + endHourMinute;
+			if (accessibleEndHourMinute != null && !accessibleEndHourMinute.equalsIgnoreCase("23:59")) {
+				accessibleEndDate += " " + accessibleEndHourMinute;
 			}
 			
 			dateTimeSB.append(" &ndash; <time datetime='" + accessibleEndDate + "' class='dtend'>" + endDate);
