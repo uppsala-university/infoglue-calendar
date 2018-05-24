@@ -40,6 +40,7 @@ import org.infoglue.calendar.controllers.CategoryController;
 import org.infoglue.calendar.controllers.ContentTypeDefinitionController;
 import org.infoglue.calendar.controllers.EventController;
 import org.infoglue.calendar.controllers.EventTypeController;
+import org.infoglue.calendar.controllers.ICalendarController;
 import org.infoglue.calendar.controllers.LanguageController;
 import org.infoglue.calendar.controllers.LocationController;
 import org.infoglue.calendar.entities.Event;
@@ -98,6 +99,10 @@ public class ViewEventAction extends CalendarAbstractAction
 	private List availableLanguages = new ArrayList();
 
 	private Boolean skipLanguageTabs;
+
+	private String iCalendar;
+
+	private String iCalUrl = null;
 
 	/**
 	 * This is the entry point for the main listing.
@@ -381,7 +386,44 @@ public class ViewEventAction extends CalendarAbstractAction
 
 		return Action.ERROR;
 	}
+	
+	public String doPublicICal() throws Exception
+	{
+		Session session = getSession(true);
+		
+		// Get eventId
+		String requestEventId = ServletActionContext.getRequest().getParameter("eventId");
+		if (this.eventId == null && requestEventId != null && !requestEventId.equalsIgnoreCase(""))
+		{
+			this.eventId = new Long(requestEventId);
+		}
 
+		if(this.eventId != null)
+		{
+			log.info("this.eventId: " + eventId);
+			this.event = EventController.getController().getEvent(eventId, session);
+			String defaultDetailUrl = this.getStringAttributeValue("defaultDetailUrl");
+			
+			// Create the iCalendar output for this event
+			String iCalString = ICalendarController.getICalendarController().getICalendarOutput(event, getLanguageCode(), defaultDetailUrl);
+			setICalendar(iCalString);
+
+			return Action.SUCCESS + "ICal";
+		}
+		else
+		{
+			log.error("Parameter eventId was invalid: " + eventId);
+			return Action.ERROR;
+		}
+	}
+
+	private void setICalendar(String iCalendar) {
+		this.iCalendar = iCalendar;
+	}
+
+	public String getICalendar() {
+		return this.iCalendar;
+	}
 
 	public List getEventCategories(EventTypeCategoryAttribute categoryAttribute)
 	{
@@ -577,6 +619,14 @@ public class ViewEventAction extends CalendarAbstractAction
 	 public void setSkipLanguageTabs(Boolean skipLanguageTabs) 
 	 {
 		 this.skipLanguageTabs = skipLanguageTabs;
+	 }
+	 
+	 public void setICalUrl(String iCalUrl) {
+		 this.iCalUrl  = iCalUrl;
+	 }
+
+	 public String getICalUrl() {
+		 return iCalUrl;
 	 }
 
 	 public String getResourceDisplayName(String assetKey)
