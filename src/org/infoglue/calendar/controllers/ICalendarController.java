@@ -21,23 +21,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.CalendarOutputter;
-import net.fortuna.ical4j.data.FoldingWriter;
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.ComponentList;
-import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyFactoryRegistry;
 import net.fortuna.ical4j.model.PropertyList;
-import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.model.component.VEvent;
-import net.fortuna.ical4j.model.component.VTimeZone;
 import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.Description;
 import net.fortuna.ical4j.model.property.DtEnd;
@@ -50,7 +45,6 @@ import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.Url;
 import net.fortuna.ical4j.model.property.Version;
 import net.fortuna.ical4j.util.Calendars;
-import net.fortuna.ical4j.util.UidGenerator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -376,10 +370,6 @@ public class ICalendarController extends BasicController
 		VEvent vEvent = new VEvent();
 		PropertyList<Property> properties = vEvent.getProperties();
 
-		// TimeZone
-		TzId timeZoneId = new TzId(EUROPE_STOCKHOLM_TIMEZONE);
-		properties.add(timeZoneId);
-
 		// Location
 		// Create a list of locations
 		Set<String> locations = new HashSet<String>();		
@@ -499,12 +489,18 @@ public class ICalendarController extends BasicController
 		// DtStart
 		String startDateTimeString = "?";
 		java.util.Calendar startCalendar = event.getStartDateTime();
-		boolean hideTime = true;
+		boolean hideTime = true; // Hide time for all day events
 		if (startCalendar != null) {
 			hideTime = startCalendar.get(java.util.Calendar.HOUR_OF_DAY) == 12 && startCalendar.get(java.util.Calendar.MINUTE) == 34;
 			if (hideTime) {
 				properties.add(new DtStart(new net.fortuna.ical4j.model.Date(startCalendar)));
 			} else {
+				// Only add time zone for events which are not all day events
+				// See https://stackoverflow.com/a/31620852/185596
+				// TimeZone
+				TzId timeZoneId = new TzId(EUROPE_STOCKHOLM_TIMEZONE);
+				properties.add(timeZoneId);
+
 				properties.add(new DtStart(new net.fortuna.ical4j.model.DateTime(startCalendar.getTime())));
 			}
 			startDateTimeString = DATE_FORMATTER.format(event.getStartDateTime().getTime());
