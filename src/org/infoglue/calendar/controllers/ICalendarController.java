@@ -48,6 +48,7 @@ import net.fortuna.ical4j.util.Calendars;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.NDC;
 import org.hibernate.Session;
 import org.infoglue.calendar.entities.Event;
 import org.infoglue.calendar.entities.EventVersion;
@@ -510,7 +511,11 @@ public class ICalendarController extends BasicController
 		java.util.Calendar endCalendar = event.getEndDateTime();
 		if (endCalendar != null) {
 			if (hideTime) {
-				properties.add(new DtEnd(new net.fortuna.ical4j.model.Date(endCalendar)));
+				// This is an all day event, and according to the ICS standard the end date is non-inclusive,
+				// let's add one day (see https://theeventscalendar.com/support/forums/topic/ical-all-day-event-off-by-one-day/)
+				java.util.Calendar endCalendarNonInclusive = (java.util.Calendar) endCalendar.clone();
+				endCalendarNonInclusive.add(java.util.Calendar.DAY_OF_MONTH, 1);
+				properties.add(new DtEnd(new net.fortuna.ical4j.model.Date(endCalendarNonInclusive)));
 			} else {
 				properties.add(new DtEnd(new net.fortuna.ical4j.model.DateTime(endCalendar.getTime())));
 			}
