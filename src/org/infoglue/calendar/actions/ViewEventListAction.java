@@ -34,6 +34,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,10 +45,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.infoglue.calendar.controllers.CalendarController;
+import org.infoglue.calendar.controllers.CategoryController;
 import org.infoglue.calendar.controllers.EventController;
 import org.infoglue.calendar.controllers.ICalendarController;
 import org.infoglue.calendar.controllers.ResourceController;
 import org.infoglue.calendar.entities.Calendar;
+import org.infoglue.calendar.entities.Category;
 import org.infoglue.calendar.entities.Event;
 import org.infoglue.calendar.entities.EventCategory;
 import org.infoglue.calendar.entities.EventTypeCategoryAttribute;
@@ -319,7 +322,7 @@ public class ViewEventListAction extends CalendarAbstractAction
 
     protected Map<String, String[]> handleCategories()
 	{
-    	Map<String, String[]> categories = new HashMap<String, String[]>();
+    	Map<String, String[]> categories = handleCategoryIds();
         if ((categoryNames != null && categoryNames.length() > 0) || (categoryAttribute != null && categoryAttribute.length() > 0))
         {
         	log.info("Request is using the old category parameter handling.");
@@ -372,6 +375,56 @@ public class ViewEventListAction extends CalendarAbstractAction
         }
 
         return categories;
+	}
+
+	Map<String, String[]> handleCategoryIds()
+	{
+    	Map<String, String[]> categories = new HashMap<String, String[]>();
+		Map parameters = ActionContext.getContext().getParameters();
+		for (Object parameter : parameters.keySet())
+		{
+			if (parameter instanceof String && ((String) parameter).startsWith("ids_"))
+			{
+				String parameterKey = (String) parameter;
+				Object parameterValueObject = parameters.get(parameterKey);
+				if (log.isDebugEnabled())
+				{
+					log.debug("Found ids in request: " + parameterKey + "=" + parameterValueObject);
+				}
+
+				if (parameterValueObject != null)
+				{
+					String categoryAttributeName = parameterKey.replaceAll("^ids_", "");
+					String[] parameterValueList = (String[])parameterValueObject;
+					if (parameterValueList.length > 0 && parameterValueList[0] != null)
+					{
+						List<String> categoryNames = new LinkedList<String>();
+						for (String parameterValue : parameterValueList) 
+						{
+							try 
+							{
+								long categoryId = Long.parseLong(parameterValue);
+								try 
+								{
+									Category category = CategoryController.getController().getCategory(categoryId, getSession());
+									categoryNames.add(category.getInternalName());
+								}
+								catch (Exception e)
+								{
+									log.warn("Could not find category with id " + categoryId, e);
+								}
+							}
+							catch (NumberFormatException nfe)
+							{
+								// A category id was not a long, ignore it
+							}
+						}
+						categories.put(categoryAttributeName, categoryNames.toArray(new String[] {}));
+					}
+				}
+			}
+		}
+		return categories;
 	}
 
     public String listFilteredGU() throws Exception
