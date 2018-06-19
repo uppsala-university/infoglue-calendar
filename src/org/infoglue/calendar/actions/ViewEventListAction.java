@@ -140,6 +140,11 @@ public class ViewEventListAction extends CalendarAbstractAction
         // If this is a calendar with external events, add them
         addExternalEvents();
         
+        if (numberOfItems != null && numberOfItems != -1 && numberOfItems <= this.events.size())
+        {
+        	this.events = this.events.subList(0, numberOfItems);
+        }
+        
         log.info("Registering usage at least:" + calendarId + " for siteNodeId:" + this.getSiteNodeId());
         RemoteCacheUpdater.setUsage(this.getSiteNodeId(), calendarIds);
         
@@ -431,6 +436,11 @@ public class ViewEventListAction extends CalendarAbstractAction
         this.events = EventController.getController().getEventList(calendarIds, categories, includedLanguages, startCalendar, endCalendar, freeText, numberOfItems, null, session);
 
         addExternalEvents(calendarIds);
+
+        if (numberOfItems != null && numberOfItems != -1 && numberOfItems <= this.events.size())
+        {
+        	this.events = this.events.subList(0, numberOfItems);
+        }
 
         log.info("Registering usage at least:" + calendarId + " for siteNodeId:" + this.getSiteNodeId());
 
