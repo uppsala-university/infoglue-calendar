@@ -43,6 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 import org.infoglue.calendar.controllers.CalendarController;
 import org.infoglue.calendar.controllers.CategoryController;
@@ -939,9 +940,13 @@ public class ViewEventListAction extends CalendarAbstractAction
 				{
 					EventCategory eventCategory = (EventCategory)eventCategoriesIterator.next();
 					SyndCategory syndCategory = new SyndCategoryImpl();
+	    			try {
 					syndCategory.setTaxonomyUri(eventCategory.getEventTypeCategoryAttribute().getInternalName());
 					syndCategory.setName(eventCategory.getCategory().getLocalizedName(this.getLanguageCode(), "sv"));
 					categories.add(syndCategory);
+	    			} catch (ObjectNotFoundException onfe) {
+	    				log.error("Error when fetching category for event " + event.getId() + ": " + onfe.getMessage());
+	    			}
 				}
 
 				//--------------------------------------------
