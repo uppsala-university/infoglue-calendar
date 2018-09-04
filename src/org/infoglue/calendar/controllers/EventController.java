@@ -362,7 +362,7 @@ public class EventController extends BasicController
             Session session) throws HibernateException, Exception 
 	{
 		Event event = null;
-		
+
 		Calendar calendar = CalendarController.getController().getCalendar(calendarId, session);
 		Language language = null;
 		if(languageId != null)
@@ -415,29 +415,27 @@ public class EventController extends BasicController
 					session);
 
 		//Creates the master language version
-		Set eventVersions = new HashSet();
-		EventVersion eventVersion = new EventVersion();
 		
-		eventVersion.setName(name);
-		eventVersion.setTitle(title);
-		eventVersion.setDescription(description);
-		eventVersion.setOrganizerName(organizerName);
-		eventVersion.setLecturer(lecturer);
-		eventVersion.setCustomLocation(customLocation);
-		eventVersion.setAlternativeLocation(alternativeLocation);
-		eventVersion.setShortDescription(shortDescription);
-		eventVersion.setLongDescription(longDescription);
-		eventVersion.setEventUrl(eventUrl);
-		eventVersion.setAttributes(xml);
-
-		eventVersion.setEvent(event);
-		eventVersion.setLanguage(language);
-
-		session.save(eventVersion);
-
-		eventVersions.add(eventVersion);
+		Set<Language> languageList = new HashSet();
+		String createMultipleLangVersions = PropertyHelper.getProperty("calendar.createAllVersionsForTheseCalendarIds");
 		
-		
+		String[] calendarIds = createMultipleLangVersions.split(",");
+		log.info("Checking if we should create multiple versions:" + calendarIds);
+		boolean createMultiVersions = false;
+ 		for (String calId : calendarIds) {
+			Long calIdLong = Long.parseLong(calId);
+			if (calIdLong == calendarId) {
+				createMultiVersions = true;
+			}
+		}
+ 		calendar.getLanguages();
+ 		if (createMultiVersions) {
+ 			languageList = calendar.getLanguages();
+ 		} else {
+ 			languageList.add(language);
+ 		}
+		Set<EventVersion> eventVersions = getEventVersions(event, contactName, title, description, organizerName, lecturer, customLocation, alternativeLocation, shortDescription, longDescription, eventUrl, languageList, xml, session);
+
 		Set eventCategories = new HashSet();
 		if(categoryAttributes != null)
 		{
@@ -469,7 +467,32 @@ public class EventController extends BasicController
 		
 		return event;
 	}
-    
+    private Set<EventVersion> getEventVersions(Event event, String name, String title, String description, String organizerName, String lecturer, String customLocation, String alternativeLocation, String shortDescription, String longDescription, String eventUrl, Set<Language> languageList, String xml, Session session) {
+    	Set eventVersions = new HashSet();
+    	EventVersion eventVersion = new EventVersion();
+    	for (Language language : languageList) {
+			eventVersion.setName(name);
+			eventVersion.setTitle(title);
+			eventVersion.setDescription(description);
+			eventVersion.setOrganizerName(organizerName);
+			eventVersion.setLecturer(lecturer);
+			eventVersion.setCustomLocation(customLocation);
+			eventVersion.setAlternativeLocation(alternativeLocation);
+			eventVersion.setShortDescription(shortDescription);
+			eventVersion.setLongDescription(longDescription);
+			eventVersion.setEventUrl(eventUrl);
+			eventVersion.setLanguage(language);
+			
+			eventVersion.setAttributes(xml);
+	
+			eventVersion.setEvent(event);
+			
+			session.save(eventVersion);
+
+			eventVersions.add(eventVersion);
+		}
+		return eventVersions;
+    }
     
     /**
      * This method is used to create a new Event object in the database inside a transaction.
