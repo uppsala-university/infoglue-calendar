@@ -422,10 +422,12 @@ public class EventController extends BasicController
 		log.info("Checking if we should create multiple versions:" + calendarIds);
 		boolean createMultiVersions = false;
  		for (String calId : calendarIds) {
-			Long calIdLong = Long.parseLong(calId);
-			if (calIdLong == calendarId) {
-				createMultiVersions = true;
-			}
+ 			if (calId != null && !calId.equalsIgnoreCase("")) {
+				Long calIdLong = Long.parseLong(calId);
+				if (calIdLong == calendarId) {
+					createMultiVersions = true;
+				}
+ 			}
 		}
  		calendar.getLanguages();
  		if (createMultiVersions) {
