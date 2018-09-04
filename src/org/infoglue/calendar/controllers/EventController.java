@@ -365,11 +365,13 @@ public class EventController extends BasicController
 		
 		Set<Language> languageList = new HashSet();
 		String createMultipleLangVersions = PropertyHelper.getProperty("calendar.createAllVersionsForTheseCalendarIds");
-		
+		System.out.println("createMultipleLangVersions:" + createMultipleLangVersions);
 		String[] calendarIds = createMultipleLangVersions.split(",");
+		
 		log.info("Checking if we should create multiple versions:" + calendarIds);
 		boolean createMultiVersions = false;
  		for (String calId : calendarIds) {
+ 			System.out.println("calId:" + calId);
  			if (calId != null && !calId.equalsIgnoreCase("")) {
 				Long calIdLong = Long.parseLong(calId);
 				if (calIdLong == calendarId) {
@@ -448,7 +450,7 @@ public class EventController extends BasicController
 			while(categoryAttributesIterator.hasNext())
 			{
 				String categoryAttributeId = (String)categoryAttributesIterator.next(); 
-				System.out.println("categoryAttributeId:" + categoryAttributeId);
+				//System.out.println("categoryAttributeId:" + categoryAttributeId);
 				EventTypeCategoryAttribute eventTypeCategoryAttribute = EventTypeCategoryAttributeController.getController().getEventTypeCategoryAttribute(new Long(categoryAttributeId), session);
 				 
 				String[] categoriesArray = (String[])categoryAttributes.get(categoryAttributeId);
@@ -476,7 +478,7 @@ public class EventController extends BasicController
     	Set eventVersions = new HashSet();
     	EventVersion eventVersion = new EventVersion();
     	for (Language language : languageList) {
-    		System.out.println("Creating versionlanguages:" + language);
+    		System.out.println("Creating versionlanguages:" + language.getIsoCode());
 			eventVersion.setName(name);
 			eventVersion.setTitle(title);
 			eventVersion.setDescription(description);
