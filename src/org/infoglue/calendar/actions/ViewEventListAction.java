@@ -29,12 +29,12 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.sql.Blob;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,10 +45,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
+import org.infoglue.calendar.controllers.CalendarController;
+import org.infoglue.calendar.controllers.CategoryController;
 import org.infoglue.calendar.controllers.EventController;
 import org.infoglue.calendar.controllers.ICalendarController;
 import org.infoglue.calendar.controllers.ResourceController;
 import org.infoglue.calendar.entities.Calendar;
+import org.infoglue.calendar.entities.Category;
 import org.infoglue.calendar.entities.Event;
 import org.infoglue.calendar.entities.EventCategory;
 import org.infoglue.calendar.entities.EventTypeCategoryAttribute;
@@ -57,7 +60,6 @@ import org.infoglue.calendar.entities.Location;
 import org.infoglue.calendar.entities.Resource;
 //import org.infoglue.common.util.Timer;
 import org.infoglue.calendar.util.CalendarHelper;
-import org.infoglue.common.util.PropertyHelper;
 import org.infoglue.common.util.RemoteCacheUpdater;
 import org.infoglue.common.util.VelocityTemplateProcessor;
 import org.infoglue.common.util.VisualFormatter;
@@ -87,6 +89,9 @@ import com.sun.syndication.io.XmlReader;
 
 public class ViewEventListAction extends CalendarAbstractAction
 {
+	private static final String CALENDAR_NAME_FOR_EXPORT_SV = "Kalender från Uppsala universitet";
+	private static final String CALENDAR_NAME_FOR_EXPORT_EN = "Calendar from Uppsala University";
+
 	private static Log log = LogFactory.getLog(ViewEventListAction.class);
 
     private String calendarId 			= "";
@@ -114,6 +119,10 @@ public class ViewEventListAction extends CalendarAbstractAction
     
     VisualFormatter vf = new VisualFormatter();
     
+	private String iCalendar;
+
+	private String defaultDetailUrl;
+
     /**
      * This is the entry point for the main listing.
      */
@@ -139,12 +148,7 @@ public class ViewEventListAction extends CalendarAbstractAction
         this.events = EventController.getController().getEventList(calendarIds, categories, getIncludedLanguages(), null, null, null, numberOfItems, daysToCountAsLongEvent, session);
         
         // If this is a calendar with external events, add them
-        addExternalEvents();
-        
-        if (numberOfItems != null && numberOfItems != -1 && numberOfItems <= this.events.size())
-        {
-        	this.events = this.events.subList(0, numberOfItems);
-        }
+		EventController.getController().addExternalEvents(this.events, getCalendarId(), getLanguage());
         
         log.info("Registering usage at least:" + calendarId + " for siteNodeId:" + this.getSiteNodeId());
         RemoteCacheUpdater.setUsage(this.getSiteNodeId(), calendarIds);
@@ -191,6 +195,53 @@ public class ViewEventListAction extends CalendarAbstractAction
         
         return Action.SUCCESS + "GU";
     }
+
+	public String listICal() throws Exception
+	{
+		execute();
+		String defaultDetailUrl = this.getStringAttributeValue("defaultDetailUrl");
+		String iCalendarName = getICalendarName(getLanguageCode());
+
+		// Get the list of events in iCalendar format
+		String iCalString = ICalendarController.getICalendarController().getICalendarOutput(events, iCalendarName, getLanguageCode(), defaultDetailUrl);
+		setICalendar(iCalString);
+
+		return Action.SUCCESS + "ICal";
+	}
+
+	/**
+	 * Returns a name suitable for including in an iCalendar file composed by the current calendars' names.
+	 */
+	String getICalendarName(String languageCode) {
+		Session session = getSession(true);
+		String calendarName = "";
+		String[] calendarIds = calendarId.split(",");
+
+		for (int i = 0; i < calendarIds.length; i++) {
+			try { 
+				Long id = new Long(calendarIds[i]);
+				Calendar calendar = CalendarController.getController().getCalendar(id, session);
+				calendarName += calendar.getLocalizedName(languageCode, "sv");
+				calendarName += (i < calendarIds.length - 1 ? ", " : "");
+			} catch (Exception e) {
+				log.error("Could not get calendar: " + calendarIds[i], e);
+			}
+		}
+		if (calendarName.length() == 0) {
+			// Use hard coded names as backup
+			calendarName = languageCode.equals("sv") ? CALENDAR_NAME_FOR_EXPORT_SV : CALENDAR_NAME_FOR_EXPORT_EN;
+		}
+
+		return calendarName;
+	}
+
+	private void setICalendar(String iCalendar) {
+		this.iCalendar = iCalendar;
+	}
+
+	public String getICalendar() {
+		return this.iCalendar;
+	}
 
 	public String listCustom() throws Exception
     {
@@ -272,7 +323,7 @@ public class ViewEventListAction extends CalendarAbstractAction
 
     protected Map<String, String[]> handleCategories()
 	{
-    	Map<String, String[]> categories = new HashMap<String, String[]>();
+		Map<String, String[]> categories = handleCategoryIds();
         if ((categoryNames != null && categoryNames.length() > 0) || (categoryAttribute != null && categoryAttribute.length() > 0))
         {
         	log.info("Request is using the old category parameter handling.");
@@ -325,6 +376,64 @@ public class ViewEventListAction extends CalendarAbstractAction
         }
 
         return categories;
+	}
+
+	/** 
+	 * Converts request parameters given on the form ids_<categoryName> to a map where each 
+	 * <categoryName> is mapped to an array of the internal category names corresponding to 
+	 * the comma separated ids.
+	 * Examples:
+	 * ids_eventTypes=71,60,77,79,83,85,196,93,95,194,99,190,105,107,183,179,187,184,113,192,119,121,186
+	 * ids_topicAreas=137
+	 */
+	Map<String, String[]> handleCategoryIds()
+	{
+		Map<String, String[]> categories = new HashMap<String, String[]>();
+		Map parameters = ActionContext.getContext().getParameters();
+		for (Object parameter : parameters.keySet())
+		{
+			if (parameter instanceof String && ((String) parameter).startsWith("ids_"))
+			{
+				String parameterKey = (String) parameter;
+				Object parameterValueObject = parameters.get(parameterKey);
+				if (log.isDebugEnabled())
+				{
+					log.debug("Found ids in request: " + parameterKey + "=" + parameterValueObject);
+				}
+
+				if (parameterValueObject != null)
+				{
+					String categoryAttributeName = parameterKey.replaceAll("^ids_", "");
+					String[] parameterValueList = (String[])parameterValueObject;
+					if (parameterValueList.length > 0 && parameterValueList[0] != null)
+					{
+						List<String> categoryNames = new LinkedList<String>();
+						for (String parameterValue : parameterValueList) 
+						{
+							try 
+							{
+								long categoryId = Long.parseLong(parameterValue);
+								try 
+								{
+									Category category = CategoryController.getController().getCategory(categoryId, getSession());
+									categoryNames.add(category.getInternalName());
+								}
+								catch (Exception e)
+								{
+									log.warn("Could not find category with id " + categoryId, e);
+								}
+							}
+							catch (NumberFormatException nfe)
+							{
+								// A category id was not a long, ignore it
+							}
+						}
+						categories.put(categoryAttributeName, categoryNames.toArray(new String[] {}));
+					}
+				}
+			}
+		}
+		return categories;
 	}
 
     public String listFilteredGU() throws Exception
@@ -436,12 +545,7 @@ public class ViewEventListAction extends CalendarAbstractAction
         //this.events = EventController.getController().getEventList(calendarIds, categoryAttribute, categoryNamesArray, includedLanguages, startCalendar, endCalendar, freeText, session);
         this.events = EventController.getController().getEventList(calendarIds, categories, includedLanguages, startCalendar, endCalendar, freeText, numberOfItems, null, session);
 
-        addExternalEvents(calendarIds);
-
-        if (numberOfItems != null && numberOfItems != -1 && numberOfItems <= this.events.size())
-        {
-        	this.events = this.events.subList(0, numberOfItems);
-        }
+		EventController.getController().addExternalEvents(this.events, calendarIds, getLanguage());
 
         log.info("Registering usage at least:" + calendarId + " for siteNodeId:" + this.getSiteNodeId());
 
@@ -465,65 +569,6 @@ public class ViewEventListAction extends CalendarAbstractAction
         }
 
         return Action.SUCCESS + "FilteredGU";
-    }
-
-    /**
-     * Import external calendar events from ICS urls.
-     * These are defined in conf/application.properties.
-     */
-	protected void addExternalEvents() {
-		addExternalEvents(calendarId.split(","));
-	}
-	
-	/**
-	 * Import external calendar events from ICS urls.
-	 * These are defined in conf/application.properties.
-	 */
-	protected void addExternalEvents(String[] calendarIds) {
-		String externalCalendarsValue = PropertyHelper.getProperty("externalCalendars");
-		if (externalCalendarsValue != null) {
-			String[] externalCalendars = externalCalendarsValue.split(",");
-			List<String> calendarIdsList = Arrays.asList(calendarIds);
-			for (String externalCalendar : externalCalendars) {
-				String[] parts = externalCalendar.split("\\|"); // split on a literal |
-				if (parts.length > 1) {
-					String externalCalendarId = parts[0];
-					String icsUrl = parts[1];
-					if (calendarIdsList.contains(externalCalendarId)) {
-						try {
-							this.events.addAll(0, ICalendarController.getICalendarController().importEvents(icsUrl, getLanguage()));
-						} catch (Throwable t) {
-							t.printStackTrace();
-							log.error("Could not import events from " + icsUrl + " for calendar " + externalCalendarId, t);
-						}
-					}
-				} else {
-					log.warn("Malformed external calendar string (should be <calendar id>|<url to ICS file>): " + externalCalendar);
-				}
-			}
-
-			sortEvents(this.events);
-		}
-	}
-
-	/** 
-     * Sort events on startDateTime.
-     */
-    protected static void sortEvents(final List<Event> unsortedEvents) {
-    	Collections.sort(unsortedEvents, new Comparator<Event>() {
-    		@Override
-    		public int compare(Event firstEvent, Event secondEvent) {
-    			java.util.Calendar firstStartDateTime = firstEvent.getStartDateTime();
-    			java.util.Calendar secondStartDateTime = secondEvent.getStartDateTime();
-    			if (firstStartDateTime.before(secondStartDateTime)) {
-    				return -1;
-    			}
-    			if (secondStartDateTime.before(firstStartDateTime)) {
-    				return 1;
-    			}
-    			return 0;
-    		}
-    	});
     }
 
     public String listFilteredGraphicalCalendarGU() throws Exception
