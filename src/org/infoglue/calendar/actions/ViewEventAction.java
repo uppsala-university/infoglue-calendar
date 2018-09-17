@@ -99,7 +99,7 @@ public class ViewEventAction extends CalendarAbstractAction
 	private List availableLanguages = new ArrayList();
 
 	private Boolean skipLanguageTabs;
-
+	private Boolean copyDescriptionToNewLanguage = new Boolean(false);
 	/**
 	 * This is the entry point for the main listing.
 	 */
@@ -131,7 +131,8 @@ public class ViewEventAction extends CalendarAbstractAction
 			}
 			
 			this.availableLanguages = LanguageController.getController().getLanguageList(session);
-
+			this.copyDescriptionToNewLanguage = copyDescriptionFieldsForNewLanguageVersion();
+			
 			if(this.eventId != null)
 			{
 				this.event = EventController.getController().getEvent(eventId, session);
@@ -425,7 +426,7 @@ public class ViewEventAction extends CalendarAbstractAction
 	}
 	
 	/* Includes descriptions as fields that should be copied to the other language version */
-	public boolean getCopyDescriptionFieldsForNewLanguageVersion() {
+	private boolean copyDescriptionFieldsForNewLanguageVersion() {
 		Long calendarId = getCalendarId();
 		System.out.println("calendarId:" + calendarId);
 		String calendarIdProperty = PropertyHelper.getProperty("calendar.createAllVersionsForTheseCalendarIds");
