@@ -138,7 +138,7 @@ public class ViewEventAction extends CalendarAbstractAction
 			}
 			
 			this.availableLanguages = LanguageController.getController().getLanguageList(session);
-			this.copyDescriptionToNewLanguage = copyDescriptionFieldsForNewLanguageVersion();
+			this.copyDescriptionToNewLanguage = copyDescriptionFieldsForNewLanguageVersion(calendarId);
 			
 			if(this.eventId != null)
 			{
@@ -470,18 +470,20 @@ public class ViewEventAction extends CalendarAbstractAction
 	}
 	
 	/* Includes descriptions as fields that should be copied to the other language version */
-	private boolean copyDescriptionFieldsForNewLanguageVersion() {
-		Long calendarId = getCalendarId();
+	private boolean copyDescriptionFieldsForNewLanguageVersion(Long calendarId) {
+		String calendarIdProperty = PropertyHelper.getProperty("createAllVersionsForTheseCalendarIds");
 		System.out.println("calendarId:" + calendarId);
-		String calendarIdProperty = PropertyHelper.getProperty("calendar.createAllVersionsForTheseCalendarIds");
-		System.out.println("calendarIdProperty:" + calendarIdProperty);
-		String[] calendarIds = calendarIdProperty.split(",");
-		for (String calId : calendarIds) {
-			Long calIdInt = Long.parseLong(calId);
-			if (calIdInt == calendarId) {
-				return true;
-			}
+		if (calendarId != null && calendarIdProperty != null) {
 			
+			System.out.println("calendarIdProperty:" + calendarIdProperty);
+			String[] calendarIds = calendarIdProperty.split(",");
+			for (String calId : calendarIds) {
+				Long calIdInt = Long.parseLong(calId);
+				if (calIdInt == calendarId) {
+					return true;
+				}
+				
+			}
 		}
 		return false;
 	}
