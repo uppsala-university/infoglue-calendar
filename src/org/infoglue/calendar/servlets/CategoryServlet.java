@@ -91,7 +91,7 @@ public class CategoryServlet extends HttpServlet
 	        		{
 	        			Category category = (Category)categoryMap.get(categorySetIterator.next());
 
-	        			sb.append("    <property name=\"" + StringEscapeUtils.escapeXml(category.getLocalizedName(languageCode, "en")) + "\" value=\"" + StringEscapeUtils.escapeXml(category.getInternalName()) + "\"/>");
+	        			sb.append("    <property name=\"" + StringEscapeUtils.escapeXml(category.getLocalizedName(languageCode, "en")) + "\" id=\"" + category.getId() + "\" value=\"" + StringEscapeUtils.escapeXml(category.getInternalName()) + "\"/>");
 	        			if(allCategoriesProperty.length() > 0)
 	        				allCategoriesProperty.append(",");
 	        			allCategoriesProperty.append(StringEscapeUtils.escapeXml(category.getInternalName()));
