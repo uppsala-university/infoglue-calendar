@@ -28,14 +28,14 @@
 						<a href="<c:out value="${createEntryRenderURL}"/>"><input type="button" value="<ww:property value="this.getLabel('labels.internal.event.signUpForThisEvent')"/>" class="button"></a>
 					</ww:if>
 				</ww:if>
-				
+				<ww:property value="event.copyDescriptionFieldsForNewLanguageVersion"/>
 				<portlet:renderURL var="editEventRenderURL">
 					<calendar:evalParam name="action" value="ViewEvent!edit"/>
 					<calendar:evalParam name="eventId" value="${eventId}"/>
 					<calendar:evalParam name="calendarId" value="${calendarId}"/>
 					<calendar:evalParam name="versionLanguageId" value="${versionLanguageId}"/>
 				</portlet:renderURL>
-
+	
 				<portlet:renderURL var="uploadFormURL">
 					<calendar:evalParam name="action" value="UpdateEvent!uploadForm"/>
 					<calendar:evalParam name="eventId" value="${eventId}"/>
