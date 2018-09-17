@@ -73,7 +73,6 @@
                 </p>
                 </ww:if>
             </ww:else>
-            
         </ww:if>	
     
         <%
@@ -100,22 +99,9 @@
             <input type="hidden" name="mode" value="<ww:property value="mode"/>"/>
 
             <input type="hidden" name="publishEventUrl" value="http://<%=hostName%><c:out value="${publishEventUrl}"/>"/>
-    
  			<fieldset>
 				<legend class="arrow-up"><ww:property value="this.getLabel('labels.internal.event.baseInfoHeader')"/></legend>  
 				<section style="display:block">
-
-
-
-
-
-
-
-
-
-
-
-
 					<%-- Event title --%>
 					<ww:if test="this.getLabel('labels.internal.event.nameInfo') != 'labels.internal.event.nameInfo'">							
 						<a class="inputLink" href="#" onclick="return false;">
@@ -125,12 +111,6 @@
 							</p>
 						</a>
 					</ww:if>
-
-
-
-
-
-
 					<ww:if test="eventVersion == null && alternativeEventVersion != null">
 						<calendar:textField label="labels.internal.event.name" name="'name'" value="alternativeEventVersion.name" cssClass="longtextfield"/>
 					</ww:if>
@@ -155,6 +135,7 @@
 						</ww:else>
 					</ww:if>
 					
+					<ww:property value="event.copyDescriptionToNewLanguage"/>
 					<%-- Short description --%>  
 					<ww:if test="this.getLabel('labels.internal.event.shortDescriptionInfo') != 'labels.internal.event.shortDescriptionInfo'">												
 						<a class="inputLink" href="#" onclick="return false;">
@@ -316,14 +297,7 @@
 						<input:hidden name="'isOrganizedByGU'" valueMap="isOrganizedByGUMap" selectedValues="isOrganizedByGU" />
 					</ww:if>
 
-
 					<%-- Contact name --%>  
-
-
-
-
-
-
 		            <ww:if test="this.isActiveEventField('contactName')">
 						<calendar:textField label="labels.internal.event.contactName" name="'contactName'" value="event.contactName" cssClass="longtextfield" required="true"/>
 					</ww:if>
