@@ -467,11 +467,14 @@ public class ViewEventAction extends CalendarAbstractAction
 	}
 	
 	/* Includes descriptions as fields that should be copied to the other language version */
-	public boolean getCopyDescriptionFieldsForNewLanguageVersion(Integer calendarId) {
+	public boolean getCopyDescriptionFieldsForNewLanguageVersion() {
+		Long calendarId = getCalendarId();
+		System.out.println("calendarId:" + calendarId);
 		String calendarIdProperty = PropertyHelper.getProperty("calendar.createAllVersionsForTheseCalendarIds");
+		System.out.println("calendarIdProperty:" + calendarIdProperty);
 		String[] calendarIds = calendarIdProperty.split(",");
 		for (String calId : calendarIds) {
-			Integer calIdInt = Integer.parseInt(calId);
+			Long calIdInt = Long.parseLong(calId);
 			if (calIdInt == calendarId) {
 				return true;
 			}
