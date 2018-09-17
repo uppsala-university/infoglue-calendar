@@ -49,6 +49,7 @@ import org.infoglue.calendar.entities.EventTypeCategoryAttribute;
 import org.infoglue.calendar.entities.EventVersion;
 import org.infoglue.calendar.entities.Language;
 import org.infoglue.calendar.entities.Resource;
+import org.infoglue.common.util.PropertyHelper;
 import org.infoglue.common.util.VelocityTemplateProcessor;
 
 import com.opensymphony.webwork.ServletActionContext;
@@ -422,7 +423,21 @@ public class ViewEventAction extends CalendarAbstractAction
 
 		return results;
 	}
-
+	
+	/* Includes descriptions as fields that should be copied to the other language version */
+	public boolean getCopyDescriptionFieldsForNewLanguageVersion(Integer calendarId) {
+		String calendarIdProperty = PropertyHelper.getProperty("calendar.createAllVersionsForTheseCalendarIds");
+		String[] calendarIds = calendarIdProperty.split(",");
+		for (String calId : calendarIds) {
+			Integer calIdInt = Integer.parseInt(calId);
+			if (calIdInt == calendarId) {
+				return true;
+			}
+			
+		}
+		return false;
+	}
+	
 	public Event getEvent()
 	{
 		return event;

@@ -27,34 +27,9 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.criterion.Conjunction;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Expression;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Property;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
 import org.infoglue.calendar.entities.Calendar;
 import org.infoglue.calendar.entities.Category;
 import org.infoglue.calendar.entities.Event;
@@ -75,6 +50,36 @@ import org.infoglue.common.util.RemoteCacheUpdater;
 import org.infoglue.common.util.VelocityTemplateProcessor;
 import org.infoglue.common.util.io.FileHelper;
 import org.infoglue.common.util.mail.MailServiceFactory;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.criterion.Conjunction;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Property;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
+
+import com.sun.syndication.feed.atom.Link;
 
 public class EventController extends BasicController
 {    
@@ -362,25 +367,6 @@ public class EventController extends BasicController
 	{
 		Event event = null;
 		
-		Set<Language> languageList = new HashSet();
-		String createMultipleLangVersions = PropertyHelper.getProperty("calendar.createAllVersionsForTheseCalendarIds");
-		System.out.println("createMultipleLangVersions:" + createMultipleLangVersions);
-		String[] calendarIds = createMultipleLangVersions.split(",");
-		
-		log.info("Checking if we should create multiple versions:" + calendarIds);
-		boolean createMultiVersions = false;
- 		for (String calId : calendarIds) {
- 			System.out.println("calId:" + calId);
- 			if (calId != null && !calId.equalsIgnoreCase("")) {
-				Long calIdLong = Long.parseLong(calId);
-				if (calIdLong == calendarId) {
-					createMultiVersions = true;
-				}
- 			}
-		}
- 		if (createMultiVersions) {
- 			stateId = 3;
- 		}
 		Calendar calendar = CalendarController.getController().getCalendar(calendarId, session);
 		Language language = null;
 		if(languageId != null)
@@ -433,15 +419,29 @@ public class EventController extends BasicController
 					session);
 
 		//Creates the master language version
+		Set eventVersions = new HashSet();
+		EventVersion eventVersion = new EventVersion();
+		
+		eventVersion.setName(name);
+		eventVersion.setTitle(title);
+		eventVersion.setDescription(description);
+		eventVersion.setOrganizerName(organizerName);
+		eventVersion.setLecturer(lecturer);
+		eventVersion.setCustomLocation(customLocation);
+		eventVersion.setAlternativeLocation(alternativeLocation);
+		eventVersion.setShortDescription(shortDescription);
+		eventVersion.setLongDescription(longDescription);
+		eventVersion.setEventUrl(eventUrl);
+		eventVersion.setAttributes(xml);
 
- 		calendar.getLanguages();
- 		if (createMultiVersions) {
- 			languageList = calendar.getLanguages();
- 		} else {
- 			languageList.add(language);
- 		}
-		Set<EventVersion> eventVersions = getEventVersions(event, contactName, title, description, organizerName, lecturer, customLocation, alternativeLocation, shortDescription, longDescription, eventUrl, languageList, xml, session);
+		eventVersion.setEvent(event);
+		eventVersion.setLanguage(language);
 
+		session.save(eventVersion);
+
+		eventVersions.add(eventVersion);
+		
+		
 		Set eventCategories = new HashSet();
 		if(categoryAttributes != null)
 		{
@@ -449,7 +449,7 @@ public class EventController extends BasicController
 			while(categoryAttributesIterator.hasNext())
 			{
 				String categoryAttributeId = (String)categoryAttributesIterator.next(); 
-				//System.out.println("categoryAttributeId:" + categoryAttributeId);
+				log.info("categoryAttributeId:" + categoryAttributeId);
 				EventTypeCategoryAttribute eventTypeCategoryAttribute = EventTypeCategoryAttributeController.getController().getEventTypeCategoryAttribute(new Long(categoryAttributeId), session);
 				 
 				String[] categoriesArray = (String[])categoryAttributes.get(categoryAttributeId);
@@ -473,33 +473,7 @@ public class EventController extends BasicController
 		
 		return event;
 	}
-    private Set<EventVersion> getEventVersions(Event event, String name, String title, String description, String organizerName, String lecturer, String customLocation, String alternativeLocation, String shortDescription, String longDescription, String eventUrl, Set<Language> languageList, String xml, Session session) {
-    	Set eventVersions = new HashSet();
-    	EventVersion eventVersion = new EventVersion();
-    	for (Language language : languageList) {
-    		System.out.println("Creating versionlanguages:" + language.getIsoCode());
-			eventVersion.setName(name);
-			eventVersion.setTitle(title);
-			eventVersion.setDescription(description);
-			eventVersion.setOrganizerName(organizerName);
-			eventVersion.setLecturer(lecturer);
-			eventVersion.setCustomLocation(customLocation);
-			eventVersion.setAlternativeLocation(alternativeLocation);
-			eventVersion.setShortDescription(shortDescription);
-			eventVersion.setLongDescription(longDescription);
-			eventVersion.setEventUrl(eventUrl);
-			eventVersion.setLanguage(language);
-			
-			eventVersion.setAttributes(xml);
-	
-			eventVersion.setEvent(event);
-			
-			session.save(eventVersion);
-
-			eventVersions.add(eventVersion);
-		}
-		return eventVersions;
-    }
+    
     
     /**
      * This method is used to create a new Event object in the database inside a transaction.
@@ -1541,6 +1515,12 @@ public class EventController extends BasicController
 	            
 	        	criteria.add(d1);
 	        }
+
+	        if(numberOfItems != null && numberOfItems != -1)
+	        {
+	        	criteria.setMaxResults(numberOfItems);
+	        }
+
 	        
 	        result = criteria.list();
 
@@ -1566,11 +1546,6 @@ public class EventController extends BasicController
         	eventList.addAll(longEvents);
         }
         
-        if (numberOfItems != null && numberOfItems != -1 && numberOfItems <= eventList.size())
-        {
-        	eventList = eventList.subList(0, numberOfItems);
-        }
-
         return eventList;
     }
     
@@ -2089,6 +2064,65 @@ public class EventController extends BasicController
             q.setString(index, groupName);
             index++;
         }
+    }
+
+    /**
+     * Import external calendar events from ICS urls.
+     * These are defined in conf/application.properties.
+     */
+	public void addExternalEvents(List<Event> events, String calendarId, Language language) {
+		addExternalEvents(events, calendarId.split(","), language);
+	}
+	
+	/**
+	 * Import external calendar events from ICS urls.
+	 * These are defined in conf/application.properties.
+	 */
+	public void addExternalEvents(List<Event> events, String[] calendarIds, Language language) {
+		String externalCalendarsValue = PropertyHelper.getProperty("externalCalendars");
+		if (externalCalendarsValue != null) {
+			String[] externalCalendars = externalCalendarsValue.split(",");
+			List<String> calendarIdsList = Arrays.asList(calendarIds);
+			for (String externalCalendar : externalCalendars) {
+				String[] parts = externalCalendar.split("\\|"); // split on a literal |
+				if (parts.length > 1) {
+					String externalCalendarId = parts[0];
+					String icsUrl = parts[1];
+					if (calendarIdsList.contains(externalCalendarId)) {
+						try {
+							events.addAll(0, ICalendarController.getICalendarController().importEvents(icsUrl, language));
+						} catch (Throwable t) {
+							t.printStackTrace();
+							log.error("Could not import events from " + icsUrl + " for calendar " + externalCalendarId, t);
+						}
+					}
+				} else {
+					log.warn("Malformed external calendar string (should be <calendar id>|<url to ICS file>): " + externalCalendar);
+				}
+			}
+
+			sortEvents(events);
+		}
+	}
+
+	/** 
+     * Sort events on startDateTime.
+     */
+    protected static void sortEvents(final List<Event> unsortedEvents) {
+    	Collections.sort(unsortedEvents, new Comparator<Event>() {
+    		@Override
+    		public int compare(Event firstEvent, Event secondEvent) {
+    			java.util.Calendar firstStartDateTime = firstEvent.getStartDateTime();
+    			java.util.Calendar secondStartDateTime = secondEvent.getStartDateTime();
+    			if (firstStartDateTime.before(secondStartDateTime)) {
+    				return -1;
+    			}
+    			if (secondStartDateTime.before(firstStartDateTime)) {
+    				return 1;
+    			}
+    			return 0;
+    		}
+    	});
     }
 
 }
