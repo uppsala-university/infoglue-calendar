@@ -138,7 +138,7 @@ public class ViewEventAction extends CalendarAbstractAction
 			}
 			
 			this.availableLanguages = LanguageController.getController().getLanguageList(session);
-			this.copyDescriptionToNewLanguage = copyDescriptionFieldsForNewLanguageVersion(calendarId);
+			setCopyDescriptionToNewLanguage(copyDescriptionFieldsForNewLanguageVersion(calendarId));
 			
 			if(this.eventId != null)
 			{
@@ -583,12 +583,22 @@ public class ViewEventAction extends CalendarAbstractAction
 	 {
 		 return eventCopy;
 	 }
-
+	 
 	 public void setEventCopy(Boolean eventCopy)
 	 {
 		 this.eventCopy = eventCopy;
 	 }
-
+	 
+	 public Boolean getcopyDescriptionToNewLanguage()
+	 {
+		 return copyDescriptionToNewLanguage;
+	 }
+	 
+	 public void setCopyDescriptionToNewLanguage(Boolean copyDescriptionToNewLanguage)
+	 {
+		 this.copyDescriptionToNewLanguage = copyDescriptionToNewLanguage;
+	 }
+	 
 	 public List getEntryFormEventTypes()
 	 {
 		 return entryFormEventTypes;
