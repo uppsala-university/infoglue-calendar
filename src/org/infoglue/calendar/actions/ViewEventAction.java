@@ -173,7 +173,7 @@ public class ViewEventAction extends CalendarAbstractAction
 				if(this.event.getOwningCalendar() != null) {
 					this.calendarId = this.event.getOwningCalendar().getId();
 				}
-				setCopyDescriptionToNewLanguage(copyDescriptionFieldsForNewLanguageVersion(this.calendarId);
+				setCopyDescriptionToNewLanguage(copyDescriptionFieldsForNewLanguageVersion(this.calendarId));
 				this.locations 	= LocationController.getController().getLocationList(session);
 				this.categories = CategoryController.getController().getRootCategoryList(session);
 				//this.infogluePrincipals = UserControllerProxy.getController().getAllUsers();
