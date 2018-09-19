@@ -138,7 +138,7 @@ public class ViewEventAction extends CalendarAbstractAction
 			}
 			
 			this.availableLanguages = LanguageController.getController().getLanguageList(session);
-			setCopyDescriptionToNewLanguage(copyDescriptionFieldsForNewLanguageVersion(calendarId));
+			
 			
 			if(this.eventId != null)
 			{
@@ -170,9 +170,10 @@ public class ViewEventAction extends CalendarAbstractAction
 					this.versionLanguageId = ((Language)this.availableLanguages.get(0)).getId();
 				}
 
-				if(this.event.getOwningCalendar() != null)
+				if(this.event.getOwningCalendar() != null) {
 					this.calendarId = this.event.getOwningCalendar().getId();
-
+				}
+				setCopyDescriptionToNewLanguage(copyDescriptionFieldsForNewLanguageVersion(this.calendarId);
 				this.locations 	= LocationController.getController().getLocationList(session);
 				this.categories = CategoryController.getController().getRootCategoryList(session);
 				//this.infogluePrincipals = UserControllerProxy.getController().getAllUsers();
@@ -473,6 +474,7 @@ public class ViewEventAction extends CalendarAbstractAction
 	private boolean copyDescriptionFieldsForNewLanguageVersion(Long calendarId) {
 		String calendarIdProperty = PropertyHelper.getProperty("createAllVersionsForTheseCalendarIds");
 		System.out.println("calendarId:" + calendarId);
+		System.out.println("calendarIdProperty:" + calendarIdProperty);
 		if (calendarId != null && calendarIdProperty != null) {
 			
 			System.out.println("calendarIdProperty:" + calendarIdProperty);
