@@ -477,7 +477,6 @@ public class ViewEventAction extends CalendarAbstractAction
 		System.out.println("calendarIdProperty:" + calendarIdProperty);
 		if (calendarId != null && calendarIdProperty != null) {
 			
-			System.out.println("calendarIdProperty:" + calendarIdProperty);
 			String[] calendarIds = calendarIdProperty.split(",");
 			for (String calId : calendarIds) {
 				Long calIdInt = Long.parseLong(calId);
