@@ -134,7 +134,7 @@
 							<calendar:textAreaField label="labels.internal.event.lecturer" name="'lecturer'" value="eventVersion.lecturer" cssClass="smalltextarea"/>
 						</ww:else>
 					</ww:if>
-					
+					<ww:property value="this.copyDescriptionToNewLanguage"/>
 					<ww:property value="event.copyDescriptionToNewLanguage"/>
 					<%-- Short description --%>  
 					<ww:if test="this.getLabel('labels.internal.event.shortDescriptionInfo') != 'labels.internal.event.shortDescriptionInfo'">												
