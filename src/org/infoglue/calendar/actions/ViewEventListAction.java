@@ -87,6 +87,7 @@ import com.sun.syndication.io.XmlReader;
  * @author Mattias Bogeblad
  */
 
+@SuppressWarnings("serial")
 public class ViewEventListAction extends CalendarAbstractAction
 {
 	private static final String CALENDAR_NAME_FOR_EXPORT_SV = "Kalender från Uppsala universitet";
@@ -150,6 +151,11 @@ public class ViewEventListAction extends CalendarAbstractAction
         // If this is a calendar with external events, add them
 		EventController.getController().addExternalEvents(this.events, getCalendarId(), getLanguage());
         
+		if (numberOfItems != null && numberOfItems != -1 && numberOfItems <= this.events.size())
+		{
+			this.events = this.events.subList(0, numberOfItems);
+		}
+		
         log.info("Registering usage at least:" + calendarId + " for siteNodeId:" + this.getSiteNodeId());
         RemoteCacheUpdater.setUsage(this.getSiteNodeId(), calendarIds);
         
@@ -546,6 +552,11 @@ public class ViewEventListAction extends CalendarAbstractAction
         this.events = EventController.getController().getEventList(calendarIds, categories, includedLanguages, startCalendar, endCalendar, freeText, numberOfItems, null, session);
 
 		EventController.getController().addExternalEvents(this.events, calendarIds, getLanguage());
+	  
+		if (numberOfItems != null && numberOfItems != -1 && numberOfItems <= this.events.size())
+		{
+			this.events = this.events.subList(0, numberOfItems);
+		}
 
         log.info("Registering usage at least:" + calendarId + " for siteNodeId:" + this.getSiteNodeId());
 
