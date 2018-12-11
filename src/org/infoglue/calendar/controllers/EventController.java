@@ -27,9 +27,35 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.criterion.Conjunction;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Property;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.infoglue.calendar.entities.Calendar;
 import org.infoglue.calendar.entities.Category;
 import org.infoglue.calendar.entities.Event;
@@ -50,36 +76,6 @@ import org.infoglue.common.util.RemoteCacheUpdater;
 import org.infoglue.common.util.VelocityTemplateProcessor;
 import org.infoglue.common.util.io.FileHelper;
 import org.infoglue.common.util.mail.MailServiceFactory;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.criterion.Conjunction;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Expression;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Property;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
-
-import com.sun.syndication.feed.atom.Link;
 
 public class EventController extends BasicController
 {    
@@ -1309,34 +1305,37 @@ public class EventController extends BasicController
     }
 
     /**
+     * @param externalEventsLanguage 
      * @deprecated Use {@link #getEventList(String[], Map, String, java.util.Calendar, java.util.Calendar, String, Session)} instead, which has a more general category handling
      */
-    public List<Event> getEventList(String[] calendarIds, String categoryAttribute, String[] categoryNames, String includedLanguages, java.util.Calendar startCalendar, java.util.Calendar endCalendar, String freeText, Session session) throws Exception 
+    public List<Event> getEventList(String[] calendarIds, String categoryAttribute, String[] categoryNames, String includedLanguages, java.util.Calendar startCalendar, java.util.Calendar endCalendar, String freeText, Session session, Language externalEventsLanguage) throws Exception 
     {
-    	return getEventList(calendarIds, Collections.singletonMap(categoryAttribute, categoryNames), includedLanguages, startCalendar, endCalendar, freeText, session);
+    	return getEventList(calendarIds, Collections.singletonMap(categoryAttribute, categoryNames), includedLanguages, startCalendar, endCalendar, freeText, session, externalEventsLanguage);
     }
 
     /**
+     * @param externalEventsLanguage 
      * @deprecated Use {@link #getEventList(String[], Map, String, java.util.Calendar, java.util.Calendar, String, String, Integer, Session)} instead, which has a more general category handling
      */
-    public List<Event> getEventList(String[] calendarIds, String categoryAttribute, String[] categoryNames, String includedLanguages, java.util.Calendar startCalendar, java.util.Calendar endCalendar, String freeText, Integer numberOfItems, Session session) throws Exception
+    public List<Event> getEventList(String[] calendarIds, String categoryAttribute, String[] categoryNames, String includedLanguages, java.util.Calendar startCalendar, java.util.Calendar endCalendar, String freeText, Integer numberOfItems, Session session, Language externalEventsLanguage) throws Exception
     {
-    	return getEventList(calendarIds, Collections.singletonMap(categoryAttribute, categoryNames), includedLanguages, startCalendar, endCalendar, freeText, numberOfItems, null, session);
+    	return getEventList(calendarIds, Collections.singletonMap(categoryAttribute, categoryNames), includedLanguages, startCalendar, endCalendar, freeText, numberOfItems, null, session, externalEventsLanguage);
     }
 
-    public List<Event> getEventList(String[] calendarIds, Map<String, String[]> categories, String includedLanguages, java.util.Calendar startCalendar, java.util.Calendar endCalendar, String freeText, Session session) throws Exception 
+    public List<Event> getEventList(String[] calendarIds, Map<String, String[]> categories, String includedLanguages, java.util.Calendar startCalendar, java.util.Calendar endCalendar, String freeText, Session session, Language externalEventsLanguage) throws Exception 
     {
-    	return getEventList(calendarIds, categories, includedLanguages, startCalendar, endCalendar, freeText, null, null, session);
+    	return getEventList(calendarIds, categories, includedLanguages, startCalendar, endCalendar, freeText, null, null, session, externalEventsLanguage);
     }
 
     /**
      * Gets a list of all events available for a particular calendar with the optional categories.
      * @param categories The Map should have the form: key = EventType's categoryattribute name, value = list of Category.internalNames to match against
      * @param daysToCountAsLongEvent If specified, will make events longer than this duration to be put at the end of the returned list, preserving order.
+     * @param externalEventsLanguage 
      * @return List of Event
      * @throws Exception
      */
-    public List<Event> getEventList(String[] calendarIds, Map<String, String[]> categories, String includedLanguages, java.util.Calendar startCalendar, java.util.Calendar endCalendar, String freeText, Integer numberOfItems, Integer daysToCountAsLongEvent, Session session) throws Exception 
+    public List<Event> getEventList(String[] calendarIds, Map<String, String[]> categories, String includedLanguages, java.util.Calendar startCalendar, java.util.Calendar endCalendar, String freeText, Integer numberOfItems, Integer daysToCountAsLongEvent, Session session, Language externalEventsLanguage) throws Exception 
     {
         List result = null;
         
@@ -1516,11 +1515,6 @@ public class EventController extends BasicController
 	        	criteria.add(d1);
 	        }
 
-	        if(numberOfItems != null && numberOfItems != -1)
-	        {
-	        	criteria.setMaxResults(numberOfItems);
-	        }
-
 	        
 	        result = criteria.list();
 
@@ -1529,23 +1523,42 @@ public class EventController extends BasicController
 	        orderedEventSet.addAll(result);	
         }
         
+        
+        
+        
         // Convert Set to List
         List<Event> eventList = new LinkedList<Event>(orderedEventSet);
-        
+     
+        addExternalEvents(eventList, calendarIds, externalEventsLanguage);
+
         if (daysToCountAsLongEvent != null) 
         {
+        	log.debug("Checking events if they are longer than or equal to " + daysToCountAsLongEvent + " days.");
+        	
         	// Move all long events to the end of the list
         	List<Event> longEvents = new LinkedList<Event>();
+
+        	// First move the long events to a temporary list
         	for (Iterator<Event> iterator = eventList.iterator(); iterator.hasNext();) {
         		Event event = iterator.next();
-        	    if (eventDuration(event) >= daysToCountAsLongEvent) {
-        	    	longEvents.add(event);
-        	        iterator.remove();
-        	    }
+        		if (eventDuration(event) >= daysToCountAsLongEvent) {
+            		log.debug("Event " + event.getId() + " was a long event.");
+
+        			longEvents.add(event);
+        			iterator.remove();
+        		}
         	}
+        	
+        	// Finally add the temporary list to the end of the event list
         	eventList.addAll(longEvents);
         }
         
+        // If there is a number of items limit, impose it by cutting off the end of the list
+        if (numberOfItems != null && numberOfItems != -1 && numberOfItems <= eventList.size())
+        {
+        	eventList = eventList.subList(0, numberOfItems);
+        }
+
         return eventList;
     }
     
@@ -2079,29 +2092,31 @@ public class EventController extends BasicController
 	 * These are defined in conf/application.properties.
 	 */
 	public void addExternalEvents(List<Event> events, String[] calendarIds, Language language) {
-		String externalCalendarsValue = PropertyHelper.getProperty("externalCalendars");
-		if (externalCalendarsValue != null) {
-			String[] externalCalendars = externalCalendarsValue.split(",");
-			List<String> calendarIdsList = Arrays.asList(calendarIds);
-			for (String externalCalendar : externalCalendars) {
-				String[] parts = externalCalendar.split("\\|"); // split on a literal |
-				if (parts.length > 1) {
-					String externalCalendarId = parts[0];
-					String icsUrl = parts[1];
-					if (calendarIdsList.contains(externalCalendarId)) {
-						try {
-							events.addAll(0, ICalendarController.getICalendarController().importEvents(icsUrl, language));
-						} catch (Throwable t) {
-							t.printStackTrace();
-							log.error("Could not import events from " + icsUrl + " for calendar " + externalCalendarId, t);
+		if (language != null) {
+			String externalCalendarsValue = PropertyHelper.getProperty("externalCalendars");
+			if (externalCalendarsValue != null) {
+				String[] externalCalendars = externalCalendarsValue.split(",");
+				List<String> calendarIdsList = Arrays.asList(calendarIds);
+				for (String externalCalendar : externalCalendars) {
+					String[] parts = externalCalendar.split("\\|"); // split on a literal |
+					if (parts.length > 1) {
+						String externalCalendarId = parts[0];
+						String icsUrl = parts[1];
+						if (calendarIdsList.contains(externalCalendarId)) {
+							try {
+								events.addAll(0, ICalendarController.getICalendarController().importEvents(icsUrl, language));
+							} catch (Throwable t) {
+								t.printStackTrace();
+								log.error("Could not import events from " + icsUrl + " for calendar " + externalCalendarId, t);
+							}
 						}
+					} else {
+						log.warn("Malformed external calendar string (should be <calendar id>|<url to ICS file>): " + externalCalendar);
 					}
-				} else {
-					log.warn("Malformed external calendar string (should be <calendar id>|<url to ICS file>): " + externalCalendar);
 				}
-			}
 
-			sortEvents(events);
+				sortEvents(events);
+			}
 		}
 	}
 
