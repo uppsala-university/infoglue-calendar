@@ -146,16 +146,8 @@ public class ViewEventListAction extends CalendarAbstractAction
         
         Map<String, String[]> categories = handleCategories();
 
-        this.events = EventController.getController().getEventList(calendarIds, categories, getIncludedLanguages(), null, null, null, numberOfItems, daysToCountAsLongEvent, session);
+        this.events = EventController.getController().getEventList(calendarIds, categories, getIncludedLanguages(), null, null, null, numberOfItems, daysToCountAsLongEvent, session, getLanguage());
         
-        // If this is a calendar with external events, add them
-		EventController.getController().addExternalEvents(this.events, getCalendarId(), getLanguage());
-        
-		if (numberOfItems != null && numberOfItems != -1 && numberOfItems <= this.events.size())
-		{
-			this.events = this.events.subList(0, numberOfItems);
-		}
-		
         log.info("Registering usage at least:" + calendarId + " for siteNodeId:" + this.getSiteNodeId());
         RemoteCacheUpdater.setUsage(this.getSiteNodeId(), calendarIds);
         
@@ -200,14 +192,14 @@ public class ViewEventListAction extends CalendarAbstractAction
 			return Action.SUCCESS + "RenderedTemplate";
         
         return Action.SUCCESS + "GU";
-    }
+	}
 
 	public String listICal() throws Exception
 	{
 		execute();
 		String defaultDetailUrl = this.getStringAttributeValue("defaultDetailUrl");
 		String iCalendarName = getICalendarName(getLanguageCode());
-
+		
 		// Get the list of events in iCalendar format
 		String iCalString = ICalendarController.getICalendarController().getICalendarOutput(events, iCalendarName, getLanguageCode(), defaultDetailUrl);
 		setICalendar(iCalString);
@@ -222,7 +214,7 @@ public class ViewEventListAction extends CalendarAbstractAction
 		Session session = getSession(true);
 		String calendarName = "";
 		String[] calendarIds = calendarId.split(",");
-
+		
 		for (int i = 0; i < calendarIds.length; i++) {
 			try { 
 				Long id = new Long(calendarIds[i]);
@@ -237,7 +229,7 @@ public class ViewEventListAction extends CalendarAbstractAction
 			// Use hard coded names as backup
 			calendarName = languageCode.equals("sv") ? CALENDAR_NAME_FOR_EXPORT_SV : CALENDAR_NAME_FOR_EXPORT_EN;
 		}
-
+		
 		return calendarName;
 	}
 
@@ -247,7 +239,7 @@ public class ViewEventListAction extends CalendarAbstractAction
 
 	public String getICalendar() {
 		return this.iCalendar;
-	}
+    }
 
 	public String listCustom() throws Exception
     {
@@ -329,7 +321,7 @@ public class ViewEventListAction extends CalendarAbstractAction
 
     protected Map<String, String[]> handleCategories()
 	{
-		Map<String, String[]> categories = handleCategoryIds();
+    	Map<String, String[]> categories = handleCategoryIds();
         if ((categoryNames != null && categoryNames.length() > 0) || (categoryAttribute != null && categoryAttribute.length() > 0))
         {
         	log.info("Request is using the old category parameter handling.");
@@ -394,7 +386,7 @@ public class ViewEventListAction extends CalendarAbstractAction
 	 */
 	Map<String, String[]> handleCategoryIds()
 	{
-		Map<String, String[]> categories = new HashMap<String, String[]>();
+    	Map<String, String[]> categories = new HashMap<String, String[]>();
 		Map parameters = ActionContext.getContext().getParameters();
 		for (Object parameter : parameters.keySet())
 		{
@@ -549,14 +541,7 @@ public class ViewEventListAction extends CalendarAbstractAction
         Session session = getSession(true);
 
         //this.events = EventController.getController().getEventList(calendarIds, categoryAttribute, categoryNamesArray, includedLanguages, startCalendar, endCalendar, freeText, session);
-        this.events = EventController.getController().getEventList(calendarIds, categories, includedLanguages, startCalendar, endCalendar, freeText, numberOfItems, null, session);
-
-		EventController.getController().addExternalEvents(this.events, calendarIds, getLanguage());
-	  
-		if (numberOfItems != null && numberOfItems != -1 && numberOfItems <= this.events.size())
-		{
-			this.events = this.events.subList(0, numberOfItems);
-		}
+        this.events = EventController.getController().getEventList(calendarIds, categories, includedLanguages, startCalendar, endCalendar, freeText, numberOfItems, null, session, getLanguage());
 
         log.info("Registering usage at least:" + calendarId + " for siteNodeId:" + this.getSiteNodeId());
 
@@ -952,9 +937,9 @@ public class ViewEventListAction extends CalendarAbstractAction
 	    			EventCategory eventCategory = (EventCategory)eventCategoriesIterator.next();
 	    			SyndCategory syndCategory = new SyndCategoryImpl();
 	    			try {
-	    				syndCategory.setTaxonomyUri(eventCategory.getEventTypeCategoryAttribute().getInternalName());
-	    				syndCategory.setName(eventCategory.getCategory().getLocalizedName(this.getLanguageCode(), "sv"));
-	    				categories.add(syndCategory);
+	    			syndCategory.setTaxonomyUri(eventCategory.getEventTypeCategoryAttribute().getInternalName());
+	    			syndCategory.setName(eventCategory.getCategory().getLocalizedName(this.getLanguageCode(), "sv"));
+	    			categories.add(syndCategory);
 	    			} catch (ObjectNotFoundException onfe) {
 	    				log.error("Error when fetching category for event " + event.getId() + ": " + onfe.getMessage());
 	    			}

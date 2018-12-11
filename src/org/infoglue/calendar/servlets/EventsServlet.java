@@ -143,7 +143,7 @@ public class EventsServlet extends HttpServlet
                         	categories.put(categoryAttributeKey, categoryAttributeNameValues.split(","));
                     	}
                 	}
-                	events = EventController.getController().getEventList(calendarIds, categories, includedLanguages, startCalendar, endCalendar, freeText, session);
+                	events = EventController.getController().getEventList(calendarIds, categories, includedLanguages, startCalendar, endCalendar, freeText, session, null);
                 }
                 else
                 {
@@ -153,7 +153,7 @@ public class EventsServlet extends HttpServlet
                 	{
                 		categoryNamesArray = categoryNames.split(",");
                 	}
-                	events = EventController.getController().getEventList(calendarIds, categoryAttribute, categoryNamesArray, includedLanguages, startCalendar, endCalendar, freeText, session);
+                	events = EventController.getController().getEventList(calendarIds, categoryAttribute, categoryNamesArray, includedLanguages, startCalendar, endCalendar, freeText, session, null);
                 }
                 
                 
