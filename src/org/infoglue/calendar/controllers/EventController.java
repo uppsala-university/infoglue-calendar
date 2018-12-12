@@ -1529,8 +1529,13 @@ public class EventController extends BasicController
         // Convert Set to List
         List<Event> eventList = new LinkedList<Event>(orderedEventSet);
      
-        addExternalEvents(eventList, calendarIds, externalEventsLanguage);
-
+        if (categories == null || categories.size() == 0) {
+        	// Include external events if there is no filtering going on.
+        	// Since imported events have no category information they can not
+        	// be matched against filter categories.
+        	addExternalEvents(eventList, calendarIds, externalEventsLanguage);
+        }
+        
         if (daysToCountAsLongEvent != null) 
         {
         	log.debug("Checking events if they are longer than or equal to " + daysToCountAsLongEvent + " days.");
