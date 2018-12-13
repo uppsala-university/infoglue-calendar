@@ -1338,6 +1338,28 @@ public class EventController extends BasicController
     public List<Event> getEventList(String[] calendarIds, Map<String, String[]> categories, String includedLanguages, java.util.Calendar startCalendar, java.util.Calendar endCalendar, String freeText, Integer numberOfItems, Integer daysToCountAsLongEvent, Session session, Language externalEventsLanguage) throws Exception 
     {
         List result = null;
+  
+        if (log.isDebugEnabled()) {
+        	log.debug("Categories:");
+    		for (Map.Entry<String, String[]> category : categories.entrySet())
+    		{
+    			if (category.getKey() != null)
+    			{
+    				if (category.getValue() != null)
+    				{
+    					log.debug(category.getKey() + ": " + category.getValue().length + " values.");
+    				}
+    				else
+    				{
+    					log.debug(category.getKey() + ": null value.");
+    				}
+    			}
+    			else
+    			{
+					log.debug("Null key.");
+    			}
+    		}
+        }
         
         String calendarSQL = null;
         if(calendarIds != null && calendarIds.length > 0)
