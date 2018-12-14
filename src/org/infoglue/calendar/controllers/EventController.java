@@ -1551,8 +1551,7 @@ public class EventController extends BasicController
         // Convert Set to List
         List<Event> eventList = new LinkedList<Event>(orderedEventSet);
 
-        String[] eventTypes = categories.get("eventTypes");
-        addExternalEvents(eventList, calendarIds, eventTypes, externalEventsLanguage);
+        addExternalEvents(eventList, calendarIds, categories, externalEventsLanguage);
         
         if (daysToCountAsLongEvent != null) 
         {
@@ -2106,7 +2105,7 @@ public class EventController extends BasicController
      * Import external calendar events from ICS urls.
      * These are defined in conf/application.properties.
      */
-	public void addExternalEvents(List<Event> events, String calendarId, String[] categories, Language language) {
+	public void addExternalEvents(List<Event> events, String calendarId, Map<String, String[]> categories, Language language) {
 		addExternalEvents(events, calendarId.split(","), categories, language);
 	}
 	
@@ -2114,20 +2113,27 @@ public class EventController extends BasicController
 	 * Import external calendar events from ICS urls.
 	 * These are defined in conf/application.properties.
 	 */
-	public void addExternalEvents(List<Event> events, String[] calendarIds, String[] categories, Language language) {
+	public void addExternalEvents(List<Event> events, String[] calendarIds, Map<String, String[]> categories, Language language) {
 		if (language != null) {
 			String externalCalendarsValue = PropertyHelper.getProperty("externalCalendars");
 			if (externalCalendarsValue != null) {
 				String[] externalCalendars = externalCalendarsValue.split(",");
 				List<String> calendarIdsList = Arrays.asList(calendarIds);
-				List<String> categoryList = categories != null ? Arrays.asList(categories) : null;
+				String[] eventTypes = categories.get("eventTypes");
+				List<String> eventTypesList = eventTypes != null ? Arrays.asList(eventTypes) : null;
+				String[] topicAreas = categories.get("topicAreas");
+				List<String> topicAreasList = topicAreas != null ? Arrays.asList(topicAreas) : null;
+				
 				for (String externalCalendar : externalCalendars) {
 					String[] parts = externalCalendar.split("\\|"); // split on a literal |
 					if (parts.length > 1) {
 						String externalCalendarId = parts[0];
 						String icsUrl = parts[1];
-						String category = parts[2];
-						if (calendarIdsList.contains(externalCalendarId) && (categoryList == null || categoryList.contains(category))) {
+						String eventType = parts[2];
+						String topicArea = parts[3];
+						if (calendarIdsList.contains(externalCalendarId) 
+							&& (eventTypesList == null || eventTypesList.contains(eventType)) 
+							&& (topicAreasList == null || topicAreasList.contains(topicArea))) {
 							try {
 								events.addAll(0, ICalendarController.getICalendarController().importEvents(icsUrl, language));
 							} catch (Throwable t) {
