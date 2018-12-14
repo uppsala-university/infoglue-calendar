@@ -1551,7 +1551,7 @@ public class EventController extends BasicController
         // Convert Set to List
         List<Event> eventList = new LinkedList<Event>(orderedEventSet);
 
-        addExternalEvents(eventList, calendarIds, categories, freeText, externalEventsLanguage);
+        addExternalEvents(eventList, calendarIds, categories, freeText, startCalendar, endCalendar, externalEventsLanguage);
         
         if (daysToCountAsLongEvent != null) 
         {
@@ -2105,15 +2105,17 @@ public class EventController extends BasicController
      * Import external calendar events from ICS urls.
      * These are defined in conf/application.properties.
      */
-	public void addExternalEvents(List<Event> events, String calendarId, Map<String, String[]> categories, String freeText, Language language) {
-		addExternalEvents(events, calendarId.split(","), categories, freeText, language);
+	public void addExternalEvents(List<Event> events, String calendarId, Map<String, String[]> categories, String freeText, java.util.Calendar startCalendar, java.util.Calendar endCalendar, Language language) {
+		addExternalEvents(events, calendarId.split(","), categories, freeText, startCalendar, endCalendar, language);
 	}
 	
 	/**
 	 * Import external calendar events from ICS urls.
 	 * These are defined in conf/application.properties.
+	 * @param endCalendar 
+	 * @param startCalendar 
 	 */
-	public void addExternalEvents(List<Event> events, String[] calendarIds, Map<String, String[]> categories, String freeText, Language language) {
+	public void addExternalEvents(List<Event> events, String[] calendarIds, Map<String, String[]> categories, String freeText, java.util.Calendar startCalendar, java.util.Calendar endCalendar, Language language) {
 		if (language != null) {
 			String externalCalendarsValue = PropertyHelper.getProperty("externalCalendars");
 			if (externalCalendarsValue != null) {
@@ -2140,38 +2142,15 @@ public class EventController extends BasicController
 							try
 							{
 								Set<Event> externalEvents = ICalendarController.getICalendarController().importEvents(icsUrl, language);
-								if (freeText == null || freeText.equals(""))
+
+								for (Event externalEvent : externalEvents)
 								{
-									events.addAll(0, externalEvents);
-								}
-								else
-								{
-									// Check if the free text search string match any events in this external calendar
-									String lowerCaseText = freeText.toLowerCase();
-									for (Event externalEvent : externalEvents)
+									// Check if the event matches the free text search string 
+									// and that the event is inside of the search dates
+									if (matchesFreeText(externalEvent, freeText)
+										&& matchesDates(externalEvent, startCalendar, endCalendar))
 									{
-										String organizerName = externalEvent.getOrganizerName();
-										String description = externalEvent.getDescription();
-										String contactName = externalEvent.getContactName();
-										String name = null;
-										Set<EventVersion> versions = externalEvent.getVersions();
-										if (versions != null)
-										{
-											// Get a name for any of the event versions, they will be the same
-											for (EventVersion version : versions) 
-											{
-												name = version.getName();
-											}
-										}
-										
-										if (organizerName != null && organizerName.toLowerCase().contains(lowerCaseText)
-											|| description != null && description.toLowerCase().contains(lowerCaseText)
-											|| contactName != null && contactName.toLowerCase().contains(lowerCaseText)
-											|| name != null && name.toLowerCase().contains(lowerCaseText))
-										{
-											events.add(0, externalEvent);
-										}
-											
+										events.add(0, externalEvent);
 									}
 								}
 							}
@@ -2188,6 +2167,45 @@ public class EventController extends BasicController
 
 				sortEvents(events);
 			}
+		}
+	}
+
+
+	private boolean matchesDates(Event event, java.util.Calendar startCalendar, java.util.Calendar endCalendar)
+	{
+		return  (startCalendar == null || startCalendar.before(event.getStartDateTime()) || startCalendar.equals(event.getStartDateTime()))
+				&& (endCalendar == null || endCalendar.after(event.getEndDateTime()) || endCalendar.equals(event.getEndDateTime()));
+	}
+
+
+	protected boolean matchesFreeText(Event event, String freeText)
+	{
+		if (freeText == null || freeText.equals(""))
+		{
+			return true;
+		}
+		else 
+		{
+			String lowerCaseText = freeText.toLowerCase();
+
+			String organizerName = event.getOrganizerName();
+			String description = event.getDescription();
+			String contactName = event.getContactName();
+			String name = null;
+			Set<EventVersion> versions = event.getVersions();
+			if (versions != null)
+			{
+				// Get a name for any of the event versions, they will be the same
+				for (EventVersion version : versions) 
+				{
+					name = version.getName();
+				}
+			}
+			
+			return (organizerName != null && organizerName.toLowerCase().contains(lowerCaseText)
+				|| description != null && description.toLowerCase().contains(lowerCaseText)
+				|| contactName != null && contactName.toLowerCase().contains(lowerCaseText)
+				|| name != null && name.toLowerCase().contains(lowerCaseText));
 		}
 	}
 
