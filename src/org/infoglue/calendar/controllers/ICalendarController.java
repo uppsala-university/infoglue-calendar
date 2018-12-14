@@ -48,7 +48,6 @@ import net.fortuna.ical4j.util.Calendars;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.NDC;
 import org.hibernate.Session;
 import org.infoglue.calendar.entities.Event;
 import org.infoglue.calendar.entities.EventVersion;

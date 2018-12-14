@@ -1551,7 +1551,7 @@ public class EventController extends BasicController
         // Convert Set to List
         List<Event> eventList = new LinkedList<Event>(orderedEventSet);
 
-        addExternalEvents(eventList, calendarIds, categories, externalEventsLanguage);
+        addExternalEvents(eventList, calendarIds, categories, freeText, externalEventsLanguage);
         
         if (daysToCountAsLongEvent != null) 
         {
@@ -2105,15 +2105,15 @@ public class EventController extends BasicController
      * Import external calendar events from ICS urls.
      * These are defined in conf/application.properties.
      */
-	public void addExternalEvents(List<Event> events, String calendarId, Map<String, String[]> categories, Language language) {
-		addExternalEvents(events, calendarId.split(","), categories, language);
+	public void addExternalEvents(List<Event> events, String calendarId, Map<String, String[]> categories, String freeText, Language language) {
+		addExternalEvents(events, calendarId.split(","), categories, freeText, language);
 	}
 	
 	/**
 	 * Import external calendar events from ICS urls.
 	 * These are defined in conf/application.properties.
 	 */
-	public void addExternalEvents(List<Event> events, String[] calendarIds, Map<String, String[]> categories, Language language) {
+	public void addExternalEvents(List<Event> events, String[] calendarIds, Map<String, String[]> categories, String freeText, Language language) {
 		if (language != null) {
 			String externalCalendarsValue = PropertyHelper.getProperty("externalCalendars");
 			if (externalCalendarsValue != null) {
@@ -2132,11 +2132,51 @@ public class EventController extends BasicController
 						String eventType = parts[2];
 						String topicArea = parts[3];
 						if (calendarIdsList.contains(externalCalendarId) 
+							// Check if event types match this external calendar
 							&& (eventTypesList == null || eventTypesList.contains(eventType)) 
-							&& (topicAreasList == null || topicAreasList.contains(topicArea))) {
-							try {
-								events.addAll(0, ICalendarController.getICalendarController().importEvents(icsUrl, language));
-							} catch (Throwable t) {
+							// Check if topic areas match this external calendar
+							&& (topicAreasList == null || topicAreasList.contains(topicArea)))
+						{
+							try
+							{
+								Set<Event> externalEvents = ICalendarController.getICalendarController().importEvents(icsUrl, language);
+								if (freeText == null || freeText.equals(""))
+								{
+									events.addAll(0, externalEvents);
+								}
+								else
+								{
+									// Check if the free text search string match any events in this external calendar
+									String lowerCaseText = freeText.toLowerCase();
+									for (Event externalEvent : externalEvents)
+									{
+										String organizerName = externalEvent.getOrganizerName();
+										String description = externalEvent.getDescription();
+										String contactName = externalEvent.getContactName();
+										String name = null;
+										Set<EventVersion> versions = externalEvent.getVersions();
+										if (versions != null)
+										{
+											// Get a name for any of the event versions, they will be the same
+											for (EventVersion version : versions) 
+											{
+												name = version.getName();
+											}
+										}
+										
+										if (organizerName != null && organizerName.toLowerCase().contains(lowerCaseText)
+											|| description != null && description.toLowerCase().contains(lowerCaseText)
+											|| contactName != null && contactName.toLowerCase().contains(lowerCaseText)
+											|| name != null && name.toLowerCase().contains(lowerCaseText))
+										{
+											events.add(0, externalEvent);
+										}
+											
+									}
+								}
+							}
+							catch (Throwable t)
+							{
 								t.printStackTrace();
 								log.error("Could not import events from " + icsUrl + " for calendar " + externalCalendarId, t);
 							}
