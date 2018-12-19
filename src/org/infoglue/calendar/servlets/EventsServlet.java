@@ -19,7 +19,9 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.infoglue.calendar.controllers.EventController;
+import org.infoglue.calendar.controllers.LanguageController;
 import org.infoglue.calendar.entities.Event;
+import org.infoglue.calendar.entities.Language;
 import org.infoglue.common.util.HibernateUtil;
 import org.infoglue.common.util.RemoteCacheUpdater;
 import org.infoglue.common.util.VisualFormatter;
@@ -55,6 +57,11 @@ public class EventsServlet extends HttpServlet
 		String calendarMonth 		= request.getParameter("calendarMonth");
 		String includedLanguages 	= request.getParameter("includedLanguages");
 		
+		String externalEventsLanguageCode 	= request.getParameter("externalEventsLanguageCode");
+		Language externalEventsLanguage;
+    	
+    	
+    	
         try
         {
     		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -130,6 +137,12 @@ public class EventsServlet extends HttpServlet
                 String[] calendarIds = calendarId.split(",");
                 List<Event> events = null;
                 
+                try {
+            		externalEventsLanguage = LanguageController.getController().getLanguageWithCode(externalEventsLanguageCode, session);
+            	} catch (Exception e) {
+            		externalEventsLanguage = null;
+            	}
+                
                 if (categoryAttributes != null) 
                 {
                 	// New way of handling attributes
@@ -143,7 +156,8 @@ public class EventsServlet extends HttpServlet
                         	categories.put(categoryAttributeKey, categoryAttributeNameValues.split(","));
                     	}
                 	}
-                	events = EventController.getController().getEventList(calendarIds, categories, includedLanguages, startCalendar, endCalendar, freeText, session, null);
+                
+                	events = EventController.getController().getEventList(calendarIds, categories, includedLanguages, startCalendar, endCalendar, freeText, session, externalEventsLanguage);
                 }
                 else
                 {
@@ -153,7 +167,7 @@ public class EventsServlet extends HttpServlet
                 	{
                 		categoryNamesArray = categoryNames.split(",");
                 	}
-                	events = EventController.getController().getEventList(calendarIds, categoryAttribute, categoryNamesArray, includedLanguages, startCalendar, endCalendar, freeText, session, null);
+                	events = EventController.getController().getEventList(calendarIds, categoryAttribute, categoryNamesArray, includedLanguages, startCalendar, endCalendar, freeText, session, externalEventsLanguage);
                 }
                 
                 
