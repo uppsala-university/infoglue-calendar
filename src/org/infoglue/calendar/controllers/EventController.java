@@ -2116,6 +2116,16 @@ public class EventController extends BasicController
 	 * @param startCalendar 
 	 */
 	public void addExternalEvents(List<Event> events, String[] calendarIds, Map<String, String[]> categories, String freeText, java.util.Calendar startCalendar, java.util.Calendar endCalendar, Language language) {
+		if (log.isDebugEnabled())
+		{
+			log.debug("calendarIds.length: " + calendarIds.length);
+			log.debug("categories.size(): " + categories.size());
+			log.debug("freeText: " + freeText);
+			log.debug("startCalendar: " + startCalendar);
+			log.debug("endCalendar: " + endCalendar);
+			log.debug("language: " + language);
+		}
+		
 		if (language != null) {
 			String externalCalendarsValue = PropertyHelper.getProperty("externalCalendars");
 			if (externalCalendarsValue != null) {
