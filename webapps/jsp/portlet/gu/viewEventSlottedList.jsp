@@ -36,11 +36,11 @@
        var ae = document.getElementById(a_id);
        if(e.style.display != 'none') {
            e.style.display = 'none';
-           ae.innerHTML = '<img src="http://clamator.its.uu.se/uploader/67/show.png">';
+           ae.innerHTML = '<img src="https://clamator.its.uu.se/uploader/67/show.png">';
        }
        else {
            e.style.display = 'block';
-           ae.innerHTML = '<img src="http://clamator.its.uu.se/uploader/67/hide.png">';
+           ae.innerHTML = '<img src="https://clamator.its.uu.se/uploader/67/hide.png">';
        }
     }
 </script>
@@ -182,17 +182,17 @@
 			</div>
 			
 			<%--
-			<a href="<ww:property value="#attr.detailUrl"/><c:out value="${delim}"/>eventId=<ww:property value="top.id"/>" title="<ww:property value="#eventVersion.title"/>"><img src="http://clamator.its.uu.se/uploader/67/show.png"></a>
+			<a href="<ww:property value="#attr.detailUrl"/><c:out value="${delim}"/>eventId=<ww:property value="top.id"/>" title="<ww:property value="#eventVersion.title"/>"><img src="https://clamator.its.uu.se/uploader/67/show.png"></a>
 			
 			<ww:if test="#eventVersion.decoratedLongDescription != ''">
-				<a class="url uid" id="longDescriptionId<ww:property value="top.id"/>A" href="javascript: toggle_SlottedVisibility('longDescriptionId<ww:property value="top.id"/>', 'longDescriptionId<ww:property value="top.id"/>A');"><img src="http://clamator.its.uu.se/uploader/67/show.png"></a>
+				<a class="url uid" id="longDescriptionId<ww:property value="top.id"/>A" href="javascript: toggle_SlottedVisibility('longDescriptionId<ww:property value="top.id"/>', 'longDescriptionId<ww:property value="top.id"/>A');"><img src="https://clamator.its.uu.se/uploader/67/show.png"></a>
 				
 				<p id="longDescriptionId<ww:property value="top.id"/>" class="longer_description" style="display: none">
 					<ww:property value="#eventVersion.decoratedLongDescription"/>
 				</p>
 			</ww:if>
 			--%>
-				<a class="url uid show" id="longDescriptionId<ww:property value="top.id"/>A" href="javascript: toggle_SlottedVisibility('longDescriptionId<ww:property value="top.id"/>', 'longDescriptionId<ww:property value="top.id"/>A');"><img src="http://clamator.its.uu.se/uploader/67/show.png"></a>
+				<a class="url uid show" id="longDescriptionId<ww:property value="top.id"/>A" href="javascript: toggle_SlottedVisibility('longDescriptionId<ww:property value="top.id"/>', 'longDescriptionId<ww:property value="top.id"/>A');"><img src="https://clamator.its.uu.se/uploader/67/show.png"></a>
 				<div id="longDescriptionId<ww:property value="top.id"/>" style="display: none">
 					<ul>
 						<!-- Plats -->
